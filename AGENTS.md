@@ -27,6 +27,7 @@
 | **v0.1.0** | 2026-07-15 | 初始版本：基础功能闭环（课程学习、自由对话、笔记、成就与连续学习激励），完成项目骨架搭建 |
 | **v0.2.0** | 2026-07-20 | 美术与动画全面优化：`LingxiGradients.dark` 双主题渐变对齐、`_MascotPainter` 6 状态精细化绘制、`SpringMotion` 6 档弹簧参数对齐 Material 3 规范、`ChatController` 流式 50ms 动态节流 |
 | **v0.3.0** | 2026-07-23 | 打磨·测试·发布：Hero 共享元素动画（`MascotHero` + `mascotHeroFlightShuttleBuilder`）、按压微交互（`LingxiButton` scale 0.96 / `LingxiCard` scale 0.99 / `LingxiChip` `AnimatedSwitcher`）、`SpringMotion.fastSpeed` 时长修复（151ms → 148ms ≤ 150ms）、列表滚动优化（`cacheExtent: 500` + `RepaintBoundary`）、PageView 手感升级（`BouncingScrollPhysics` + `reduceMotion` 按钮降级）、GoRouter 过渡统一（`slideFadeTransitionBuilder` + `SpringMotion.entranceCurve`）、新增 149 个测试用例 |
+| **v0.4.0** | 2026-07-24 | 双端专注版：移除 macOS 支持、新增应用内自动更新（`UpdateService`/`UpdateController`/`UpdateDialog`/`UpdateState`，基于 GitHub Releases API，Android APK + Windows ZIP 双端）、新增 `LearnerProfiles` / `LearningEvents` 两张 Drift 表（schemaVersion v3）、新增 `package_info_plus` / `open_filex` / `archive` / `msix` 依赖、前端 UI 审查修复（硬编码颜色改用语义色、死代码清理）、CI/CD 修复（Windows zip 路径、ScrollCacheExtent 类型、MSVC /WX 标志、rive_common 编译） |
 
 ---
 
@@ -74,6 +75,9 @@
 | `google_fonts` | ^6.2.1 | 字体（Noto Sans SC + Quicksand） |
 | `shared_preferences` | ^2.2.3 | KV 偏好存储 |
 | `flutter_localizations` | sdk | 本地化委托 |
+| `package_info_plus` | ^8.0.0 | 自动更新版本号读取 |
+| `open_filex` | ^4.7.0 | 调用系统安装器（APK/ZIP） |
+| `archive` | ^3.6.1 | 解压 Windows ZIP 更新包 |
 
 ### 开发依赖（dev_dependencies）
 
@@ -87,6 +91,7 @@
 | `flutter_native_splash` | ^2.4.1 | 启动屏生成 |
 | `http_mock_adapter` | ^0.6.1 | Dio HTTP mock（测试用） |
 | `fake_async` | ^1.3.1 | 测试用虚拟时间（fake_async） |
+| `msix` | ^3.16.7 | Windows MSIX 安装包打包（可选，当前 `build_windows: false`） |
 
 ### 版本锁定策略
 
@@ -105,7 +110,7 @@ lib/
 ├── app.dart                      # LingxiApp（MaterialApp.router 根 Widget）
 ├── core/                         # 核心层：与业务无关的基础设施
 │   ├── constants/                #   常量（app_constants.dart）
-│   ├── motion/                   #   动画曲线（spring_motion.dart）
+│   ├── motion/                   #   动画曲线（spring_motion.dart, animation_utils.dart, page_transitions.dart）
 │   ├── providers/                #   全局 Provider（app_providers.dart）
 │   ├── router/                   #   路由（app_router.dart, route_names.dart）
 │   └── theme/                    #   主题（app_theme.dart, lingxi_colors.dart, lingxi_gradients.dart, lingxi_elevations.dart, shape_variants.dart）
@@ -127,7 +132,8 @@ lib/
 │   ├── onboarding/               #   引导与 API 配置向导
 │   ├── progress/                 #   进度统计、成就服务、连续学习服务
 │   ├── recommendation/           #   学习推荐引擎（基于学习历史与进度）
-│   └── settings/                 #   设置、API 设置、数据导出、Provider 编辑
+│   ├── settings/                 #   设置、API 设置、数据导出、Provider 编辑
+│   └── update/                   #   应用内自动更新（controller, dialog, service, state）
 └── shared/                       # 共享层：跨 feature 复用
     ├── utils/                    #   工具（responsive.dart, misconception_parser.dart）
     └── widgets/                  #   通用组件（lingxi_card, lingxi_button, lingxi_app_bar 等）
@@ -357,6 +363,8 @@ Table（database.dart）  →  Repository（repositories/）  →  Provider（db
 | `Settings` | 通用 KV 设置 |
 | `Achievements` | 成就解锁记录 |
 | `Streaks` | 连续学习天数（单行表） |
+| `LearnerProfiles` | 学习者画像（ageGroup/skillLevel/learningGoal/dailyMinutes/pace，单行表 `id='default'`） |
+| `LearningEvents` | 学习事件（lesson_start/quiz_attempt/socratic_turn/note_create 等，含 durationSeconds 与 metadata JSON） |
 
 ### 新增表步骤
 
@@ -378,8 +386,14 @@ int get schemaVersion => 3;  // 每次表结构变更递增（以 database.dart 
 MigrationStrategy get migration => MigrationStrategy(
   onCreate: (m) async => await m.createAll(),
   onUpgrade: (m, from, to) async {
-    // 示例：if (from < 2) { await m.addColumn(...); }
-    // 当前 v3，按版本号顺序执行迁移
+    // v1 → v2：新增 LearnerProfiles 表
+    if (from < 2) {
+      await m.createTable(learnerProfiles);
+    }
+    // v2 → v3：新增 LearningEvents 表
+    if (from < 3) {
+      await m.createTable(learningEvents);
+    }
   },
   beforeOpen: (details) async {
     await customStatement('PRAGMA foreign_keys = ON');
@@ -481,6 +495,71 @@ factory LingxiDatabase.forTesting(QueryExecutor e) => LingxiDatabase(e);
 
 ---
 
+## 自动更新模块约定
+
+> v0.4.0 新增。应用内自动更新基于 GitHub Releases API，支持 Android（APK 下载安装）与 Windows（ZIP 解压安装）双端，免去用户反复卸载重装。
+
+### 模块文件结构
+
+```
+lib/features/update/
+├── update_controller.dart        # StateNotifier 状态管理与业务编排
+├── update_dialog.dart            # 版本公告弹窗 UI（编辑式视觉风格）
+├── update_service.dart           # 版本检查、资产下载、平台适配安装
+└── update_state.dart             # 状态模型（UpdateStatus 枚举 + ReleaseInfo）
+```
+
+配套数据层：
+- `lib/data/repositories/update_preferences_repository.dart`：上次检查时间、跳过版本号持久化（基于 `SharedPreferences`）
+
+### 状态机流转
+
+```
+idle ──checkForUpdates(force)──> checking
+checking ──newer──> available
+checking ──same/error──> upToDate / error
+available ──download──> downloading ──done──> downloaded
+downloaded ──install──> installing
+available ──skip──> skipped
+```
+
+`UpdateStatus` 枚举值：`idle` / `checking` / `upToDate` / `available` / `downloading` / `downloaded` / `installing` / `error` / `skipped`。
+
+### 节流与触发规则
+
+- **启动静默检查**：`app.dart` 在 `WidgetsBinding.instance.addPostFrameCallback` 中延迟 3 秒触发 `checkForUpdates(silent: true)`。
+- **节流周期**：`kUpdateCheckIntervalHours`（24 小时），非强制模式下上次检查时间在周期内则跳过。
+- **force: true**：跳过节流，用于设置页"检查更新"按钮与弹窗内重试。
+- **silent: true**：无新版本或出错时保持 `idle`，不弹窗；发现新版本时切到 `available` 并由 `app.dart` 监听自动弹窗。
+- **跳过的版本**：用户点击"跳过此版本"后，该版本在 silent 模式下不再提示，直到出现更高版本。
+
+### 平台资产匹配
+
+- **Android**：从 Release assets 中按 ABI 优先级匹配 APK（`arm64-v8a` > `armeabi-v7a` > `x86_64`），通过 `open_filex` 调起系统安装器。
+- **Windows**：下载 `.zip` 资产，使用 `archive` 包解压到临时目录，调用 `open_filex` 打开解压后目录由用户手动替换（避免文件占用导致替换失败）。
+- **平台不支持**：`UpdateService.isPlatformSupported` 返回 `false` 时静默回到 `idle`。
+
+### 安全考量（与「安全红线」第 6 条关联）
+
+- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release 的 APK。
+- FileProvider 仅共享应用临时目录下的更新文件（见 `android/app/src/main/res/xml/file_paths.xml`）。
+- `UpdateService` **不读取/写入 API Key**，**不经过** `SecureLogInterceptor`（无敏感信息需脱敏）。
+- 下载使用 HTTPS，仅访问 `api.github.com` 与 `github.com`。
+- Release Notes 通过 `flutter_markdown` 渲染，禁止执行其中可能含有的脚本（Markdown 默认不执行代码）。
+
+### 新增 Provider 步骤
+
+- `updateControllerProvider`（StateNotifierProvider）定义在 `lib/features/update/update_controller.dart` 底部，依赖 `updateServiceProvider` 与 `updatePreferencesRepositoryProvider`。
+- `updateServiceProvider`（Provider）定义在 `lib/features/update/update_service.dart` 底部，依赖 `dioProvider`（专用于更新的 dio 实例）。
+- 与 AI 模块的 dio 实例隔离，避免 `SecureLogInterceptor` 等拦截器干扰 GitHub API 请求。
+
+### 集成入口
+
+- **启动时**：`lib/app.dart` 的 `_LingxiAppState.initState` 中 `Future.delayed(Duration(seconds: 3))` 后调用 `checkForUpdates(silent: true)`，并 `ref.listen(updateControllerProvider.select((s) => s.status))` 监听 `available` 状态自动弹 `UpdateDialog`。
+- **手动触发**：`lib/features/settings/settings_page.dart` 中"检查更新"入口调用 `UpdateDialog.show(context, force: true)`。
+
+---
+
 ## 吉祥物集成约定
 
 ### MascotMood 6 状态
@@ -573,6 +652,15 @@ macos/Runner/*.entitlements.priv
 - 错误报告中若包含请求/响应，确保已通过 `SecureLogInterceptor` 脱敏。
 - **不要**在 Issue/PR 描述/commit message 中粘贴真实 API Key。
 
+### 6. 自动更新权限边界（v0.4.0 新增）
+
+- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release（`YJLZSL/polaris-learn`）的 APK，**不得**用于安装任意来源的包。
+- `FileProvider`（`androidx.core.content.FileProvider`）仅共享应用临时目录下的更新文件，配置见 `android/app/src/main/res/xml/file_paths.xml`，**禁止**扩展共享范围至外部存储。
+- `UpdateService` **不读取/写入 API Key**，**不经过** `SecureLogInterceptor`（GitHub Releases API 为公开接口，无敏感信息需脱敏）。
+- 下载**必须**使用 HTTPS，仅允许访问 `api.github.com` 与 `github.com` 域名，**禁止**将下载指向其他域名。
+- 修改 `UpdateService` 时**不得**引入执行远程脚本的能力（如 `Process.run` 执行下载的 `.exe` / `.sh`），Windows 仅允许解压 ZIP 后由用户手动替换。
+- Release Notes 通过 `flutter_markdown` 渲染，**不得**启用其中的代码执行或链接跳转（默认已禁用）。
+
 ---
 
 ## 测试约定
@@ -581,19 +669,27 @@ macos/Runner/*.entitlements.priv
 
 ```
 test/
+├── core/                       # 核心层测试（motion、theme 等）
 ├── data/
-│   ├── repositories/          # Repository 测试
-│   └── services/              # 服务测试（secure_storage_test.dart）
+│   ├── repositories/           # Repository 测试（conversation、note、progress、streak 等）
+│   └── services/               # 服务测试（secure_storage_test.dart 等）
 ├── features/
-│   └── ai/                    # AI Provider 测试（providers_test.dart, sse_transformer_test.dart）
+│   ├── ai/                     # AI Provider 测试（providers_test.dart, sse_transformer_test.dart）
+│   ├── learning/               # 学习路径相关测试
+│   ├── progress/               # 进度统计测试
+│   ├── recommendation/         # 推荐引擎测试
+│   └── settings/               # 设置页测试
 ├── shared/
-│   └── utils/                 # 工具函数测试
-├── chat_controller_test.dart  # Controller 测试（顶层）
-├── data_export_test.dart      # 导出服务测试
+│   ├── utils/                  # 工具函数测试
+│   └── widgets/                # 共享组件 Widget 测试
+├── chat_controller_test.dart   # Controller 测试（顶层）
+├── data_export_test.dart       # 导出服务测试
 ├── secure_log_interceptor_test.dart
 ├── streak_service_test.dart
-└── widget_test.dart           # Widget 测试
+└── widget_test.dart            # Widget 测试
 ```
+
+> ⚠️ **测试缺口**（截至 v0.4.0）：`lib/features/update/` 4 个文件、`learner_profile_repository.dart`、`learning_event_repository.dart`、`update_preferences_repository.dart` 暂无独立测试，已在「已知技术债」中记录。
 
 ### 命名与组织
 
@@ -774,10 +870,12 @@ test(mascot): 补充 MascotController 彩蛋触发测试
 | 吉祥物动画 | v0.2.0 已完成 `_MascotPainter` 6 状态精细化绘制（径向渐变身体 / 角部高光 / 瞳孔高光 / 6 情绪差异化），v0.3.0 已完成 Hero 共享元素动画接入；Rive `.riv` 资源仍未就绪 | Rive 动画资源待完善：待美术产出 `assets/rive/lingxi_mascot.riv` 后，在 `RiveMascotWidget` 中完成状态机映射，并保留 `MascotWidget` 作为加载失败 fallback |
 | 图表 | `fl_chart` 未引入，统计页图表用 `CustomPainter` 手绘 | 待引入 `fl_chart`，重写统计页图表 |
 | 国际化 | UI 文案大量硬编码中文，仅 `app.dart` 配置了 `supportedLocales` 与 delegates | 待抽取 `intl` ARB 文件，启用 `flutter gen-l10n` |
-| 课程内容 | 仅 L0 Python 示例课程，`assets/courses/` 内容单薄 | 待扩充更多课程（L1/L2、其他语言） |
+| 课程内容 | 已有 L0 Python 基础 + L1 Python 数据结构，但 L2-L4 仍空缺，`assets/courses/` 内容单薄 | 待扩充 L2/L3/L4 课程，引入其他语言（如 JavaScript / Go）课程 |
 | 数据导出 | `file_picker` / `share_plus` 未引入，导出仅写入应用文档目录返回路径 | 待引入 `share_plus` 支持系统分享，或 `file_picker` 支持自定义保存位置 |
 | Riverpod 代码生成 | 已引入 `riverpod_generator` 但未广泛使用 `@riverpod` 注解，仍以手写 Provider 为主 | 待逐步迁移到代码生成风格 |
-| iOS / Linux | 不支持 | 当前不计划支持，PR 不要引入 iOS/Linux 专属依赖 |
+| iOS / Linux / macOS | 不支持（v0.4.0 已彻底移除 macOS） | 当前不计划支持，PR 不要引入 iOS/Linux/macOS 专属依赖 |
+| 自动更新测试 | `lib/features/update/` 4 个文件（`update_service.dart`、`update_controller.dart`、`update_dialog.dart`、`update_state.dart`）无独立测试 | 待补 `update_service_test.dart`（mock GitHub API）与 `update_controller_test.dart`（状态机流转） |
+| Repository 测试缺口 | `learner_profile_repository.dart`、`learning_event_repository.dart`、`update_preferences_repository.dart` 无独立测试 | 待补对应 `_test.dart`，至少覆盖 CRUD 主路径 |
 
 ---
 
@@ -852,7 +950,7 @@ flutter devices                                       # 列出可用设备
 9. **运行 `flutter analyze` 确认零错误**：任何 warning 都需在 PR 中说明。
 10. **运行相关测试**：修改了 Repository/Service 必须运行对应测试；新增功能必须补测试。
 11. **重新生成代码**：修改了 Drift 表定义或 Riverpod 注解后，运行 `flutter pub run build_runner build --delete-conflicting-outputs`。
-12. **更新文档**：若修改了依赖版本、目录结构、安全相关逻辑，同步更新 `AGENTS.md` 对应章节。
+12. **更新文档（强制）**：参见下方「文档同步工作流」章节，按检查清单同步更新对应文档。**不更新文档的 PR 将被要求补充后再 review。**
 13. **提交遵循 Conventional Commits**：中文 commit message，type/scope 准确。
 
 ### 禁止事项
@@ -863,10 +961,75 @@ flutter devices                                       # 列出可用设备
 - ❌ 不要引入仅 iOS/Linux/macOS 可用的依赖。
 - ❌ 不要直接 push 到 `main` 分支。
 - ❌ 不要在未阅读相关代码的情况下"凭直觉"修改。
+- ❌ 不要"做完任务就走"——任何代码变更必须同步更新对应文档（见「文档同步工作流」）。
 
 ---
 
-*本文档随项目演进持续更新。如有疑问或建议，提交 Issue 或在 PR 中讨论。*
+## 文档同步工作流
+
+> 本章节定义每次代码变更**必须**同步更新的文档检查清单，确保文档与代码始终一致。
+> 违反此工作流的 PR 将被要求补充文档更新后再 review。
+
+### 21.1 PR 文档同步检查清单
+
+每次提交 PR 时，作者必须在 PR 描述中勾选以下检查项（对照 `CONTRIBUTING.md` 的 PR 模板）：
+
+#### 必查项（所有 PR）
+
+- [ ] 若修改了 `pubspec.yaml` 依赖 → 已更新 AGENTS.md「技术栈与版本约束」表
+- [ ] 若新增/删除/修改了 Drift 表 → 已更新 AGENTS.md「当前表清单」、`schemaVersion` 与 migration 代码示例
+- [ ] 若新增了 feature 模块 → 已更新 AGENTS.md「目录结构」与相应模块约定章节（如「自动更新模块约定」）
+- [ ] 若修改了 `lib/core/constants/app_constants.dart` → 已在 AGENTS.md 相关章节记录新常量
+- [ ] 若修改了安全相关代码（`SecureStorageService` / `SecureLogInterceptor` / 权限） → 已更新 AGENTS.md「安全红线」与 `SECURITY.md`
+- [ ] 若新增了公开 API/Provider/Repository → 已更新 `docs/代码百科.md` 相应模块段落
+- [ ] 若修改了 `analysis_options.yaml` lint 规则 → 已更新 AGENTS.md「代码风格与 lint 规则」表
+
+#### 版本发布时（打 tag 前）
+
+- [ ] AGENTS.md「版本演进历史」已新增版本行
+- [ ] `CHANGELOG.md` 已新增版本段落（从 `[Unreleased]` 转为 `[版本号] - 日期`）
+- [ ] `README.md` 版本徽章与项目状态表已更新
+- [ ] `lib/core/constants/app_constants.dart` 的 `kAppVersion` 已更新
+- [ ] `pubspec.yaml` 的 `version` 已更新
+- [ ] （可选）`msix_config.msix_version` 已同步
+
+#### 测试相关
+
+- [ ] 若新增了 Repository/Service → 已添加对应 `_test.dart` 文件，至少覆盖 CRUD 主路径
+- [ ] 若修改了现有 Repository/Service → 已更新对应测试
+- [ ] `flutter test` 通过（或在 PR 中明确说明失败原因与后续计划）
+
+### 21.2 文档所有权矩阵
+
+| 文档 | 维护场景 | 主要维护者 |
+|------|----------|-----------|
+| `AGENTS.md` | 任何架构/约定/版本变更 | PR 作者 |
+| `README.md` | 版本发布、功能特性变更、技术栈变更 | PR 作者 |
+| `CHANGELOG.md` | 每次 PR（`[Unreleased]` 段）、版本发布 | PR 作者 |
+| `SECURITY.md` | 安全相关变更（API Key / 权限 / 拦截器） | PR 作者 |
+| `CONTRIBUTING.md` | 贡献流程、PR 模板、命名约定变更 | 仓库管理员 |
+| `CODE_OF_CONDUCT.md` | 社区行为准则变更 | 仓库管理员 |
+| `docs/架构设计.md` | 分层架构、数据流、路由结构变更 | PR 作者 |
+| `docs/代码百科.md` | 模块/Provider/Repository 变更 | PR 作者 |
+| `docs/吉祥物设计.md` | 吉祥物视觉、状态机、交互变更 | PR 作者 |
+| `docs/前端重设计指南.md` | **已归档**（v0.2.0 前的历史蓝图，仅作参考） | 不再维护 |
+
+### 21.3 CHANGELOG.md 维护规则
+
+- 每次 PR 在 `[Unreleased]` 段添加变更项，按类别分组：
+  - `### 新增`（Added）—— 新功能、新依赖、新表
+  - `### 变更`（Changed）—— 现有功能的修改
+  - `### 修复`（Fixed）—— Bug 修复
+  - `### 移除`（Removed）—— 移除的功能/依赖
+- 版本发布时将 `[Unreleased]` 标题改为 `[版本号] - YYYY-MM-DD「版本名」`，并在文件顶部新建空的 `[Unreleased]` 段。
+- 变更项来源：commit message 的 `type` 与 `description`，可合并同类型变更。
+- 格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/) 1.1.0，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/) 2.0.0。
+
+### 21.4 文档同步自动化（未来方向）
+
+- 探索 GitHub Actions 在 PR 中自动检查文档同步：如检测 `pubspec.yaml` 变更则提示更新 AGENTS.md「技术栈与版本约束」。
+- 探索依赖版本自动同步脚本：从 `pubspec.yaml` 提取版本号生成 AGENTS.md 表格行。
+- 探索 CHANGELOG 自动生成：从 commit message（Conventional Commits）自动填充 `[Unreleased]` 段。
 
 ---
 
@@ -1014,3 +1177,7 @@ flutter devices                                       # 列出可用设备
 - `PerformanceOverlay` 在首页、学习路径、对话列表、笔记列表、课时页滑动过程中均不出现红条
 - `flutter run --profile` 模式下使用 Dart DevTools Timeline 录制，UI 线程帧时间 ≤ 16ms
 - 开启系统"移除动画"后，所有页面交互保持可用，无卡顿或缺失关键反馈
+
+---
+
+*本文档随项目演进持续更新。如有疑问或建议，提交 Issue 或在 PR 中讨论。*

@@ -39,23 +39,39 @@ flutter analyze
 ```
 lib/
 ├── main.dart                 # 应用入口
-├── app.dart                  # MaterialApp 配置
-├── core/                     # 核心工具与配置
-│   ├── constants/
-│   ├── theme/
-│   └── utils/
-├── data/                     # 数据层
-│   ├── database/             # Drift 数据库
-│   ├── models/               # 数据模型
-│   └── repositories/         # 仓库
-├── features/                 # 功能模块
-│   ├── course/
-│   ├── chat/
-│   └── settings/
-├── providers/                # Riverpod Providers
-├── router/                   # GoRouter 路由配置
-└── widgets/                  # 共享组件
+├── app.dart                  # MaterialApp.router 根 Widget
+├── core/                     # 核心层：与业务无关的基础设施
+│   ├── constants/            #   常量
+│   ├── motion/               #   动画曲线与页面过渡
+│   ├── providers/            #   全局 Provider
+│   ├── router/               #   GoRouter 路由配置
+│   └── theme/                #   主题（ThemeExtension 系统）
+├── data/                     # 数据层：本地持久化与数据模型
+│   ├── db/                   #   Drift 数据库
+│   ├── models/               #   纯数据模型
+│   ├── providers/            #   数据层 Provider 注册
+│   ├── repositories/         #   仓库（每张表一个 Repository）
+│   └── services/             #   数据服务（SecureStorage 等）
+├── features/                 # 功能层：按业务模块组织
+│   ├── achievements/         #   成就
+│   ├── ai/                   #   AI Provider 抽象与实现
+│   ├── chat/                 #   对话
+│   ├── help/                 #   帮助中心
+│   ├── home/                 #   首页
+│   ├── learning/             #   学习路径与课时
+│   ├── mascot/               #   吉祥物小犀
+│   ├── notes/                #   笔记
+│   ├── onboarding/           #   引导与 API 配置
+│   ├── progress/             #   进度统计与成就服务
+│   ├── recommendation/       #   学习推荐引擎
+│   ├── settings/             #   设置、API 设置、数据导出
+│   └── update/               #   应用内自动更新
+└── shared/                   # 共享层：跨 feature 复用
+    ├── utils/                #   工具函数
+    └── widgets/              #   通用组件（LingxiCard / LingxiButton 等）
 ```
+
+> 完整目录结构与分层职责见 [AGENTS.md](AGENTS.md) 「目录结构与分层约定」章节。
 
 ## 提交规范
 
@@ -109,7 +125,12 @@ docs(readme): 更新构建指南
 - [ ] 代码通过 `flutter analyze` 检查
 - [ ] 代码通过 `flutter test` 测试
 - [ ] 已为新增功能编写测试
-- [ ] 已更新相关文档
+- [ ] **已同步更新相关文档**（按 [AGENTS.md](AGENTS.md) 「文档同步工作流」章节检查清单逐项核对）
+  - [ ] 若修改了 `pubspec.yaml` 依赖 → 已更新 AGENTS.md「技术栈与版本约束」表
+  - [ ] 若新增/删除/修改了 Drift 表 → 已更新 AGENTS.md「当前表清单」与 migration 代码
+  - [ ] 若新增了 feature 模块 → 已更新 AGENTS.md「目录结构」
+  - [ ] 若修改了安全相关代码 → 已更新 AGENTS.md「安全红线」与 [SECURITY.md](SECURITY.md)
+  - [ ] 若有版本发布 → 已更新 AGENTS.md「版本演进历史」与 [CHANGELOG.md](CHANGELOG.md) `[Unreleased]` 段
 
 ## 相关 Issue
 
@@ -189,7 +210,7 @@ assets/courses/
 ## 联系方式
 
 <!-- 联系方式占位（后续补充） -->
-- GitHub Issues：[提交 Issue](https://github.com/lingxiacademy/lingxi-academy/issues)
+- GitHub Issues：[提交 Issue](https://github.com/YJLZSL/polaris-learn/issues)
 - Email：待补充
 
 再次感谢你的贡献！💪

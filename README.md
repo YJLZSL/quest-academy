@@ -52,6 +52,7 @@
 - 🔒 **数据安全** —— API Key 硬件级加密存储，日志自动脱敏
 - 🖥️ **双端支持** —— Android + Windows
 - 📝 **富文本渲染** —— Markdown + LaTeX 数学公式 + 代码高亮
+- 🔄 **应用内自动更新** —— 基于 GitHub Releases API，启动自动检查 + 手动触发，Android APK / Windows ZIP 双端支持，无需反复卸载重装
 
 ## 动画亮点
 
@@ -117,6 +118,9 @@ flutter build windows --release      # Windows
 | [flutter_markdown](https://pub.dev/packages/flutter_markdown) | ^0.7.2+1 | Markdown 渲染 |
 | [flutter_math_fork](https://pub.dev/packages/flutter_math_fork) | ^0.7.2 | 数学公式渲染 |
 | [google_fonts](https://pub.dev/packages/google_fonts) | ^6.2.1 | 字体加载 |
+| [package_info_plus](https://pub.dev/packages/package_info_plus) | ^8.0.0 | 自动更新版本号读取 |
+| [open_filex](https://pub.dev/packages/open_filex) | ^4.7.0 | 调用系统安装器（APK/ZIP） |
+| [archive](https://pub.dev/packages/archive) | ^3.6.1 | 解压 Windows ZIP 更新包 |
 
 ## 项目结构
 
@@ -136,7 +140,8 @@ lingxi-academy/
 │   │   ├── notes/                    #   笔记
 │   │   ├── onboarding/               #   引导与 API 配置
 │   │   ├── progress/                 #   进度统计与成就
-│   │   └── settings/                 #   设置
+│   │   ├── settings/                 #   设置
+│   │   └── update/                   #   应用内自动更新
 │   └── shared/                       # 共享层：跨 feature 复用组件
 ├── assets/                           # 静态资源
 ├── docs/                             # 项目文档
@@ -162,9 +167,12 @@ lingxi-academy/
 
 ## 相关文档
 
-- [AGENTS.md](AGENTS.md) —— AI 协作者规范
+- [AGENTS.md](AGENTS.md) —— AI 协作者规范（含安全红线与文档同步工作流）
+- [CHANGELOG.md](CHANGELOG.md) —— 变更日志
+- [SECURITY.md](SECURITY.md) —— 安全策略
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) —— 贡献者行为准则
+- [CONTRIBUTING.md](CONTRIBUTING.md) —— 贡献指南
 - [docs/架构设计.md](docs/架构设计.md) —— 架构设计
 - [docs/吉祥物设计.md](docs/吉祥物设计.md) —— 吉祥物设计
-- [docs/前端重设计指南.md](docs/前端重设计指南.md) —— 前端重设计指南
+- [docs/前端重设计指南.md](docs/前端重设计指南.md) —— 前端重设计指南（已归档，v0.2.0 前历史蓝图）
 - [docs/代码百科.md](docs/代码百科.md) —— 代码百科
-- [CONTRIBUTING.md](CONTRIBUTING.md) —— 贡献指南
