@@ -33,7 +33,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
 
   # 网络
-  dio: ^5.4.3+1
+  dio: ^5.11.0
 
   # 自动更新（版本检查 / 下载 / 安装）
   package_info_plus: ^8.0.0
