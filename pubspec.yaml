@@ -41,7 +41,7 @@ dependencies:
   archive: ^3.6.1
 
   # 动画与图形
-  rive: ^0.13.13
+  rive: ^0.14.10
 
   # 内容渲染
   flutter_markdown: ^0.7.2+1
