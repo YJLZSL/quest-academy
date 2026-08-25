@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lingxi_academy/features/ai/sse_transformer.dart';
+import 'package:quest_academy/features/ai/sse_transformer.dart';
 
 void main() {
   group('SseTransformer.parse', () {

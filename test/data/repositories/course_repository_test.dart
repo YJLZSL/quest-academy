@@ -5,8 +5,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/repositories/course_repository.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/repositories/course_repository.dart';
 
 void main() {
   // ----------------------------------------------------------------------

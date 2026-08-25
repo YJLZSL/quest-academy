@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 学习者画像采集页面。
 ///
@@ -87,20 +87,20 @@ class _LearnerProfileSetupPageState
                 children: [
                   if (_currentStep > 0)
                     Expanded(
-                      child: LingxiButton(
+                      child: QuestButton(
                         label: const Text('上一步'),
-                        variant: LingxiButtonVariant.text,
+                        variant: QuestButtonVariant.text,
                         onPressed: _previousStep,
                       ),
                     ),
                   if (_currentStep > 0) const SizedBox(width: 12),
                   Expanded(
                     flex: 2,
-                    child: LingxiButton(
+                    child: QuestButton(
                       label: Text(
                         _currentStep < _totalSteps - 1 ? '下一步' : '开始学习',
                       ),
-                      variant: LingxiButtonVariant.filled,
+                      variant: QuestButtonVariant.filled,
                       onPressed: _nextStep,
                     ),
                   ),
@@ -408,7 +408,7 @@ class _SelectableCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return LingxiCard(
+    return QuestCard(
       color: isSelected ? colorScheme.primaryContainer : null,
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

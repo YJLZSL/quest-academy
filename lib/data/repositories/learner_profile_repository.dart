@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 学习者画像数据别名。
 typedef LearnerProfileEntry = LearnerProfile;
@@ -10,7 +10,7 @@ typedef LearnerProfileEntry = LearnerProfile;
 class LearnerProfileRepository {
   LearnerProfileRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 获取当前学习者画像，若不存在则创建默认画像。
   Future<LearnerProfileEntry> getProfile() async {

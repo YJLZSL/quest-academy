@@ -2,24 +2,22 @@
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/repositories/achievement_repository.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/progress/achievement_definitions.dart';
-import 'package:lingxi_academy/features/progress/achievement_service.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/repositories/achievement_repository.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/features/progress/achievement_definitions.dart';
+import 'package:quest_academy/features/progress/achievement_service.dart';
 
 /// 创建内存数据库与 AchievementService 实例。
-(LingxiDatabase, AchievementService) _setup() {
-  final db = LingxiDatabase.forTesting(NativeDatabase.memory());
+(QuestDatabase, AchievementService) _setup() {
+  final db = QuestDatabase.forTesting(NativeDatabase.memory());
   final service = AchievementService(
     db: db,
     achievementRepo: AchievementRepository(db),
     settings: SettingsRepository(db),
-    mascot: MascotController(),
     noteRepo: NoteRepository(db),
     progressRepo: ProgressRepository(db),
   );

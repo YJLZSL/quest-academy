@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
 
 import 'particles/particle_painter.dart';
 
@@ -186,7 +188,8 @@ class _CelebrationOverlayState extends State<CelebrationOverlay> {
                 origin: b.origin,
                 particleCount: widget.particleCount,
                 type: _effectFor(widget.type),
-                colors: widget.colors,
+                // 未传入粒子颜色时，使用主题庆祝渐变的色值作为默认配色。
+                colors: widget.colors ?? context.questGradients.celebration.colors,
                 onComplete: () => _onBurstComplete(b.id),
               ),
             ),
@@ -229,7 +232,8 @@ class _OverlayParticleBurst extends StatelessWidget {
             origin: origin,
             particleCount: particleCount,
             type: _effectFor(type),
-            colors: colors,
+            // 未传入粒子颜色时，使用主题庆祝渐变的色值作为默认配色。
+            colors: colors ?? context.questGradients.celebration.colors,
             onComplete: onComplete,
           ),
         ),
@@ -343,7 +347,8 @@ class _SuccessCheckmarkState extends State<SuccessCheckmark>
       });
     }
 
-    final color = widget.color ?? Theme.of(context).colorScheme.primary;
+    // 未指定颜色时，使用主题语义色 successGreen。
+    final color = widget.color ?? context.questColors.successGreen;
     final strokeWidth = widget.strokeWidth ?? widget.size * 0.08;
 
     return SizedBox(
@@ -559,7 +564,8 @@ class _ErrorCrossState extends State<ErrorCross>
       });
     }
 
-    final color = widget.color ?? Theme.of(context).colorScheme.error;
+    // 未指定颜色时，使用主题语义色 misconceptionRed。
+    final color = widget.color ?? context.questColors.misconceptionRed;
     final strokeWidth = widget.strokeWidth ?? widget.size * 0.09;
 
     return SizedBox(

@@ -1,7 +1,7 @@
 // ignore_for_file: lines_longer_than_80_lines
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/features/ai/confusion_detection_service.dart';
+import 'package:quest_academy/features/ai/confusion_detection_service.dart';
 
 void main() {
   group('ConfusionDetectionService 困惑信号识别', () {

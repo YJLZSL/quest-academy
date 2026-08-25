@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "id": "image-001",
+      "title": "波可学园应用图标",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1784983200000,
+      "canvasData": {
+        "x": 0,
+        "y": 0
+      },
+      "devMetadata": {
+        "imageSrc": "assets/poco-app-icon.png"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "freeSize",
+    "projectName": "波可学园应用图标",
+    "visualEditorEnabled": false
+  }
+}

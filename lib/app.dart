@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/core/router/app_router.dart';
-import 'package:lingxi_academy/core/theme/app_theme.dart';
-import 'package:lingxi_academy/features/progress/celebration_service.dart';
-import 'package:lingxi_academy/features/update/update_controller.dart';
-import 'package:lingxi_academy/features/update/update_dialog.dart';
-import 'package:lingxi_academy/features/update/update_state.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/router/app_router.dart';
+import 'package:quest_academy/core/theme/app_theme.dart';
+import 'package:quest_academy/core/theme/theme_flavor_provider.dart';
+import 'package:quest_academy/features/progress/celebration_service.dart';
+import 'package:quest_academy/features/update/update_controller.dart';
+import 'package:quest_academy/features/update/update_dialog.dart';
+import 'package:quest_academy/features/update/update_state.dart';
 
-/// 灵犀学院应用根 Widget。
+/// 问学应用根 Widget。
 ///
 /// 使用 `MaterialApp.router`，路由配置由 [goRouterProvider] 提供，
-/// 主题由 `AppTheme` 提供。外层包裹 [GlobalCelebrationLayer] 支持全局粒子庆祝。
-class LingxiApp extends ConsumerStatefulWidget {
-  const LingxiApp({super.key});
+/// 主题由 [AppTheme.themeFor] 根据当前主题模式、主题风味与种子色动态生成。
+/// 外层包裹 [GlobalCelebrationLayer] 支持全局粒子庆祝。
+class QuestApp extends ConsumerStatefulWidget {
+  const QuestApp({super.key});
 
   @override
-  ConsumerState<LingxiApp> createState() => _LingxiAppState();
+  ConsumerState<QuestApp> createState() => _QuestAppState();
 }
 
-class _LingxiAppState extends ConsumerState<LingxiApp> {
+class _QuestAppState extends ConsumerState<QuestApp> {
   /// 防止更新弹窗重复弹出（同一会话只弹一次）。
   bool _updateDialogShown = false;
 
@@ -61,13 +63,26 @@ class _LingxiAppState extends ConsumerState<LingxiApp> {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
     final router = ref.watch(goRouterProvider);
+    final flavor = ref.watch(themeFlavorProvider);
+    final seedColor = ref.watch(seedColorProvider);
+
+    final brightness = _resolveBrightness(themeMode);
+    final theme = AppTheme.themeFor(
+      brightness,
+      seed: seedColor,
+      flavor: flavor,
+    );
 
     return GlobalCelebrationLayer(
       child: MaterialApp.router(
-        title: '灵犀学院',
+        title: '问学',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        theme: theme,
+        darkTheme: AppTheme.themeFor(
+          Brightness.dark,
+          seed: seedColor,
+          flavor: flavor,
+        ),
         themeMode: themeMode,
         locale: locale,
         supportedLocales: const [
@@ -82,5 +97,16 @@ class _LingxiAppState extends ConsumerState<LingxiApp> {
         routerConfig: router,
       ),
     );
+  }
+
+  Brightness _resolveBrightness(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return Brightness.light;
+      case ThemeMode.dark:
+        return Brightness.dark;
+      case ThemeMode.system:
+        return MediaQuery.platformBrightnessOf(context);
+    }
   }
 }

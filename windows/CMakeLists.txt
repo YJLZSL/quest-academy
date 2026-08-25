@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(lingxi_academy LANGUAGES CXX)
+project(quest_academy LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "lingxi_academy")
+set(BINARY_NAME "quest_academy")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -39,8 +39,8 @@ add_definitions(-DUNICODE -D_UNICODE)
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)
-  # /W4 启用最高级别警告；不使用 /WX（警告视为错误）以避免第三方插件
-  # （如 rive_common 内嵌 harfbuzz）的不可控警告阻塞构建。
+  # /W4 启用最高级别警告；不使用 /WX（警告视为错误）以避免第三方插件的
+  # 不可控警告阻塞构建。
   # 项目自身代码的 warning 通过 flutter analyze 在 CI 中把控。
   target_compile_options(${TARGET} PRIVATE /W4 /wd"4100")
   target_compile_options(${TARGET} PRIVATE /EHsc)

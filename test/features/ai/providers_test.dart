@@ -7,17 +7,17 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:lingxi_academy/data/models/provider_config.dart';
-import 'package:lingxi_academy/data/repositories/provider_config_repository.dart';
-import 'package:lingxi_academy/data/services/secure_storage_service.dart';
-import 'package:lingxi_academy/features/ai/ai_error_mapper.dart';
-import 'package:lingxi_academy/features/ai/ai_provider.dart';
-import 'package:lingxi_academy/features/ai/ai_provider_registry.dart';
-import 'package:lingxi_academy/features/ai/anthropic_provider.dart';
-import 'package:lingxi_academy/features/ai/gemini_provider.dart';
-import 'package:lingxi_academy/features/ai/ollama_provider.dart';
-import 'package:lingxi_academy/features/ai/openai_compatible_provider.dart';
-import 'package:lingxi_academy/features/ai/retry_interceptor.dart';
+import 'package:quest_academy/data/models/provider_config.dart';
+import 'package:quest_academy/data/repositories/provider_config_repository.dart';
+import 'package:quest_academy/data/services/secure_storage_service.dart';
+import 'package:quest_academy/features/ai/ai_error_mapper.dart';
+import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/ai/ai_provider_registry.dart';
+import 'package:quest_academy/features/ai/anthropic_provider.dart';
+import 'package:quest_academy/features/ai/gemini_provider.dart';
+import 'package:quest_academy/features/ai/ollama_provider.dart';
+import 'package:quest_academy/features/ai/openai_compatible_provider.dart';
+import 'package:quest_academy/features/ai/retry_interceptor.dart';
 
 /// 自定义 HttpClientAdapter，用于注入模拟的流式响应。
 ///

@@ -25,10 +25,6 @@
 - **用户自备 API** —— 用户自行配置 API Key（OpenAI / Claude / Gemini / Ollama），仅本地加密存储，**永不上传**
 - **苏格拉底式引导** —— AI 导师以提问引导思考，培养独立思考与问题拆解能力
 
-## 吉祥物小犀
-
-小犀是一只星空小犀牛，头戴学士帽、身披星光翅膀，拥有 6 种情绪状态（待机 / 开心 / 思考 / 难过 / 庆祝 / 好奇），随学习进程联动变化——AI 思考时托腮沉思，完成知识点时欢呼撒花，连点 5 次触发彩蛋。名字取自"心有灵犀一点通"。
-
 ## 学习路径 L0-L4
 
 | 级别 | 定位 | 内容方向 |
@@ -46,7 +42,8 @@
 - 🤔 **引导式学习** —— 苏格拉底式问答，AI 不给答案给引导
 - 💬 **自由对话** —— 支持 OpenAI / Claude / Gemini / Ollama 四类 Provider
 - 📚 **学习路径** —— 结构化知识点卡片 + 测验 + 苏格拉底对话
-- 🦏 **吉祥物小犀** —— 6 状态情绪联动，点击交互，连点 5 次彩蛋
+- 🎮 **游戏化激励** —— Streak 连续打卡、每日 XP 目标、成就徽章、关卡路径、粒子庆祝反馈
+- 🎨 **三档主题风格** —— 默认（Duolingo 式活泼）、极简（低动效专注）、Pixel MC（像素块体素风），设置页一键切换
 - 🔥 **Streak 打卡** —— 连续学习天数追踪 + 成就徽章系统
 - 🔍 **分级探索** —— 简化 / 深入 / 图示三按钮，按需调整回复详略
 - 🔒 **数据安全** —— API Key 硬件级加密存储，日志自动脱敏
@@ -58,10 +55,9 @@
 
 v0.3.0 在动画与性能体验上全面打磨，目标 60fps 无丢帧：
 
-- 🎭 **Hero 共享元素动画** —— 吉祥物在首页 / 学习路径 / 对话页之间视觉延续，自定义 `flightShuttleBuilder` 使用 `SpringMotion.gentleSpeed` 曲线
+- 🎮 **游戏化反馈动画** —— 知识点完成触发粒子爆发、+XP 浮层、Streak 火焰跳动、成就徽章弹性入场
 - 🎨 **微交互反馈** —— 按压（`LingxiButton` scale 0.96 / `LingxiCard` scale 0.99）、选中（`LingxiChip` `AnimatedSwitcher`）、过渡均有弹性动画
 - 🌊 **流式响应节流** —— 首 token 立即渲染，后续 50ms 节流刷新，流式结束强制刷新，兼顾即时反馈与性能
-- 🎭 **6 状态吉祥物** —— idle / happy / thinking / sad / celebrate / curious 差异化矢量绘制（径向渐变身体 / 角部高光 / 瞳孔高光）
 - ♿ **无障碍降级** —— `reduceMotion` 全覆盖，开启系统"移除动画"后所有动画降级为即时切换或按钮切换
 - 📊 **性能预算** —— 60fps 目标，`RepaintBoundary` 隔离持续动画，`cacheExtent` 优化列表滚动，`PerformanceOverlay` 静态审查无红条
 
@@ -77,7 +73,7 @@ v0.3.0 在动画与性能体验上全面打磨，目标 60fps 无丢帧：
 ## 快速开始
 
 1. **下载安装**：从 [Releases](https://github.com/YJLZSL/polaris-learn/releases) 下载对应平台安装包
-2. **首次引导**：5 步引导页（欢迎 → API 说明 → 小犀彩蛋 → 学习路径 → 苏格拉底介绍）
+2. **首次引导**：5 步引导页（欢迎 → API 说明 → 主题选择 → 学习路径 → 苏格拉底介绍）
 3. **配置 API**：选择服务商（OpenAI 兼容 / Anthropic / Gemini / Ollama），填入 API Key 与模型名，点击"测试连接"
 4. **开始学习**：从首页进入"学习路径"选 L0 课程，或进入"对话"自由交流
 
@@ -114,10 +110,10 @@ flutter build windows --release      # Windows
 | [drift](https://pub.dev/packages/drift) | ^2.18.0 | SQLite ORM |
 | [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) | ^9.2.2 | API Key 加密存储 |
 | [dio](https://pub.dev/packages/dio) | ^5.4.3+1 | HTTP 客户端 |
-| [rive](https://rive.app) | ^0.13.13 | 吉祥物动画 |
+| [rive](https://rive.app) | ^0.13.13 | 动画引擎（吉祥物方案已归档，当前未启用） |
 | [flutter_markdown](https://pub.dev/packages/flutter_markdown) | ^0.7.2+1 | Markdown 渲染 |
 | [flutter_math_fork](https://pub.dev/packages/flutter_math_fork) | ^0.7.2 | 数学公式渲染 |
-| [google_fonts](https://pub.dev/packages/google_fonts) | ^6.2.1 | 字体加载 |
+| [google_fonts](https://pub.dev/packages/google_fonts) | ^6.2.1 | 字体加载（Noto Sans SC + Quicksand + Press Start 2P + VT323） |
 | [package_info_plus](https://pub.dev/packages/package_info_plus) | ^8.0.0 | 自动更新版本号读取 |
 | [open_filex](https://pub.dev/packages/open_filex) | ^4.7.0 | 调用系统安装器（APK/ZIP） |
 | [archive](https://pub.dev/packages/archive) | ^3.6.1 | 解压 Windows ZIP 更新包 |
@@ -136,10 +132,10 @@ lingxi-academy/
 │   │   ├── chat/                     #   对话
 │   │   ├── home/                     #   首页
 │   │   ├── learning/                 #   学习路径与课时
-│   │   ├── mascot/                   #   吉祥物小犀
 │   │   ├── notes/                    #   笔记
 │   │   ├── onboarding/               #   引导与 API 配置
 │   │   ├── progress/                 #   进度统计与成就
+│   │   ├── recommendation/           #   推荐服务
 │   │   ├── settings/                 #   设置
 │   │   └── update/                   #   应用内自动更新
 │   └── shared/                       # 共享层：跨 feature 复用组件
@@ -173,6 +169,7 @@ lingxi-academy/
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) —— 贡献者行为准则
 - [CONTRIBUTING.md](CONTRIBUTING.md) —— 贡献指南
 - [docs/架构设计.md](docs/架构设计.md) —— 架构设计
-- [docs/吉祥物设计.md](docs/吉祥物设计.md) —— 吉祥物设计
+- [docs/游戏化重设计实施规范.md](docs/游戏化重设计实施规范.md) —— 游戏化重设计实施规范
 - [docs/前端重设计指南.md](docs/前端重设计指南.md) —— 前端重设计指南（已归档，v0.2.0 前历史蓝图）
+- [docs/吉祥物设计.md](docs/吉祥物设计.md) —— 吉祥物设计（已归档）
 - [docs/代码百科.md](docs/代码百科.md) —— 代码百科

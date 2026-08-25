@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
 import 'package:markdown/markdown.dart' as md;
 
 /// Markdown 渲染组件。
@@ -60,11 +61,13 @@ class MarkdownRenderer extends StatelessWidget {
       ),
       codeblockDecoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(8),
+        // 使用形状 Token 替代硬编码半径，保持圆角风格一致。
+        borderRadius: ShapeVariants.roundedSmall.borderRadius,
       ),
       blockquoteDecoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(8),
+        // 使用形状 Token 替代硬编码半径，保持圆角风格一致。
+        borderRadius: ShapeVariants.roundedSmall.borderRadius,
       ),
     );
   }

@@ -1,4 +1,4 @@
-name: Release
+﻿name: Release
 
 on:
   push:
@@ -112,19 +112,19 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           cd build/app/outputs/flutter-apk
-          mv app-armeabi-v7a-release.apk "lingxi-academy-${VERSION}-android-armeabi-v7a.apk"
-          mv app-arm64-v8a-release.apk "lingxi-academy-${VERSION}-android-arm64-v8a.apk"
-          mv app-x86_64-release.apk "lingxi-academy-${VERSION}-android-x86_64.apk"
+          mv app-armeabi-v7a-release.apk "quest-academy-${VERSION}-android-armeabi-v7a.apk"
+          mv app-arm64-v8a-release.apk "quest-academy-${VERSION}-android-arm64-v8a.apk"
+          mv app-x86_64-release.apk "quest-academy-${VERSION}-android-x86_64.apk"
           cd ../bundle/release
-          mv app-release.aab "lingxi-academy-${VERSION}-android.aab"
+          mv app-release.aab "quest-academy-${VERSION}-android.aab"
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-artifacts
           path: |
-            build/app/outputs/flutter-apk/lingxi-academy-*.apk
-            build/app/outputs/bundle/release/lingxi-academy-*.aab
+            build/app/outputs/flutter-apk/quest-academy-*.apk
+            build/app/outputs/bundle/release/quest-academy-*.aab
           retention-days: 30
 
   # ===========================================================================
@@ -164,7 +164,7 @@ jobs:
           dart run msix:create \
             --install-certificate false \
             --version "${MSIX_VER}.0" \
-            --output-name "lingxi-academy-${VERSION}-windows" \
+            --output-name "quest-academy-${VERSION}-windows" \
             --output-path "."
 
       - name: Zip Windows build
@@ -172,13 +172,13 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           cd build/windows/x64/runner/Release
-          7z a -tzip "../../../../../lingxi-academy-${VERSION}-windows-x64.zip" .
+          7z a -tzip "../../../../../quest-academy-${VERSION}-windows-x64.zip" .
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-artifacts
-          path: lingxi-academy-*-windows-x64.zip
+          path: quest-academy-*-windows-x64.zip
           retention-days: 30
 
       - name: Upload Windows MSIX
@@ -186,7 +186,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-msix
-          path: lingxi-academy-*-windows.msix
+          path: quest-academy-*-windows.msix
           retention-days: 30
           if-no-files-found: ignore
 

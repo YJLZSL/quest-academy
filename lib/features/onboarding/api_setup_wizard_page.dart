@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/data/models/provider_config.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/data/models/provider_config.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 单个配置步骤。
 class _SetupStep {
@@ -69,7 +69,7 @@ class ApiSetupWizardPage extends StatelessWidget {
         ),
         _SetupStep(
           title: '步骤 4：创建新 Key',
-          description: '点击 "Create new secret key" 按钮，可为 Key 命名（如 "lingxi-academy"），方便后续管理。',
+          description: '点击 "Create new secret key" 按钮，可为 Key 命名（如 "quest-academy"），方便后续管理。',
         ),
         _SetupStep(
           title: '步骤 5：复制 API Key',
@@ -162,7 +162,7 @@ class ApiSetupWizardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('API 配置向导')),
+      appBar: const QuestAppBar(title: Text('API 配置向导')),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _tutorials.length,
@@ -232,7 +232,7 @@ class _ProviderTutorialCardState extends State<_ProviderTutorialCard>
     final theme = Theme.of(context);
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
 
-    return LingxiCard(
+    return QuestCard(
       padding: const EdgeInsets.all(20),
       animateEntrance: !reduceMotion,
       entranceDelay: Duration(milliseconds: 60 * widget.index),
@@ -325,10 +325,10 @@ class _ProviderTutorialCardState extends State<_ProviderTutorialCard>
           SizedBox(
             width: double.infinity,
             child: SpringMotion.hoverLift(
-              child: LingxiButton(
+              child: QuestButton(
                 label: const Text('立即配置'),
                 icon: const Icon(Icons.settings),
-                size: LingxiButtonSize.large,
+                size: QuestButtonSize.large,
                 onPressed: () => context.go(
                   '${RouteNames.settingsApiPath}?provider=${widget.tutorial.type.value}',
                 ),

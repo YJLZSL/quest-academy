@@ -1,6 +1,6 @@
 // ignore_for_file: lines_longer_than_80_lines
 
-import 'package:lingxi_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/models/course_content.dart';
 
 /// 成就事件基类（sealed），用于事件驱动的成就判定。
 ///

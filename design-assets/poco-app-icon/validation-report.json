@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "renderBlockingErrorCount": 0,
+  "softWarningCount": 0,
+  "errors": [],
+  "warnings": [],
+  "projectFileHashes": {
+    "poco-app-icon.design": "ef4a435b94456a4d67d42a88f3c557b8a7a27258e0b265a832f826281d598c8f",
+    "assets/poco-app-icon.png": "d4fb007d87ac052f7bb5f0883b8802f4c5ea76156cf777ed9a2641d69bddb136"
+  },
+  "designDir": "d:\\AIKFCC\\AI  Classroom\\design-assets\\poco-app-icon",
+  "checkedAt": "2026-07-25T12:59:35.590Z"
+}

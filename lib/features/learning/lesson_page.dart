@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/core/theme/lingxi_gradients.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/providers/course_providers.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/features/progress/celebration_service.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/animated_progress_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/features/learning/widgets/continue_learning_sidebar.dart';
-import 'package:lingxi_academy/features/learning/widgets/learning_card_widget.dart';
-import 'package:lingxi_academy/features/learning/widgets/quiz_widget.dart';
-import 'package:lingxi_academy/features/learning/widgets/socratic_dialog_panel.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/providers/course_providers.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/features/progress/celebration_service.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/features/learning/widgets/continue_learning_sidebar.dart';
+import 'package:quest_academy/features/learning/widgets/learning_card_widget.dart';
+import 'package:quest_academy/features/learning/widgets/quiz_widget.dart';
+import 'package:quest_academy/features/learning/widgets/socratic_dialog_panel.dart';
 
 /// 课程单节课学习页。
 ///
@@ -77,7 +74,7 @@ class _LessonPageState extends ConsumerState<LessonPage> {
     return null;
   }
 
-  /// 知识点完成回调：标记进度 + 吉祥物庆祝 + 切换下一个或显示庆祝页。
+  /// 知识点完成回调：标记进度 + 触发庆祝 + 切换下一个或显示庆祝页。
   void _onKnowledgePointCompleted(String kpId, double score) {
     setState(() {
       _completedKpIds.add(kpId);
@@ -90,9 +87,6 @@ class _LessonPageState extends ConsumerState<LessonPage> {
           kpId,
           score: score,
         );
-
-    // 吉祥物庆祝动画。
-    ref.read(mascotControllerProvider.notifier).celebrate();
 
     // 星光粒子庆祝（知识点完成反馈）。
     if (!AnimationUtils.platformReduceMotion) {
@@ -157,17 +151,6 @@ class _LessonPageState extends ConsumerState<LessonPage> {
           data: (course) => Text(course?.title ?? '课程'),
           orElse: () => const Text('课程'),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: MascotWidget(
-              size: 40,
-              onTap: () {
-                ref.read(mascotControllerProvider.notifier).triggerTap();
-              },
-            ),
-          ),
-        ],
       ),
       body: courseAsync.when(
         data: (course) {
@@ -335,11 +318,11 @@ class _LessonPageState extends ConsumerState<LessonPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const MascotWidget(size: 160, mood: MascotMood.celebrate),
+              const Icon(Icons.emoji_events, size: 80, color: Colors.white),
               const SizedBox(height: 24),
               ShaderMask(
                 shaderCallback: (bounds) =>
-                    context.lingxiGradients.celebration.createShader(bounds),
+                    context.questGradients.celebration.createShader(bounds),
                 child: Text(
                   '🎉 章节完成！',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -355,7 +338,7 @@ class _LessonPageState extends ConsumerState<LessonPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              LingxiButton(
+              QuestButton(
                 label: const Text('返回学习路径'),
                 icon: const Icon(Icons.home),
                 onPressed: () => context.go(RouteNames.learningPath),
@@ -574,7 +557,7 @@ class _KnowledgePointLearnerState
             SpringMotion.pulseBreathing(
               period: const Duration(seconds: 2),
               child: ShaderMask(
-                shaderCallback: (bounds) => context.lingxiGradients
+                shaderCallback: (bounds) => context.questGradients
                     .achievementGold
                     .createShader(bounds),
                 child: const Icon(Icons.celebration,
@@ -597,7 +580,7 @@ class _KnowledgePointLearnerState
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            LingxiButton(
+            QuestButton(
               label: const Text('开始苏格拉底对话'),
               icon: const Icon(Icons.forum),
               onPressed: _startSocratic,

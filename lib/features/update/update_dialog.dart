@@ -3,14 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/lingxi_elevations.dart';
-import 'package:lingxi_academy/core/theme/lingxi_gradients.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_elevations.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
 
 import 'update_controller.dart';
 import 'update_state.dart';
@@ -18,7 +17,7 @@ import 'update_state.dart';
 /// 自动更新弹窗。
 ///
 /// 设计语言：编辑式版本公告 + 星空紫氛围。
-/// - 顶部：庆祝渐变条带 + 吉祥物小犀（celebrate 情绪）作为视觉焦点
+/// - 顶部：庆祝渐变条带 + 版本图标作为视觉焦点
 /// - 中部：大号版本号 + Release Notes（Markdown 渲染）
 /// - 底部：根据状态切换的主操作 + 次要操作
 ///
@@ -102,8 +101,8 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog>
   Widget build(BuildContext context) {
     final state = ref.watch(updateControllerProvider);
     final theme = Theme.of(context);
-    final gradients = context.lingxiGradients;
-    final elevations = context.lingxiElevations;
+    final gradients = context.questGradients;
+    final elevations = context.questElevations;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
 
     return Dialog(
@@ -152,12 +151,12 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog>
   }
 }
 
-/// 顶部渐变横幅 + 吉祥物 + 大号版本号。
+/// 顶部渐变横幅 + 版本图标 + 大号版本号。
 class _HeaderBanner extends StatelessWidget {
   const _HeaderBanner({required this.state, required this.gradients});
 
   final UpdateState state;
-  final LingxiGradients gradients;
+  final QuestGradients gradients;
 
   @override
   Widget build(BuildContext context) {
@@ -190,12 +189,14 @@ class _HeaderBanner extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 吉祥物（小尺寸，作为视觉焦点，但不抢戏）
-              RepaintBoundary(
-                child: MascotWidget(
-                  size: 64,
-                  showAura: false,
-                  enableTapInteraction: false,
+              // 版本图标（作为视觉焦点，但不抢戏）
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                child: const Icon(
+                  Icons.system_update_rounded,
+                  size: 32,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: 16),
@@ -491,7 +492,7 @@ class _DownloadingBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gradients = context.lingxiGradients;
+    final gradients = context.questGradients;
     final percent = (progress * 100).clamp(0, 100).toInt();
 
     return Padding(
@@ -651,7 +652,7 @@ class _ErrorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = context.lingxiColors;
+    final colors = context.questColors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -785,11 +786,11 @@ class _ActionRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        LingxiButton(
+        QuestButton(
           label: Text(primaryLabel),
           icon: Icon(primaryIcon),
-          variant: LingxiButtonVariant.filled,
-          size: LingxiButtonSize.large,
+          variant: QuestButtonVariant.filled,
+          size: QuestButtonSize.large,
           onPressed: onPrimary,
           pulse: pulse,
         ),

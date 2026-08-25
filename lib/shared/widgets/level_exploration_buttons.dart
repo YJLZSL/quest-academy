@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/ai/ai_provider.dart';
 import '../../features/ai/ai_providers.dart';
-import 'lingxi_button.dart';
+import 'quest_button.dart';
 
 /// 分级探索动作类型。
 enum LevelAction {
@@ -89,12 +89,12 @@ class _LevelExplorationButtonsState
     return Row(
       children: [
         Expanded(
-          child: LingxiButton(
+          child: QuestButton(
             icon: _loadingAction == LevelAction.simplify
                 ? const _LoadingIcon()
                 : const Icon(Icons.compress),
             label: const Text('简化'),
-            variant: LingxiButtonVariant.text,
+            variant: QuestButtonVariant.text,
             onPressed: _isLoading
                 ? null
                 : () => _regenerate(LevelAction.simplify),
@@ -102,12 +102,12 @@ class _LevelExplorationButtonsState
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: LingxiButton(
+          child: QuestButton(
             icon: _loadingAction == LevelAction.deeper
                 ? const _LoadingIcon()
                 : const Icon(Icons.unfold_more),
             label: const Text('深入'),
-            variant: LingxiButtonVariant.text,
+            variant: QuestButtonVariant.text,
             onPressed: _isLoading
                 ? null
                 : () => _regenerate(LevelAction.deeper),
@@ -115,12 +115,12 @@ class _LevelExplorationButtonsState
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: LingxiButton(
+          child: QuestButton(
             icon: _loadingAction == LevelAction.image
                 ? const _LoadingIcon()
                 : const Icon(Icons.image_outlined),
             label: const Text('图像'),
-            variant: LingxiButtonVariant.text,
+            variant: QuestButtonVariant.text,
             onPressed: _isLoading
                 ? null
                 : () => _regenerate(LevelAction.image),

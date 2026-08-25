@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// "继续学习"侧边栏。
 ///
@@ -80,7 +80,7 @@ class ContinueLearningSidebar extends StatelessWidget {
                 final topic = relatedTopics[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: LingxiCard(
+                  child: QuestCard(
                     onTap: () {
                       onTopicTap?.call();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,7 +112,7 @@ class ContinueLearningSidebar extends StatelessWidget {
       width: 280,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: LingxiCard(
+        child: QuestCard(
           padding: EdgeInsets.zero,
           child: content,
         ),

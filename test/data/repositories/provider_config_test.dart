@@ -4,9 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:lingxi_academy/data/models/provider_config.dart';
-import 'package:lingxi_academy/data/repositories/provider_config_repository.dart';
-import 'package:lingxi_academy/data/services/secure_storage_service.dart';
+import 'package:quest_academy/data/models/provider_config.dart';
+import 'package:quest_academy/data/repositories/provider_config_repository.dart';
+import 'package:quest_academy/data/services/secure_storage_service.dart';
 
 void main() {
   // SharedPreferences 测试初始化（内存实现）

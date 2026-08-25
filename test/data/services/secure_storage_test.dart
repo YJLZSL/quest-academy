@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lingxi_academy/data/services/secure_storage_service.dart';
+import 'package:quest_academy/data/services/secure_storage_service.dart';
 
 void main() {
   // 使用 flutter_secure_storage 官方提供的测试平台（内存实现），

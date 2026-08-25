@@ -7,18 +7,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/models/provider_config.dart';
-import 'package:lingxi_academy/data/repositories/conversation_repository.dart';
-import 'package:lingxi_academy/data/repositories/message_repository.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/provider_config_repository.dart';
-import 'package:lingxi_academy/data/services/secure_storage_service.dart';
-import 'package:lingxi_academy/features/settings/data_export_service.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/models/provider_config.dart';
+import 'package:quest_academy/data/repositories/conversation_repository.dart';
+import 'package:quest_academy/data/repositories/message_repository.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/provider_config_repository.dart';
+import 'package:quest_academy/data/services/secure_storage_service.dart';
+import 'package:quest_academy/features/settings/data_export_service.dart';
 
-/// 创建一个内存版 [LingxiDatabase]，测试间彼此隔离。
-LingxiDatabase _createDb() =>
-    LingxiDatabase.forTesting(NativeDatabase.memory());
+/// 创建一个内存版 [QuestDatabase]，测试间彼此隔离。
+QuestDatabase _createDb() =>
+    QuestDatabase.forTesting(NativeDatabase.memory());
 
 /// 测试用的明文 API Key（绝不应出现在导出 JSON 中）。
 const _testApiKey = 'sk-MUST-NOT-LEAK-1234567890';

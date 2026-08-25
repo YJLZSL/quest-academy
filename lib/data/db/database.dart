@@ -1,7 +1,7 @@
 // ignore_for_file: lines_longer_than_80_lines
 
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/connection.dart';
+import 'package:quest_academy/data/db/connection.dart';
 import 'package:uuid/uuid.dart';
 
 part 'database.g.dart';
@@ -207,15 +207,15 @@ class LearningEvents extends Table {
   LearnerProfiles,
   LearningEvents,
 ])
-class LingxiDatabase extends _$LingxiDatabase {
+class QuestDatabase extends _$QuestDatabase {
   /// 通过任意 [QueryExecutor] 构造数据库，主要用于生产环境。
-  LingxiDatabase(super.e);
+  QuestDatabase(super.e);
 
   /// 测试用工厂：可注入内存或自定义 executor。
-  factory LingxiDatabase.forTesting(QueryExecutor e) => LingxiDatabase(e);
+  factory QuestDatabase.forTesting(QueryExecutor e) => QuestDatabase(e);
 
   /// 应用入口使用：默认打开跨端连接。
-  factory LingxiDatabase.open() => LingxiDatabase(openConnection());
+  factory QuestDatabase.open() => QuestDatabase(openConnection());
 
   /// 启用文本模式存储 DateTime，保留毫秒精度，便于按时间排序与展示。
   ///

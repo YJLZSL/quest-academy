@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 学习事件类型常量。
 abstract class LearningEventType {
@@ -18,7 +18,7 @@ abstract class LearningEventType {
 class LearningEventRepository {
   LearningEventRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 记录一个学习事件。
   Future<void> recordEvent({

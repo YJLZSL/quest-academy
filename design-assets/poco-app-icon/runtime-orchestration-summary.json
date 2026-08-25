@@ -1,0 +1,56 @@
+{
+  "project": {
+    "resolvedLane": "graphic_bitmap_first",
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      {
+        "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/design-artifact-formats/graphic-asset-design-file-format.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/deterministic-tooling/validate-graphic-asset-design.mjs",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/delivery-evidence-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
+    ],
+    "contextReadScope": "intent-graphic-asset-generation",
+    "validationRunDiscipline": "run validate-graphic-asset-design.mjs before finish",
+    "lowValueCallWatchdog": {
+      "noProgressNextAction": "proceed to asset generation"
+    },
+    "graphicStrategyGate": {
+      "graphicStrategyGate": "bitmap-first",
+      "textCriticality": "low",
+      "copyDensity": "short",
+      "coreInfoTypes": ["brand"],
+      "bitmapFirstAllowed": true,
+      "layoutStaticRequired": false,
+      "graphicStrategyRoutingReason": "应用图标为视觉识别资产，无需可编辑文本层"
+    },
+    "assetInventory": [
+      {
+        "nodeId": "image-001",
+        "title": "波可学园应用图标",
+        "filename": "assets/poco-app-icon.png",
+        "status": "registered"
+      }
+    ],
+    "validationResult": {
+      "validator": "validate-graphic-asset-design.mjs",
+      "success": true,
+      "reportPath": "validation-report.json",
+      "checkedAt": "2026-07-25T12:59:35.590Z"
+    }
+  }
+}

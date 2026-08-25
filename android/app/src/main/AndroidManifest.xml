@@ -2,7 +2,7 @@
     <!-- 自动更新：允许安装来自 GitHub Release 的 APK -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <application
-        android:label="lingxi_academy"
+        android:label="问学"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

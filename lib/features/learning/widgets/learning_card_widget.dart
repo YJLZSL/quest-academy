@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_chip.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_chip.dart';
 
 /// 知识点学习卡片。
 ///
@@ -64,7 +63,7 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = context.lingxiColors;
+    final colors = context.questColors;
     final kp = widget.knowledgePoint;
 
     // 确定区块数量用于 stagger 索引。
@@ -94,7 +93,7 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
           const SizedBox(height: 16),
           // 核心解释（Markdown 渲染）
           _staggeredSection(
-            LingxiCard(
+            QuestCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -147,7 +146,7 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
                     runSpacing: 8,
                     children: [
                       for (final term in kp.vocabulary)
-                        LingxiChip(
+                        QuestChip(
                           label: Text(term.term),
                           avatar: const Icon(Icons.label, size: 16),
                         ),
@@ -205,7 +204,7 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
               period: const Duration(seconds: 3),
               minScale: 0.99,
               maxScale: 1.02,
-              child: LingxiButton(
+              child: QuestButton(
                 label: const Text('开始测验'),
                 icon: const Icon(Icons.quiz),
                 onPressed: widget.onStartQuiz,
@@ -218,8 +217,8 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
     );
   }
 
-  /// 构建主图区：有图片显示图片，否则显示装饰性渐变背景 + 吉祥物。
-  Widget _buildHero(KnowledgePoint kp, LingxiColors colors) {
+  /// 构建主图区：有图片显示图片，否则显示装饰性渐变背景 + 主题图标。
+  Widget _buildHero(KnowledgePoint kp, QuestColors colors) {
     if (kp.imageUrl != null && kp.imageUrl!.isNotEmpty) {
       final url = kp.imageUrl!;
       final image = url.startsWith('http')
@@ -245,8 +244,8 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
     return _buildGradientHero(colors);
   }
 
-  /// 装饰性渐变背景 + 吉祥物插画。
-  Widget _buildGradientHero(LingxiColors colors) {
+  /// 装饰性渐变背景 + 主题图标。
+  Widget _buildGradientHero(QuestColors colors) {
     return Container(
       height: 180,
       decoration: BoxDecoration(
@@ -255,34 +254,17 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colors.mascotPrimary.withValues(alpha: 0.6),
-            colors.mascotSecondary.withValues(alpha: 0.6),
+            colors.brandPrimary.withValues(alpha: 0.6),
+            colors.brandSecondary.withValues(alpha: 0.6),
           ],
         ),
       ),
-      child: const Stack(
-        children: [
-          Positioned(
-            left: 16,
-            top: 16,
-            child: Text(
-              '🦏 让小犀陪你一起学',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Positioned(
-            right: 8,
-            bottom: 8,
-            child: MascotWidget(
-              size: 96,
-              enableTapInteraction: false,
-            ),
-          ),
-        ],
+      child: Center(
+        child: Icon(
+          Icons.school,
+          size: 64,
+          color: Colors.white.withValues(alpha: 0.9),
+        ),
       ),
     );
   }
@@ -290,7 +272,7 @@ class _LearningCardWidgetState extends State<LearningCardWidget> {
   /// 构建"为什么重要"方框。
   Widget _buildWhyItMatters(
     String text,
-    LingxiColors colors,
+    QuestColors colors,
     ThemeData theme,
   ) {
     return Container(

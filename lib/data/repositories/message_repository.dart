@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 消息仓库：封装 [Messages] 表的查询与插入操作。
 class MessageRepository {
   MessageRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 获取指定对话下的全部消息，按创建时间正序（最早在前）。
   ///

@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:lingxi_academy/data/db/connection.dart';
+import 'package:quest_academy/data/db/connection.dart';
 
 /// 打开加密数据库连接（预留接口，当前未启用）。
 ///
@@ -8,7 +8,7 @@ import 'package:lingxi_academy/data/db/connection.dart';
 /// - 加密能力由 `sqlcipher_flutter_libs` 提供，已在 `pubspec.yaml` 中预声明。
 /// - 真实 API Key 与敏感数据使用 `flutter_secure_storage` 存储（详见 Task 5），
 ///   不进入 Drift 数据库；因此当前数据库内容并不强依赖加密。
-/// - 未来若决定启用整库加密，需要在 [LingxiDatabase.open] 中将
+/// - 未来若决定启用整库加密，需要在 [QuestDatabase.open] 中将
 ///   [openConnection] 替换为 [openSecureConnection]，并完成一次性数据迁移：
 ///     1. 读取现有未加密数据库导出 SQL；
 ///     2. 使用 Key 打开新的 SQLCipher 数据库；

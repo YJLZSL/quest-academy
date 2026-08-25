@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('placeholder smoke test', (tester) async {
-    // TODO(后续 Task): 补充 LingxiApp 启动与导航的 Widget 测试。
+    // TODO(后续 Task): 补充 QuestApp 启动与导航的 Widget 测试。
     expect(true, isTrue);
   });
 }

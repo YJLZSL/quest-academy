@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/features/ai/secure_log_interceptor.dart';
+import 'package:quest_academy/features/ai/secure_log_interceptor.dart';
 
 void main() {
   // ----------------------------------------------------------------------
@@ -43,11 +43,11 @@ void main() {
     test('非敏感头保持原值', () {
       final result = SecureLogInterceptor.redactHeaders(<String, dynamic>{
         'accept': 'application/json',
-        'user-agent': 'lingxi/0.1',
+        'user-agent': 'quest/0.1',
         'anthropic-version': '2023-06-01',
       });
       expect(result['accept'], 'application/json');
-      expect(result['user-agent'], 'lingxi/0.1');
+      expect(result['user-agent'], 'quest/0.1');
       expect(result['anthropic-version'], '2023-06-01');
     });
 

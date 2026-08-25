@@ -1,0 +1,20 @@
+{
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "version_source": "skill-release-manifest.json",
+    "runtime_skill_dir": "c:\\Users\\23501\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+    "recorded_at": "2026-07-25T20:00:00+08:00"
+  },
+  "operation": "create-image-project",
+  "assetCount": 1,
+  "assets": [
+    {
+      "filename": "poco-app-icon.png",
+      "title": "波可学园应用图标",
+      "deliverableType": "app-icon",
+      "intendedAspect": "square 1:1",
+      "status": "generated"
+    }
+  ]
+}

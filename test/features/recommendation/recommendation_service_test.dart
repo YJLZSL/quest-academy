@@ -2,14 +2,14 @@
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/features/recommendation/recommendation_service.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/features/recommendation/recommendation_service.dart';
 
 /// 创建内存数据库与 RecommendationService 实例。
-(LingxiDatabase, ProgressRepository, RecommendationService) _setup() {
-  final db = LingxiDatabase.forTesting(NativeDatabase.memory());
+(QuestDatabase, ProgressRepository, RecommendationService) _setup() {
+  final db = QuestDatabase.forTesting(NativeDatabase.memory());
   final progressRepo = ProgressRepository(db);
   final service = RecommendationService(progressRepo);
   return (db, progressRepo, service);

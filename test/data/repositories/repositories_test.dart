@@ -3,24 +3,24 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/repositories/achievement_repository.dart';
-import 'package:lingxi_academy/data/repositories/conversation_repository.dart';
-import 'package:lingxi_academy/data/repositories/message_repository.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/repositories/achievement_repository.dart';
+import 'package:quest_academy/data/repositories/conversation_repository.dart';
+import 'package:quest_academy/data/repositories/message_repository.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
 
-/// 创建一个内存版 [LingxiDatabase]，测试间彼此隔离。
-LingxiDatabase _createDb() =>
-    LingxiDatabase.forTesting(NativeDatabase.memory());
+/// 创建一个内存版 [QuestDatabase]，测试间彼此隔离。
+QuestDatabase _createDb() =>
+    QuestDatabase.forTesting(NativeDatabase.memory());
 
 void main() {
   // ----------------------------------------------------------------------
   // ConversationRepository
   // ----------------------------------------------------------------------
   group('ConversationRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late ConversationRepository repo;
 
     setUp(() {
@@ -139,7 +139,7 @@ void main() {
   // MessageRepository
   // ----------------------------------------------------------------------
   group('MessageRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late MessageRepository repo;
     late String conversationId;
 
@@ -226,7 +226,7 @@ void main() {
   // NoteRepository
   // ----------------------------------------------------------------------
   group('NoteRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late NoteRepository repo;
 
     setUp(() {
@@ -342,7 +342,7 @@ void main() {
   // ProgressRepository
   // ----------------------------------------------------------------------
   group('ProgressRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late ProgressRepository repo;
 
     setUp(() {
@@ -397,7 +397,7 @@ void main() {
   // SettingsRepository
   // ----------------------------------------------------------------------
   group('SettingsRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late SettingsRepository repo;
 
     setUp(() {
@@ -436,7 +436,7 @@ void main() {
   // AchievementRepository
   // ----------------------------------------------------------------------
   group('AchievementRepository', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late AchievementRepository repo;
 
     setUp(() async {

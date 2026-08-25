@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/empty_state_widget.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_chip.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_chip.dart';
 
 /// 笔记列表页。
 ///
-/// 顶部按标签多选筛选（[LingxiChip] filter 变体），桌面端 2-3 列网格、
+/// 顶部按标签多选筛选（[QuestChip] filter 变体），桌面端 2-3 列网格、
 /// 移动端单列。笔记卡片展示标题、内容预览（前 80 字）、标签与创建时间。
 /// 右下角 FAB 新建笔记，跳转到 [NoteEditorPage]。
 class NotesPage extends ConsumerStatefulWidget {
@@ -74,7 +73,7 @@ class _NotesPageState extends ConsumerState<NotesPage> {
   Widget build(BuildContext context) {
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('笔记')),
+      appBar: const QuestAppBar(title: Text('笔记')),
       floatingActionButton: _buildFab(reduceMotion),
       body: StreamBuilder<List<Note>>(
         stream: _stream,
@@ -155,9 +154,9 @@ class _NotesPageState extends ConsumerState<NotesPage> {
   }
 
   Widget _buildTagChip(String t, int index, double? animValue) {
-    final chip = LingxiChip(
+    final chip = QuestChip(
       label: Text(t),
-      variant: LingxiChipVariant.filter,
+      variant: QuestChipVariant.filter,
       selected: _selectedTags.contains(t),
       onSelected: (selected) {
         AnimationUtils.hapticLight();
@@ -248,7 +247,7 @@ class _NotesPageState extends ConsumerState<NotesPage> {
         .map((t) => t.trim())
         .where((t) => t.isNotEmpty)
         .toList();
-    return LingxiCard(
+    return QuestCard(
       animateEntrance: true,
       entranceDelay: Duration(milliseconds: 40 * index),
       onTap: () => context.go('${RouteNames.notesPath}/${note.id}'),
@@ -278,9 +277,9 @@ class _NotesPageState extends ConsumerState<NotesPage> {
               runSpacing: 6,
               children: [
                 for (final t in tags)
-                  LingxiChip(
+                  QuestChip(
                     label: Text(t),
-                    variant: LingxiChipVariant.info,
+                    variant: QuestChipVariant.info,
                   ),
               ],
             ),
@@ -300,7 +299,7 @@ class _NotesPageState extends ConsumerState<NotesPage> {
   /// 空状态。
   Widget _buildEmpty(BuildContext context) {
     return EmptyStateWidget(
-      mascotMood: MascotMood.idle,
+      icon: Icons.note_alt_outlined,
       title: '还没有笔记',
       description: '把重要的内容记下来吧',
       ctaText: '新建笔记',

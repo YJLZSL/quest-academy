@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/features/progress/spaced_repetition_service.dart';
-import 'package:lingxi_academy/features/recommendation/recommendation_service.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/features/progress/spaced_repetition_service.dart';
+import 'package:quest_academy/features/recommendation/recommendation_service.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 每日学习计划任务项。
 class DailyTask {
@@ -144,7 +144,7 @@ class DailyPlanWidget extends ConsumerWidget {
     }
 
     if (tasks.isEmpty) {
-      return LingxiCard(
+      return QuestCard(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -197,7 +197,7 @@ class _DailyTaskTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return LingxiCard(
+    return QuestCard(
       animateEntrance: true,
       entranceDelay: Duration(milliseconds: 80 * index),
       onTap: task.routePath != null

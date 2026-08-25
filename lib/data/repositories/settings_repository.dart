@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 设置仓库：封装 [Settings] 键值对表的读写操作。
 class SettingsRepository {
   SettingsRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 读取某个键的值。不存在时返回 null。
   Future<String?> getSetting(String key) async {

@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 对话仓库：封装 [Conversations] 表的查询、插入、更新、删除操作。
 class ConversationRepository {
   ConversationRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 获取所有对话，按更新时间倒序排列（最近使用的在前）。
   ///

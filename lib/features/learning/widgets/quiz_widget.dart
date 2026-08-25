@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/constants/app_constants.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/lingxi_gradients.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/features/progress/celebration_service.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/constants/app_constants.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/features/progress/celebration_service.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 测验组件。
 ///
@@ -233,7 +233,7 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
 
     // 无题目时直接通过。
     if (widget.questions.isEmpty) {
-      return LingxiCard(
+      return QuestCard(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -243,7 +243,7 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
             const SizedBox(height: 8),
             Text('本知识点暂无测验', style: theme.textTheme.titleMedium),
             const SizedBox(height: 16),
-            LingxiButton(
+            QuestButton(
               label: const Text('跳过测验'),
               onPressed: widget.onPassed,
             ),
@@ -252,7 +252,7 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
       );
     }
 
-    return LingxiCard(
+    return QuestCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -278,7 +278,7 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
           if (_finished && _score < kQuizPassThreshold)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: LingxiButton(
+              child: QuestButton(
                 label: const Text('再试一次'),
                 icon: const Icon(Icons.refresh),
                 onPressed: _retry,
@@ -292,7 +292,7 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
   /// 提交按钮：全部作答时显示脉冲呼吸。
   Widget _buildSubmitButton() {
     final enabled = _allAnswered;
-    final btn = LingxiButton(
+    final btn = QuestButton(
       label: const Text('提交答案'),
       icon: const Icon(Icons.check),
       onPressed: enabled ? _submit : null,
@@ -491,19 +491,19 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
   /// 构建测验结果展示。
   ///
   /// 反馈卡片背景使用语义化渐变：
-  /// - 通过：[LingxiGradients.success]（绿 → 深绿）。
+  /// - 通过：[QuestGradients.success]（绿 → 深绿）。
   /// - 未通过：misconceptionRed 渐变（红 → 深红）。
   /// 渐变颜色统一以 15% 透明度应用，保持文字对比度。
   Widget _buildResult(ThemeData theme) {
     final passed = _score >= kQuizPassThreshold;
-    final gradients = context.lingxiGradients;
-    final colors = context.lingxiColors;
+    final gradients = context.questGradients;
+    final colors = context.questColors;
 
     // 构建反馈渐变（半透明）与强调色。
     final LinearGradient feedbackGradient;
     final Color accentColor;
     if (passed) {
-      // 通过：直接基于 [LingxiGradients.success] 复用其 begin/end，仅覆盖
+      // 通过：直接基于 [QuestGradients.success] 复用其 begin/end，仅覆盖
       // colors 为 15% 透明度。LinearGradient 未提供 copyWith，手动重建。
       final successGradient = gradients.success;
       feedbackGradient = LinearGradient(
@@ -516,8 +516,8 @@ class _QuizWidgetState extends ConsumerState<QuizWidget>
       );
       accentColor = successGradient.colors.last;
     } else {
-      // 未通过：LingxiGradients 未定义 misconceptionRed 渐变，以
-      // [LingxiColors.misconceptionRed] 同色系不同透明度构造渐变。
+      // 未通过：QuestGradients 未定义 misconceptionRed 渐变，以
+      // [QuestColors.misconceptionRed] 同色系不同透明度构造渐变。
       final baseRed = colors.misconceptionRed;
       feedbackGradient = LinearGradient(
         begin: Alignment.topLeft,

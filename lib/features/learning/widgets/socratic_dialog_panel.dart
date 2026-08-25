@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/features/ai/ai_provider.dart';
-import 'package:lingxi_academy/features/ai/ai_providers.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/ai/ai_providers.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 苏格拉底对话面板（简化版）。
 ///
@@ -67,16 +66,12 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
       return;
     }
 
-    // 提前捕获吉祥物控制器，确保卸载后仍可重置。
-    final mascotNotifier = ref.read(mascotControllerProvider.notifier);
-
     setState(() {
       _messages.add(ChatMessage.user(trimmed));
       _isResponding = true;
       _errorMessage = null;
       _inputController.clear();
     });
-    mascotNotifier.setAiThinking(true);
 
     final assistantBuffer = StringBuffer();
     setState(() {
@@ -129,8 +124,6 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
         if (!hadError) _hasCompletedOnce = true;
       });
     }
-    // 无论是否卸载都重置吉祥物（全局单例状态）。
-    mascotNotifier.setAiThinking(false);
     _scrollToBottom();
   }
 
@@ -152,7 +145,7 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
     final theme = Theme.of(context);
     final aiProviderAsync = ref.watch(currentAiProviderProvider);
 
-    return LingxiCard(
+    return QuestCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -232,7 +225,7 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (_messages.isEmpty)
-          LingxiButton(
+          QuestButton(
             label: const Text('开始对话'),
             icon: const Icon(Icons.play_arrow),
             onPressed: () => _send(widget.seedQuestion),
@@ -298,7 +291,7 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
           ),
           if (_hasCompletedOnce && !_isResponding) ...[
             const SizedBox(height: 8),
-            LingxiButton(
+            QuestButton(
               label: const Text('完成对话'),
               icon: const Icon(Icons.check),
               onPressed: widget.onCompleted,

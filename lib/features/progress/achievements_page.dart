@@ -2,17 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/features/progress/achievement_service.dart';
-import 'package:lingxi_academy/features/progress/celebration_service.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/animated_count_text.dart';
-import 'package:lingxi_academy/shared/widgets/animated_progress_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_badge.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/features/progress/achievement_service.dart';
+import 'package:quest_academy/features/progress/celebration_service.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/animated_count_text.dart';
+import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_badge.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 成就列表 FutureProvider，首次加载后缓存。
 final achievementsListProvider =
@@ -42,7 +42,7 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage> {
   Widget build(BuildContext context) {
     final asyncList = ref.watch(achievementsListProvider);
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('成就')),
+      appBar: const QuestAppBar(title: Text('成就')),
       body: asyncList.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
@@ -183,8 +183,8 @@ class _StatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gold = context.lingxiColors.achievementGold;
-    return LingxiCard(
+    final gold = context.questColors.achievementGold;
+    return QuestCard(
       animateEntrance: true,
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -282,7 +282,7 @@ class _BadgeCardState extends State<_BadgeCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gold = context.lingxiColors.achievementGold;
+    final gold = context.questColors.achievementGold;
     final unlocked = widget.item.unlocked;
 
     final cardContent = Padding(
@@ -290,7 +290,7 @@ class _BadgeCardState extends State<_BadgeCard> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 徽章（使用 LingxiBadge）
+          // 徽章（使用 QuestBadge）
           keyedBadge(gold, unlocked),
           const SizedBox(height: 4),
           // 名称
@@ -442,9 +442,9 @@ class _BadgeCardState extends State<_BadgeCard> {
     );
   }
 
-  /// 构建带 key 的 LingxiBadge。
+  /// 构建带 key 的 QuestBadge。
   Widget keyedBadge(Color gold, bool unlocked) {
-    final badge = LingxiBadge(
+    final badge = QuestBadge(
       icon: Text(
         widget.item.achievement.icon,
         style: const TextStyle(fontSize: 28),
@@ -454,7 +454,7 @@ class _BadgeCardState extends State<_BadgeCard> {
       newlyUnlocked: widget.newlyUnlocked,
       progress: unlocked ? null : widget.item.progress,
       size: 64,
-      shape: LingxiBadgeShape.circle,
+      shape: QuestBadgeShape.circle,
     );
     return badge;
   }

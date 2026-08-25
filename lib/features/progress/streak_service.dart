@@ -2,9 +2,9 @@
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
 
 /// 连续学习天数据快照。
 ///
@@ -60,7 +60,7 @@ class StreakData {
 class StreakService {
   StreakService(this._db, this._settings);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
   final SettingsRepository _settings;
 
   /// Settings 中存储最长连续天数的键。

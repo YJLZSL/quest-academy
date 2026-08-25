@@ -11,8 +11,8 @@ import 'spring_motion.dart';
 /// - [buildModalPage]：底部滑入（编辑器等全屏模态）
 ///
 /// 自动检测 reduceMotion 无障碍设置并降级为即时切换（直接返回 child）。
-class LingxiPageTransitions {
-  const LingxiPageTransitions._();
+class QuestPageTransitions {
+  const QuestPageTransitions._();
 
   /// 统一的 slide + fade 过渡构建器。
   ///
@@ -163,70 +163,4 @@ class LingxiPageTransitions {
     );
   }
 
-  // ── Hero 共享元素过渡 ────────────────────────────────────
-
-  /// 吉祥物 Hero 飞行过渡的 [Hero.flightShuttleBuilder] 实现。
-  ///
-  /// 使用 [SpringMotion.gentleSpeed] 对应的 [SpringMotion.entranceCurve]
-  /// （≈250ms 柔和过渡），在飞行过程中叠加淡入 + 0.88→1.0 缩放，
-  /// 让吉祥物在首页、学习路径 AppBar、对话页空状态间切换时呈现柔和弹性。
-  ///
-  /// reduceMotion 下 [MascotHero] 会跳过 [Hero] 包裹，此 builder 不会被调用。
-  static Widget mascotHeroFlightShuttleBuilder(
-    BuildContext flightContext,
-    Animation<double> animation,
-    HeroFlightDirection flightDirection,
-    BuildContext fromHeroContext,
-    BuildContext toHeroContext,
-  ) {
-    // 飞行中的视觉内容使用目标 Hero 的子组件
-    final Hero toHero = toHeroContext.widget as Hero;
-    final curved = CurvedAnimation(
-      parent: animation,
-      curve: SpringMotion.entranceCurve,
-      reverseCurve: SpringMotion.exitCurve,
-    );
-    return AnimatedBuilder(
-      animation: curved,
-      builder: (context, child) {
-        return Opacity(
-          opacity: curved.value,
-          child: Transform.scale(
-            scale: 0.88 + 0.12 * curved.value,
-            child: child,
-          ),
-        );
-      },
-      child: toHero.child,
-    );
-  }
-}
-
-/// 吉祥物 Hero 共享元素动画包装器。
-///
-/// 在首页 hero 区、学习路径 AppBar、对话页空状态三处的 [MascotWidget] 外层
-/// 包裹统一的 `mascot-hero` tag [Hero]，实现页面切换时吉祥物的共享元素过渡。
-///
-/// 当 `MediaQuery.disableAnimationsOf(context)` 为 true（reduceMotion）时
-/// 跳过 [Hero] 包裹，直接返回 [child]，降级为即时切换。
-class MascotHero extends StatelessWidget {
-  const MascotHero({super.key, required this.child});
-
-  /// 共享元素 tag：所有页面吉祥物使用同一 tag 才能联动
-  static const String tag = 'mascot-hero';
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    if (MediaQuery.disableAnimationsOf(context)) {
-      return child;
-    }
-    return Hero(
-      tag: tag,
-      flightShuttleBuilder:
-          LingxiPageTransitions.mascotHeroFlightShuttleBuilder,
-      child: child,
-    );
-  }
 }

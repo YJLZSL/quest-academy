@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/constants/app_constants.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/data/repositories/update_preferences_repository.dart';
+import 'package:quest_academy/core/constants/app_constants.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/data/repositories/update_preferences_repository.dart';
 
 import 'update_service.dart';
 import 'update_state.dart';

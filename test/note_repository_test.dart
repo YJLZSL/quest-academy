@@ -2,16 +2,16 @@
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
 
-/// 创建一个内存版 [LingxiDatabase]，测试间彼此隔离。
-LingxiDatabase _createDb() =>
-    LingxiDatabase.forTesting(NativeDatabase.memory());
+/// 创建一个内存版 [QuestDatabase]，测试间彼此隔离。
+QuestDatabase _createDb() =>
+    QuestDatabase.forTesting(NativeDatabase.memory());
 
 void main() {
   group('NoteRepository CRUD', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late NoteRepository repo;
 
     setUp(() {

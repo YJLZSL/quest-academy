@@ -2,33 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/page_transitions.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/ai/ai_provider.dart';
-import 'package:lingxi_academy/features/chat/chat_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/level_exploration_buttons.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_chip.dart';
-import 'package:lingxi_academy/shared/widgets/markdown_renderer.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/page_transitions.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/chat/chat_controller.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/level_exploration_buttons.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_chip.dart';
+import 'package:quest_academy/shared/widgets/markdown_renderer.dart';
 
 /// 自由对话主页。
 ///
-/// 顶部 [LingxiAppBar] 显示当前对话标题并提供切换/新建入口与苏格拉底开关；
+/// 顶部 [QuestAppBar] 显示当前对话标题并提供切换/新建入口与苏格拉底开关；
 /// 主体为消息列表（用户/AI 气泡左右对齐，反向 [ListView.builder]），
 /// AI 气泡使用 [MarkdownRenderer] 渲染，流式等待时显示三点脉动打字指示器；
 /// 底部为多行输入框 + 发送/停止按钮。桌面端 Ctrl+Enter 发送。
 ///
 /// 消息气泡根据角色从对应方向滑入并弹性缩放到 1.0；Socratic 开关、发送按钮、
-/// 输入框聚焦边框均有弹簧/颜色过渡动画；空状态提供快速建议 Chip。
+/// 输入框聚焦边框均有弹簧/颜色过渡动画；空状态提供图标提示与快速建议 Chip。
 class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({super.key, required this.conversationId});
 
@@ -155,7 +154,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           ),
         },
         child: Scaffold(
-          appBar: LingxiAppBar(
+          appBar: QuestAppBar(
             title: _TitleButton(
               title: state.conversationTitle,
               onTap: () => _showConversationsMenu(context),
@@ -218,7 +217,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  /// 消息区域：空对话显示吉祥物提示 + 建议 Chip，否则反向列表。
+  /// 消息区域：空对话显示图标提示 + 建议 Chip，否则反向列表。
   Widget _buildMessageArea(BuildContext context, ChatControllerState state) {
     final hasMessages =
         state.messages.isNotEmpty || state.isStreaming;
@@ -274,7 +273,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  /// 空对话状态：吉祥物 + 提示 + 快速建议 Chip。
+  /// 空对话状态：图标 + 提示 + 快速建议 Chip。
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
@@ -292,17 +291,16 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const MascotHero(
-              child: MascotWidget(
-                size: 160,
-                enableTapInteraction: false,
-              ),
+            Icon(
+              Icons.chat_bubble_outline,
+              size: 96,
+              color: theme.colorScheme.primary,
             ),
             const SizedBox(height: 24),
             Text('问我任何问题', style: theme.textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
-              '小犀在这里陪你一起探索',
+              '在这里陪你一起探索',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -944,9 +942,9 @@ class _SuggestionChipState extends State<_SuggestionChip>
   @override
   Widget build(BuildContext context) {
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
-    final chip = LingxiChip(
+    final chip = QuestChip(
       label: Text(widget.label),
-      variant: LingxiChipVariant.action,
+      variant: QuestChipVariant.action,
       onPressed: () {
         AnimationUtils.hapticLight();
         widget.onTap();
@@ -980,7 +978,7 @@ class _SocraticToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lingxi = context.lingxiColors;
+    final quest = context.questColors;
     final theme = Theme.of(context);
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
     return _TogglePressWrapper(
@@ -993,12 +991,12 @@ class _SocraticToggle extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: value
-                ? lingxi.socraticBlue.withValues(alpha: 0.15)
+                ? quest.socraticBlue.withValues(alpha: 0.15)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: value
-                  ? lingxi.socraticBlue.withValues(alpha: 0.5)
+                  ? quest.socraticBlue.withValues(alpha: 0.5)
                   : theme.colorScheme.outlineVariant,
               width: value ? 1.5 : 1.0,
             ),
@@ -1028,7 +1026,7 @@ class _SocraticToggle extends StatelessWidget {
                     key: ValueKey<bool>(value),
                     size: 18,
                     color: value
-                        ? lingxi.socraticBlue
+                        ? quest.socraticBlue
                         : theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -1038,7 +1036,7 @@ class _SocraticToggle extends StatelessWidget {
                 AnimatedDefaultTextStyle(
                   duration: SpringMotion.fastDuration,
                   style: theme.textTheme.labelMedium!.copyWith(
-                    color: lingxi.socraticBlue,
+                    color: quest.socraticBlue,
                     fontWeight: FontWeight.w600,
                   ),
                   child: const Text('苏格拉底'),
@@ -1056,7 +1054,7 @@ class _SocraticToggle extends StatelessWidget {
                       onChanged(v);
                     },
                     activeTrackColor:
-                        lingxi.socraticBlue.withValues(alpha: 0.5),
+                        quest.socraticBlue.withValues(alpha: 0.5),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),

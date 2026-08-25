@@ -3,16 +3,16 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/repositories/learning_event_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/features/progress/spaced_repetition_service.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/repositories/learning_event_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/features/progress/spaced_repetition_service.dart';
 
 /// 创建内存数据库与 SpacedRepetitionService 实例。
-(LingxiDatabase, ProgressRepository, LearningEventRepository,
+(QuestDatabase, ProgressRepository, LearningEventRepository,
     SpacedRepetitionService) _setup() {
-  final db = LingxiDatabase.forTesting(NativeDatabase.memory());
+  final db = QuestDatabase.forTesting(NativeDatabase.memory());
   final progressRepo = ProgressRepository(db);
   final eventRepo = LearningEventRepository(db);
   final service = SpacedRepetitionService(progressRepo, eventRepo);
@@ -75,7 +75,7 @@ Course _buildCourse(String id, String title, List<KnowledgePoint> kps) {
 
 /// 直接向 Progress 表插入一条已完成记录，completedAt 由参数指定。
 Future<void> _seedCompleted({
-  required LingxiDatabase db,
+  required QuestDatabase db,
   required String courseId,
   required String kpId,
   required DateTime completedAt,
@@ -92,7 +92,7 @@ Future<void> _seedCompleted({
 
 /// 直接向 Progress 表插入一条进行中记录。
 Future<void> _seedInProgress({
-  required LingxiDatabase db,
+  required QuestDatabase db,
   required String courseId,
   required String kpId,
   required DateTime studiedAt,
@@ -108,7 +108,7 @@ Future<void> _seedInProgress({
 
 /// 直接向 LearningEvents 表插入一条复习完成事件。
 Future<void> _seedReviewEvent({
-  required LingxiDatabase db,
+  required QuestDatabase db,
   required String kpId,
   required DateTime createdAt,
 }) async {

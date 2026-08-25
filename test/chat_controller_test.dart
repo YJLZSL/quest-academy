@@ -6,15 +6,13 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/ai/ai_provider.dart';
-import 'package:lingxi_academy/features/ai/ai_providers.dart';
-import 'package:lingxi_academy/features/ai/prompt_manager.dart';
-import 'package:lingxi_academy/features/chat/chat_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/ai/ai_providers.dart';
+import 'package:quest_academy/features/ai/prompt_manager.dart';
+import 'package:quest_academy/features/chat/chat_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 模拟 [AiProvider]：按预置事件序列发射流式响应。
@@ -66,7 +64,7 @@ Future<void> _waitForIdle(
 
 void main() {
   group('ChatController', () {
-    late LingxiDatabase db;
+    late QuestDatabase db;
     late SharedPreferences prefs;
 
     setUp(() async {
@@ -78,7 +76,7 @@ void main() {
       // ProviderConfig 时因缺少平台通道而报错。
       FlutterSecureStorage.setMockInitialValues(<String, String>{});
       prefs = await SharedPreferences.getInstance();
-      db = LingxiDatabase.forTesting(NativeDatabase.memory());
+      db = QuestDatabase.forTesting(NativeDatabase.memory());
     });
 
     tearDown(() async {
@@ -122,10 +120,6 @@ void main() {
       expect(rows[0].role, 'user');
       expect(rows[1].role, 'assistant');
       expect(rows[1].content, 'Hello world');
-
-      // 验证吉祥物切换为庆祝态。
-      expect(container.read(mascotControllerProvider).mood,
-          MascotMood.celebrate);
     });
 
     test('sendMessage 收到 ErrorEvent 时保留已接收内容并设置错误', () async {
@@ -153,7 +147,6 @@ void main() {
       expect(state.messages[0].role, MessageRole.user);
       expect(state.messages[1].role, MessageRole.assistant);
       expect(state.messages[1].content, '部分内容');
-      expect(container.read(mascotControllerProvider).mood, MascotMood.sad);
 
       // 验证部分内容已落盘到数据库。
       final rows = await container
@@ -407,10 +400,6 @@ void main() {
       final convCount =
           await container.read(conversationRepositoryProvider).count();
       expect(convCount, 0);
-
-      // 吉祥物应为难过态。
-      expect(
-          container.read(mascotControllerProvider).mood, MascotMood.sad);
     });
 
     test('创建 Conversation 时填充 provider/model 字段', () async {

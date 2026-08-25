@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
 
 /// 引导页数据模型。
 class _OnboardingStep {
   const _OnboardingStep({
-    required this.mood,
+    required this.icon,
+    this.iconColor,
     required this.title,
     required this.description,
     required this.ctaText,
     this.isLast = false,
   });
 
-  final MascotMood mood;
+  final IconData icon;
+  final Color? iconColor;
   final String title;
   final String description;
   final String ctaText;
@@ -30,8 +29,8 @@ class _OnboardingStep {
 
 /// 引导页：5 步 PageView 动画教程。
 ///
-/// 桌面端两列布局（左吉祥物大图，右文字），移动端单列垂直排列。
-/// 每步切换时联动 [mascotControllerProvider] 切换吉祥物情绪，
+/// 桌面端两列布局（左侧图标插画，右文字），移动端单列垂直排列。
+/// 每步以大号 Material 图标作为视觉锚点，
 /// 页面切换使用弹簧物理曲线，步骤内容淡入滑入。
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -42,33 +41,33 @@ class OnboardingPage extends ConsumerStatefulWidget {
   /// 5 步引导内容
   static const List<_OnboardingStep> _steps = [
     _OnboardingStep(
-      mood: MascotMood.happy,
+      icon: Icons.waving_hand_rounded,
       title: '欢迎来到灵犀学院',
-      description: '我是小犀，你的 AI 学习伙伴。在这里，AI 不会直接给你答案，而是引导你思考。',
+      description: '这里是引导式 AI 学习平台。AI 不会直接给你答案，而是通过提问引导你思考。',
       ctaText: '下一步',
     ),
     _OnboardingStep(
-      mood: MascotMood.curious,
+      icon: Icons.vpn_key_rounded,
       title: '自备 API，安全无忧',
-      description: '灵犀学院是非商业平台，你需要配置自己的 AI API（OpenAI/Claude/Gemini/Ollama）才能与小犀对话。密钥本地加密存储，永不上传。',
+      description: '灵犀学院是非商业平台，你需要配置自己的 AI API（OpenAI/Claude/Gemini/Ollama）才能开启对话。密钥本地加密存储，永不上传。',
       ctaText: '去设置 API',
     ),
     _OnboardingStep(
-      mood: MascotMood.thinking,
-      title: '点击小犀，发现彩蛋',
-      description: '在任意页面点击小犀，它会眨眼、挥手、蹦跳。连续点击 5 次，会有惊喜哦。',
-      ctaText: '试试点我',
+      icon: Icons.palette_rounded,
+      title: '主题与动效',
+      description: '灵犀学院采用 Material 3 设计语言，支持明暗主题与流畅动效，让学习过程更舒适。',
+      ctaText: '下一步',
     ),
     _OnboardingStep(
-      mood: MascotMood.happy,
+      icon: Icons.map_rounded,
       title: '从 L0 到 L4，循序渐进',
       description: '学习路径分为五层：L0 启蒙、L1 基础、L2 进阶、L3 实战、L4 专家。每节课程包含学习卡片、测验、苏格拉底对话。',
       ctaText: '看看路径',
     ),
     _OnboardingStep(
-      mood: MascotMood.curious,
+      icon: Icons.psychology_rounded,
       title: '苏格拉底式引导',
-      description: '在自由对话中，小犀会通过提问引导你思考，而不是直接给答案。你也可以关闭引导模式获得直接解答。',
+      description: '在自由对话中，AI 助手会通过提问引导你思考，而不是直接给答案。你也可以关闭引导模式获得直接解答。',
       ctaText: '开始学习',
       isLast: true,
     ),
@@ -83,12 +82,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    // 初始化为第一步的情绪
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(mascotControllerProvider.notifier)
-          .setMood(OnboardingPage._steps.first.mood);
-    });
   }
 
   @override
@@ -107,12 +100,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     );
   }
 
-  /// 页面切换回调：更新当前页并联动吉祥物情绪
+  /// 页面切换回调：更新当前页
   void _onPageChanged(int index) {
     setState(() => _currentPage = index);
-    ref
-        .read(mascotControllerProvider.notifier)
-        .setMood(OnboardingPage._steps[index].mood);
   }
 
   /// 完成引导：写入 SharedPreferences 并更新 provider。
@@ -136,9 +126,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       case '去设置 API':
         // 跳转 API 设置页，保留引导状态
         context.go(RouteNames.settingsApiPath);
-        break;
-      case '试试点我':
-        ref.read(mascotControllerProvider.notifier).triggerTap();
         break;
       case '看看路径':
         // 完成引导并跳转到学习路径
@@ -220,10 +207,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         children: [
           // 上一页按钮
           if (_currentPage > 0)
-            LingxiButton(
+            QuestButton(
               label: const Text('上一步'),
               icon: const Icon(Icons.arrow_back),
-              variant: LingxiButtonVariant.text,
+              variant: QuestButtonVariant.text,
               onPressed: () => _goToPage(_currentPage - 1),
             )
           else
@@ -256,14 +243,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           ),
           // 下一页/开始学习按钮
           if (!isLast)
-            LingxiButton(
+            QuestButton(
               label: const Text('下一步'),
               icon: const Icon(Icons.arrow_forward),
               onPressed: () => _goToPage(_currentPage + 1),
             )
           else
             // 最后一步：按钮加呼吸脉冲引导点击
-            LingxiButton(
+            QuestButton(
               label: const Text('开始学习'),
               icon: const Icon(Icons.rocket_launch),
               pulse: true,
@@ -277,7 +264,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
 /// 单个引导步骤视图。
 ///
-/// 桌面端两列（左吉祥物，右文字），移动端单列垂直排列。
+/// 桌面端两列（左侧图标插画，右文字），移动端单列垂直排列。
 /// 步骤激活时内容从下方淡入滑入（300ms，easeOutCubic）。
 class _OnboardingStepView extends StatefulWidget {
   const _OnboardingStepView({
@@ -345,17 +332,18 @@ class _OnboardingStepViewState extends State<_OnboardingStepView>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // 吉祥物：呼吸脉动
-    Widget mascot = MascotWidget(
+    // 步骤图标：大号 Material 图标 + 圆形渐变背景
+    Widget illustration = _StepIllustration(
+      icon: widget.step.icon,
       size: widget.isDesktop ? 240 : 180,
-      mood: widget.step.mood,
+      color: widget.step.iconColor,
     );
     if (!widget.reduceMotion) {
-      mascot = SpringMotion.pulseBreathing(
+      illustration = SpringMotion.pulseBreathing(
         period: const Duration(seconds: 3),
         minScale: 0.97,
         maxScale: 1.03,
-        child: mascot,
+        child: illustration,
       );
     }
 
@@ -377,7 +365,7 @@ class _OnboardingStepViewState extends State<_OnboardingStepView>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(flex: 1, child: Center(child: mascot)),
+            Expanded(flex: 1, child: Center(child: illustration)),
             const SizedBox(width: 48),
             Expanded(flex: 1, child: textContent),
           ],
@@ -390,7 +378,7 @@ class _OnboardingStepViewState extends State<_OnboardingStepView>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          mascot,
+          illustration,
           const SizedBox(height: 32),
           textContent,
         ],
@@ -419,16 +407,56 @@ class _OnboardingStepViewState extends State<_OnboardingStepView>
           ),
         ),
         const SizedBox(height: 32),
-        LingxiButton(
+        QuestButton(
           label: Text(widget.step.ctaText),
           icon: widget.step.isLast
               ? const Icon(Icons.rocket_launch)
               : const Icon(Icons.arrow_forward),
-          size: LingxiButtonSize.large,
+          size: QuestButtonSize.large,
           pulse: widget.step.isLast,
           onPressed: widget.onCta,
         ),
       ],
+    );
+  }
+}
+
+/// 步骤图标插画：大号图标置于渐变圆形背景中。
+class _StepIllustration extends StatelessWidget {
+  const _StepIllustration({
+    required this.icon,
+    required this.size,
+    this.color,
+  });
+
+  final IconData icon;
+  final double size;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final iconColor = color ?? theme.colorScheme.primary;
+    final containerSize = size * 0.75;
+    return Container(
+      width: containerSize,
+      height: containerSize,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            iconColor.withValues(alpha: 0.18),
+            iconColor.withValues(alpha: 0.06),
+          ],
+        ),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        size: size * 0.38,
+        color: iconColor,
+      ),
     );
   }
 }

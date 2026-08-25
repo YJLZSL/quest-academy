@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
-import 'package:lingxi_academy/shared/widgets/empty_state_widget.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -22,9 +21,9 @@ void main() {
             ],
             child: const Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.sad,
+                icon: Icons.chat_bubble_outline,
                 title: '还没有对话历史',
-                description: '开始第一次对话，让小犀陪你学习',
+                description: '开始第一次对话，让 AI 陪你学习',
               ),
             ),
           ),
@@ -33,7 +32,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('还没有对话历史'), findsOneWidget);
-      expect(find.text('开始第一次对话，让小犀陪你学习'), findsOneWidget);
+      expect(find.text('开始第一次对话，让 AI 陪你学习'), findsOneWidget);
     });
 
     testWidgets('提供 ctaText 和 onCta 时应渲染 CTA 按钮', (tester) async {
@@ -47,7 +46,7 @@ void main() {
             ],
             child: Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.curious,
+                icon: Icons.note_alt_outlined,
                 title: '还没有笔记',
                 description: '在学习或对话中，重要内容可一键保存为笔记',
                 ctaText: '去学习',
@@ -80,7 +79,7 @@ void main() {
             ],
             child: const Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.thinking,
+                icon: Icons.inbox_outlined,
                 title: '暂无数据',
                 description: '稍后再来看看吧',
               ),
@@ -98,7 +97,7 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward), findsNothing);
     });
 
-    testWidgets('应渲染吉祥物 MascotWidget', (tester) async {
+    testWidgets('应渲染中心图标', (tester) async {
       final prefs = await SharedPreferences.getInstance();
       await tester.pumpWidget(
         MaterialApp(
@@ -108,7 +107,7 @@ void main() {
             ],
             child: const Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.happy,
+                icon: Icons.emoji_events_outlined,
                 title: '成就墙空空如也',
                 description: '完成课程、连续打卡，解锁专属徽章',
               ),
@@ -118,7 +117,8 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 500));
 
-      // 标题应可见
+      // 图标与标题应可见
+      expect(find.byIcon(Icons.emoji_events_outlined), findsOneWidget);
       expect(find.text('成就墙空空如也'), findsOneWidget);
     });
 
@@ -132,9 +132,9 @@ void main() {
             ],
             child: const Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.sad,
+                icon: Icons.sentiment_dissatisfied,
                 title: '自定义插图测试',
-                description: '应显示自定义插图而非吉祥物',
+                description: '应显示自定义插图而非默认图标',
                 illustration: Icon(Icons.sentiment_dissatisfied, size: 120),
               ),
             ),
@@ -148,7 +148,7 @@ void main() {
       expect(find.text('自定义插图测试'), findsOneWidget);
     });
 
-    testWidgets('点击组件应触发吉祥物 triggerTap 不崩溃', (tester) async {
+    testWidgets('点击组件不崩溃', (tester) async {
       final prefs = await SharedPreferences.getInstance();
       await tester.pumpWidget(
         MaterialApp(
@@ -158,9 +158,9 @@ void main() {
             ],
             child: const Scaffold(
               body: EmptyStateWidget(
-                mascotMood: MascotMood.idle,
+                icon: Icons.touch_app_outlined,
                 title: '点击测试',
-                description: '点击组件触发彩蛋',
+                description: '点击组件验证交互',
               ),
             ),
           ),

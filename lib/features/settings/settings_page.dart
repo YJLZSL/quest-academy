@@ -7,7 +7,7 @@ import '../../core/motion/animation_utils.dart';
 import '../../core/motion/spring_motion.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/router/route_names.dart';
-import '../../core/theme/lingxi_colors.dart';
+import '../../core/theme/quest_colors.dart';
 import '../../data/models/provider_config.dart';
 import '../../data/providers/db_providers.dart';
 import '../../data/providers/storage_providers.dart';
@@ -15,10 +15,11 @@ import '../ai/ai_providers.dart';
 import '../update/update_controller.dart';
 import '../update/update_dialog.dart';
 import '../update/update_state.dart';
-import '../../shared/widgets/lingxi_app_bar.dart';
-import '../../shared/widgets/lingxi_button.dart';
-import '../../shared/widgets/lingxi_card.dart';
+import '../../shared/widgets/quest_app_bar.dart';
+import '../../shared/widgets/quest_button.dart';
+import '../../shared/widgets/quest_card.dart';
 import 'api_settings_page.dart' show providerConfigsProvider;
+import 'widgets/theme_flavor_selector.dart';
 import 'data_export_service.dart';
 import '../../core/constants/app_constants.dart';
 
@@ -264,6 +265,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               selected: {themeMode},
               onSelectionChanged: (s) => _setThemeMode(ref, s.first),
             ),
+            const SizedBox(height: 16),
+            Text('主题风格', style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 8),
+            const ThemeFlavorSelector(),
           ],
         ),
       ),
@@ -322,24 +327,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LingxiButton(
+            QuestButton(
               label: const Text('导出数据'),
               icon: const Icon(Icons.upload_outlined),
-              variant: LingxiButtonVariant.elevated,
+              variant: QuestButtonVariant.elevated,
               onPressed: () => _exportData(ref, context),
             ),
             const SizedBox(height: 8),
-            LingxiButton(
+            QuestButton(
               label: const Text('导入数据'),
               icon: const Icon(Icons.download_outlined),
-              variant: LingxiButtonVariant.elevated,
+              variant: QuestButtonVariant.elevated,
               onPressed: () => _importData(ref, context),
             ),
             const SizedBox(height: 8),
-            LingxiButton(
+            QuestButton(
               label: const Text('清空所有数据'),
               icon: const Icon(Icons.delete_forever_outlined),
-              variant: LingxiButtonVariant.text,
+              variant: QuestButtonVariant.text,
               onPressed: () => _clearAllData(ref, context),
             ),
           ],
@@ -483,13 +488,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if (reduceMotion) {
       return Scaffold(
-        appBar: const LingxiAppBar(title: Text('设置')),
+        appBar: const QuestAppBar(title: Text('设置')),
         body: list,
       );
     }
 
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('设置')),
+      appBar: const QuestAppBar(title: Text('设置')),
       body: AnimatedOpacity(
         opacity: _contentVisible ? 1.0 : 0.0,
         duration: SpringMotion.gentleDuration,
@@ -554,7 +559,7 @@ class _AnimatedSettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LingxiCard(
+    return QuestCard(
       animateEntrance: true,
       entranceDelay: Duration(milliseconds: 60 * index),
       onTap: onTap,
@@ -580,7 +585,7 @@ class _UpdateCheckTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = context.lingxiColors;
+    final colors = context.questColors;
     final status = updateState.status;
     final info = updateState.releaseInfo;
 

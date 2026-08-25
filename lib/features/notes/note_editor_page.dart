@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
 
 /// 笔记编辑器。
 ///
@@ -178,7 +178,7 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: LingxiAppBar(
+      appBar: QuestAppBar(
         title: Text(_isNew ? '新建笔记' : '编辑笔记'),
         actions: [
           if (!_isNew)
@@ -244,10 +244,10 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
             hintText: '例如：dart,flutter,笔记',
           ),
           const SizedBox(height: 24),
-          LingxiButton(
+          QuestButton(
             label: const Text('保存笔记'),
             icon: const Icon(Icons.save_outlined),
-            size: LingxiButtonSize.large,
+            size: QuestButtonSize.large,
             onPressed: _save,
           ),
         ],

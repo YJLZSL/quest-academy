@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 成就仓库：封装 [Achievements] 表的查询与解锁操作。
 class AchievementRepository {
   AchievementRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 获取全部成就定义，按 id 排序保证展示顺序稳定。
   Future<List<Achievement>> getAllAchievements() {

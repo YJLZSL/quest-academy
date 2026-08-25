@@ -3,7 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lingxi_academy/features/settings/api_test_service.dart';
+import 'package:quest_academy/features/settings/api_test_service.dart';
 
 /// 构造一个 [DioException]，便于测试。
 DioException _makeDioException(

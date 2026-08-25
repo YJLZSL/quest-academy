@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/providers/course_providers.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/repositories/learning_event_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/providers/course_providers.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/learning_event_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
 
 /// 复习提醒项。
 class ReviewReminder {

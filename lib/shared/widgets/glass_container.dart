@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
 
 /// 毛玻璃容器组件
 ///
@@ -29,7 +29,7 @@ class GlassContainer extends StatelessWidget {
   /// 垂直模糊程度
   final double sigmaY;
 
-  /// 背景色（默认白色 15% 透明度）
+  /// 背景色；未指定时使用当前主题 surface 色 15% 透明度。
   final Color? color;
 
   /// 圆角（默认 roundedLarge = 16px）
@@ -48,7 +48,9 @@ class GlassContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveBorderRadius =
         borderRadius ?? ShapeVariants.roundedLarge.borderRadius;
-    final effectiveColor = color ?? Colors.white.withValues(alpha: 0.15);
+    // 默认使用主题 surface 色叠加低透明度，实现随主题切换的毛玻璃底色。
+    final effectiveColor = color ??
+        Theme.of(context).colorScheme.surface.withValues(alpha: 0.15);
 
     Widget result = ClipRRect(
       borderRadius: effectiveBorderRadius,

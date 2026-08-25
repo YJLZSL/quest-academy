@@ -7,7 +7,40 @@
 
 ## [Unreleased]
 
-暂无未发布变更。下次 PR 在此段添加变更项。
+### 新增
+
+- **游戏化重设计**：全面转向 Duolingo 式现代游戏化 UI，移除吉祥物，替换为 Streak、XP、成就徽章、粒子庆祝等非角色化反馈
+  - 新增 `XpProgressRing`：今日 XP / 每日目标完成度圆环
+  - 新增 `StreakFlameBadge`：顶部火焰徽章，支持首页与 AppBar 复用
+  - 新增 `AchievementBadgeRow`：横向滚动最近解锁成就
+  - 新增 `LevelNode` / `LevelPath`：学习路径关卡节点与连接线动画
+  - 知识点/测验完成时由 `CelebrationService` 触发粒子爆发与「+XP」浮层反馈
+- **三档主题风味**：设置页一键切换
+  - `standard`：Duolingo 式活泼风格，大圆角、高饱和、强进度可视化
+  - `minimal`：低饱和、低动效、高信息密度的专注模式
+  - `minecraft`（Pixel MC）：完整像素块/体素风格，直角、厚边阴影、8-bit 配色、像素字体
+- **主题令牌体系扩展**：`AppTheme.themeFor(seed, flavor)` 支持按风味生成主题
+  - `LingxiColors.fromSeed(seed, flavor)` / `toDark()`
+  - `LingxiGradients.fromSeed(seed, colors, flavor)`，重命名 `mascotHero` → `brandGlow`
+  - 新增 `ShapeTokens`、`MotionTokens`、`BackgroundTextures`、`AppTypography` 按 `ThemeFlavor` 切换
+  - 新增 `ThemeFlavorSelector` 三选一组件（`lib/features/settings/widgets/theme_flavor_selector.dart`）
+- **旧设置迁移**：启动时自动将 `minimal_mode=true` 迁移为 `theme_flavor='minimal'`
+- **测试补全**：新增 `theme_flavor_provider_test`、`xp_progress_ring_test`、`level_node_test`、`home_page_test`
+
+### 变更
+
+- **首页 Hero 区**：移除吉祥物，改为欢迎语 + XP 进度环 + Streak 火焰徽章 + 最近成就入口
+- **学习路径页**：移除吉祥物，改为关卡节点路径（已完成/当前/锁定状态分明）
+- **AI 反馈形式**：思考态改为脉冲指示条；完成/出错改为 `CelebrationService` 粒子 + SnackBar，不再联动吉祥物
+- **引导页**：移除吉祥物与小犀彩蛋，改为大图标 + 步骤指示器
+- **更新公告弹窗**：移除吉祥物形象，改为版本图标 + 庆祝渐变横幅
+
+### 移除
+
+- 彻底删除 `lib/features/mascot/` 目录（`mascot_controller.dart`、`mascot_state.dart`、`mascot_widget.dart`、`mascot_overlay.dart`、painter、Rive 相关文件）
+- 删除 `MascotHero` / `mascotHeroFlightShuttleBuilder` 及相关 Hero 共享元素动画
+- 删除 `minimalModeProvider`，合并为 `ThemeFlavor.minimal`
+- 清理所有页面与组件中对 `MascotWidget` / `mascotControllerProvider` / `MascotOverlay` 的引用
 
 ---
 

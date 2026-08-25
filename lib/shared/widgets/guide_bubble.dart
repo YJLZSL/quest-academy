@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_elevations.dart';
+import 'package:quest_academy/core/theme/motion_tokens.dart';
+import 'package:quest_academy/core/theme/shape_tokens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 引导气泡组件。
+///
+/// 主题适配说明：
+/// - 背景色统一走 [ColorScheme.primaryContainer]，不再叠加渐变；
+/// - 圆角按风味取自 [ShapeTokens.chipRadius] / [ShapeTokens.dialogRadius]：
+///   Minimal 用 chipRadius（更紧凑方正），Standard 用 dialogRadius（更圆润），
+///   Minecraft 强制直角；
+/// - Minimal 风味下内边距更紧凑、阴影更淡，降低对用户的干扰；
+/// - 所有形状、颜色、阴影均来自主题 Token。
 ///
 /// 在用户首次进入某类知识点或页面时显示"下一步"引导气泡，
 /// 帮助自学能力较弱的用户理解学习流程。
@@ -140,22 +151,40 @@ class _GuideBubbleOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final colors = context.questColors;
+    final elevations = context.questElevations;
+    final shapeTokens = context.shapeTokens;
+    final motionTokens = context.motionTokens;
+
+    // 通过 MotionTokens 推断风味：Minimal 入场延迟为 0 且关闭粒子。
+    final isMinimal =
+        motionTokens.pageEntranceDelay == Duration.zero && !motionTokens.enableParticles;
+    final isMinecraft = motionTokens.enableParticles &&
+        motionTokens.buttonPressedScale == 0.9;
+
+    // 按风味选择圆角：Standard 用 dialogRadius 更圆润；Minimal 用 chipRadius 更紧凑；
+    // Minecraft 强制直角，配合 pixelBorder 厚边。
+    final borderRadius = isMinecraft
+        ? BorderRadius.zero
+        : BorderRadius.circular(
+            isMinimal ? shapeTokens.chipRadius : shapeTokens.dialogRadius,
+          );
+
+    // Minimal 风味更紧凑的内边距与更淡的阴影。
+    final padding = isMinimal
+        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 6)
+        : const EdgeInsets.symmetric(horizontal: 14, vertical: 10);
+    final shadow = isMinimal ? QuestElevations.level0 : elevations.subtle;
 
     return SpringMotion.springTransition(
       beginScale: 0.9,
       beginOffset: const Offset(0, -0.05),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: padding,
         decoration: BoxDecoration(
           color: colorScheme.primaryContainer,
-          borderRadius: ShapeVariants.roundedMedium.borderRadius,
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: borderRadius,
+          boxShadow: isMinecraft ? elevations.pixelBorder : shadow,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -163,7 +192,7 @@ class _GuideBubbleOverlay extends StatelessWidget {
             Icon(
               Icons.lightbulb_outline_rounded,
               size: 18,
-              color: colorScheme.onPrimaryContainer,
+              color: colors.infoTeal,
             ),
             const SizedBox(width: 8),
             Flexible(
@@ -183,13 +212,14 @@ class _GuideBubbleOverlay extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
+                  color: colors.brandPrimary.withValues(alpha: 0.15),
+                  borderRadius:
+                      BorderRadius.circular(shapeTokens.chipRadius / 2),
                 ),
                 child: Text(
                   actionLabel,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: colorScheme.primary,
+                    color: colors.brandPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

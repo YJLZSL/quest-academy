@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/page_transitions.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/features/progress/achievements_page.dart';
-import 'package:lingxi_academy/features/progress/statistics_page.dart';
-import 'package:lingxi_academy/features/chat/chat_list_page.dart';
-import 'package:lingxi_academy/features/chat/chat_page.dart';
-import 'package:lingxi_academy/features/help/help_center_page.dart';
-import 'package:lingxi_academy/features/home/home_page.dart';
-import 'package:lingxi_academy/features/learning/learning_path_page.dart';
-import 'package:lingxi_academy/features/learning/lesson_page.dart';
-import 'package:lingxi_academy/features/notes/note_editor_page.dart';
-import 'package:lingxi_academy/features/notes/notes_page.dart';
-import 'package:lingxi_academy/features/onboarding/api_setup_wizard_page.dart';
-import 'package:lingxi_academy/features/onboarding/onboarding_page.dart';
-import 'package:lingxi_academy/features/settings/api_settings_page.dart';
-import 'package:lingxi_academy/features/settings/settings_page.dart';
+import 'package:quest_academy/core/motion/page_transitions.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/features/progress/achievements_page.dart';
+import 'package:quest_academy/features/progress/statistics_page.dart';
+import 'package:quest_academy/features/chat/chat_list_page.dart';
+import 'package:quest_academy/features/chat/chat_page.dart';
+import 'package:quest_academy/features/help/help_center_page.dart';
+import 'package:quest_academy/features/home/home_page.dart';
+import 'package:quest_academy/features/learning/learning_path_page.dart';
+import 'package:quest_academy/features/learning/lesson_page.dart';
+import 'package:quest_academy/features/notes/note_editor_page.dart';
+import 'package:quest_academy/features/notes/notes_page.dart';
+import 'package:quest_academy/features/onboarding/api_setup_wizard_page.dart';
+import 'package:quest_academy/features/onboarding/onboarding_page.dart';
+import 'package:quest_academy/features/settings/api_settings_page.dart';
+import 'package:quest_academy/features/settings/settings_page.dart';
 
 /// 全局 GoRouter 提供者。
 ///
@@ -52,7 +52,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.onboardingPath,
         name: RouteNames.onboarding,
-        pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+        pageBuilder: (context, state) => QuestPageTransitions.buildPage(
           context: context,
           state: state,
           child: const OnboardingPage(),
@@ -61,7 +61,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.apiSetupPath,
         name: RouteNames.apiSetup,
-        pageBuilder: (context, state) => LingxiPageTransitions.buildModalPage(
+        pageBuilder: (context, state) => QuestPageTransitions.buildModalPage(
           context: context,
           state: state,
           child: const ApiSetupWizardPage(),
@@ -73,7 +73,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.homePath,
             name: RouteNames.home,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const HomePage(),
@@ -82,7 +82,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.learningPath,
             name: RouteNames.learning,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const LearningPathPage(),
@@ -92,7 +92,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: ':courseId/:lessonId',
                 name: RouteNames.lesson,
                 pageBuilder: (context, state) =>
-                    LingxiPageTransitions.buildSlidePage(
+                    QuestPageTransitions.buildSlidePage(
                   context: context,
                   state: state,
                   child: LessonPage(
@@ -106,7 +106,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.chatListPath,
             name: RouteNames.chatList,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const ChatListPage(),
@@ -116,7 +116,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: ':conversationId',
                 name: RouteNames.chat,
                 pageBuilder: (context, state) =>
-                    LingxiPageTransitions.buildSlidePage(
+                    QuestPageTransitions.buildSlidePage(
                   context: context,
                   state: state,
                   child: ChatPage(
@@ -130,7 +130,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.notesPath,
             name: RouteNames.notes,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const NotesPage(),
@@ -140,7 +140,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: ':noteId',
                 name: RouteNames.noteEditor,
                 pageBuilder: (context, state) =>
-                    LingxiPageTransitions.buildModalPage(
+                    QuestPageTransitions.buildModalPage(
                   context: context,
                   state: state,
                   child: NoteEditorPage(
@@ -153,7 +153,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.achievementsPath,
             name: RouteNames.achievements,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const AchievementsPage(),
@@ -162,7 +162,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.statisticsPath,
             name: RouteNames.statistics,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const StatisticsPage(),
@@ -171,7 +171,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.settingsPath,
             name: RouteNames.settings,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const SettingsPage(),
@@ -181,7 +181,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: RouteNames.settingsApiPath,
             name: RouteNames.settingsApi,
             pageBuilder: (context, state) =>
-                LingxiPageTransitions.buildModalPage(
+                QuestPageTransitions.buildModalPage(
               context: context,
               state: state,
               child: const ApiSettingsPage(),
@@ -190,7 +190,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RouteNames.helpPath,
             name: RouteNames.help,
-            pageBuilder: (context, state) => LingxiPageTransitions.buildPage(
+            pageBuilder: (context, state) => QuestPageTransitions.buildPage(
               context: context,
               state: state,
               child: const HelpCenterPage(),

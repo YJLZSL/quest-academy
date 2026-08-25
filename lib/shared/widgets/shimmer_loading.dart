@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/motion/animation_utils.dart';
+import '../../core/theme/shape_tokens.dart';
 
 /// 通用骨架屏（Shimmer）加载容器。
 ///
@@ -183,14 +184,14 @@ class _SlidingGradientTransform extends GradientTransform {
 /// 矩形卡片骨架占位。
 ///
 /// 适用于课程卡片、笔记卡片、成就卡片等矩形内容区域的加载占位。
-/// 默认 16px 圆角、160px 高度，可通过 [width]、[height]、[borderRadius] 调整。
+/// 默认使用主题 shapeTokens.cardRadius、高度 160px，可通过 [width]、[height]、[borderRadius] 调整。
 class ShimmerCard extends StatelessWidget {
   /// 创建一个矩形卡片骨架占位。
   const ShimmerCard({
     super.key,
     this.width,
     this.height,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16)),
+    this.borderRadius,
     this.baseColor,
     this.highlightColor,
     this.period = const Duration(milliseconds: 2000),
@@ -204,8 +205,8 @@ class ShimmerCard extends StatelessWidget {
   /// 卡片高度，默认 160。
   final double? height;
 
-  /// 卡片圆角，默认 16px。
-  final BorderRadiusGeometry borderRadius;
+  /// 卡片圆角；未指定时使用主题 shapeTokens.cardRadius。
+  final BorderRadiusGeometry? borderRadius;
 
   /// 骨架底色，未指定时使用主题默认色。
   final Color? baseColor;
@@ -224,6 +225,9 @@ class ShimmerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 未指定圆角时，使用主题卡片圆角 Token。
+    final effectiveRadius = borderRadius ??
+        BorderRadius.circular(context.shapeTokens.cardRadius);
     final card = ShimmerLoading(
       baseColor: baseColor,
       highlightColor: highlightColor,
@@ -234,7 +238,7 @@ class ShimmerCard extends StatelessWidget {
         height: height ?? 160,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: borderRadius,
+          borderRadius: effectiveRadius,
         ),
       ),
     );
@@ -305,7 +309,8 @@ class ShimmerListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lineRadius = BorderRadius.circular(lineHeight / 2);
+    // 文字条圆角使用主题 chipRadius Token，保持与标签/芯片风格一致。
+    final lineRadius = BorderRadius.circular(context.shapeTokens.chipRadius);
 
     return ShimmerLoading(
       baseColor: baseColor,
@@ -375,7 +380,7 @@ class ShimmerChatBubble extends StatelessWidget {
     super.key,
     this.widthFactor = 0.6,
     this.height = 48,
-    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
+    this.borderRadius,
     this.alignment = Alignment.centerLeft,
     this.baseColor,
     this.highlightColor,
@@ -390,8 +395,8 @@ class ShimmerChatBubble extends StatelessWidget {
   /// 气泡高度，默认 48（约两行文字）。
   final double height;
 
-  /// 气泡圆角，默认 20px 全圆角。
-  final BorderRadiusGeometry borderRadius;
+  /// 气泡圆角；未指定时使用主题 shapeTokens.inputRadius。
+  final BorderRadiusGeometry? borderRadius;
 
   /// 气泡在父级中的对齐方式，默认左侧对齐（对方消息）。
   /// 使用 [Alignment.centerRight] 可模拟己方消息。
@@ -414,6 +419,9 @@ class ShimmerChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 未指定圆角时，使用主题输入框圆角 Token。
+    final effectiveRadius = borderRadius ??
+        BorderRadius.circular(context.shapeTokens.inputRadius);
     final bubble = ShimmerLoading(
       baseColor: baseColor,
       highlightColor: highlightColor,
@@ -427,7 +435,7 @@ class ShimmerChatBubble extends StatelessWidget {
             height: height,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: borderRadius,
+              borderRadius: effectiveRadius,
             ),
           ),
         ),

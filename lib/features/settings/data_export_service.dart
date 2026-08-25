@@ -100,7 +100,7 @@ class ImportResult {
 class DataExportService {
   DataExportService(this._db, this._providerRepo, this._prefs);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
   final ProviderConfigRepository _providerRepo;
   final SharedPreferences _prefs;
 
@@ -236,7 +236,7 @@ class DataExportService {
 
   /// 导出全部数据并写入应用文档目录的 JSON 文件，返回文件绝对路径。
   ///
-  /// 文件名格式：`lingxi_export_YYYYMMDD_HHmmss.json`。
+  /// 文件名格式：`quest_export_YYYYMMDD_HHmmss.json`。
   Future<String> exportToFile() async {
     final json = await exportAll();
     final dir = await getApplicationDocumentsDirectory();
@@ -248,7 +248,7 @@ class DataExportService {
         '${now.hour.toString().padLeft(2, '0')}'
         '${now.minute.toString().padLeft(2, '0')}'
         '${now.second.toString().padLeft(2, '0')}';
-    final file = File('${dir.path}/lingxi_export_$stamp.json');
+    final file = File('${dir.path}/quest_export_$stamp.json');
     await file.writeAsString(json);
     return file.path;
   }
@@ -262,7 +262,7 @@ class DataExportService {
 class DataImportService {
   DataImportService(this._db, this._providerRepo, this._prefs);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
   final ProviderConfigRepository _providerRepo;
   final SharedPreferences _prefs;
 

@@ -2,7 +2,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

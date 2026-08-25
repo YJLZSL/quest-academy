@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/app.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/app.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 应用入口。
@@ -16,7 +16,7 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
       ],
-      child: const LingxiApp(),
+      child: const QuestApp(),
     ),
   );
 }

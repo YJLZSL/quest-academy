@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// 笔记仓库：封装 [Notes] 表的查询、插入、更新、删除操作。
 class NoteRepository {
   NoteRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
 
   /// 获取所有笔记，按更新时间倒序。
   ///

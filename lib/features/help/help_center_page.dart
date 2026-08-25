@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
-import 'package:lingxi_academy/shared/widgets/markdown_renderer.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/markdown_renderer.dart';
 
 /// 帮助分类数据。
 class _HelpCategory {
@@ -204,7 +204,7 @@ class HelpCenterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('帮助中心')),
+      appBar: const QuestAppBar(title: Text('帮助中心')),
       body: Stack(
         children: [
           // 分类列表
@@ -256,7 +256,7 @@ class HelpCenterPage extends StatelessWidget {
           content: const Text(
             '感谢你的反馈！\n\n你可以通过以下方式联系我们：\n\n'
             '• GitHub Issues：提交 Bug 或功能建议\n'
-            '• 邮箱：lingxi-academy@example.com\n\n'
+            '• 邮箱：quest-academy@example.com\n\n'
             '我们会认真阅读每一条反馈。',
           ),
           actions: [
@@ -281,7 +281,7 @@ class HelpCenterPage extends StatelessWidget {
 
 /// 单个帮助分类卡片（可展开/收起）。
 ///
-/// 使用 LingxiCard 包裹，展开/收起通过 AnimatedSize 平滑过渡，
+/// 使用 QuestCard 包裹，展开/收起通过 AnimatedSize 平滑过渡，
 /// 展开箭头通过 AnimatedRotation 旋转。
 class _HelpCategoryCard extends StatefulWidget {
   const _HelpCategoryCard({
@@ -364,7 +364,7 @@ class _HelpCategoryCardState extends State<_HelpCategoryCard> {
       ),
     );
 
-    return LingxiCard(
+    return QuestCard(
       padding: EdgeInsets.zero,
       animateEntrance: !widget.reduceMotion,
       entranceDelay: Duration(milliseconds: 40 * widget.index),

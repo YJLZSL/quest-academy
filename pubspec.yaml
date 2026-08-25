@@ -1,8 +1,8 @@
-name: lingxi_academy
-description: 灵犀学院 - 引导式 AI 学习应用
+name: quest_academy
+description: 问学 Quest Academy - 引导式 AI 学习应用
 publish_to: 'none'
 
-version: 0.4.0+1
+version: 0.6.0+1
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -40,9 +40,6 @@ dependencies:
   open_filex: ^4.7.0
   archive: ^3.6.1
 
-  # 动画与图形
-  rive: ^0.13.13
-
   # 内容渲染
   flutter_markdown: ^0.7.2+1
   flutter_math_fork: ^0.7.2
@@ -73,7 +70,6 @@ flutter:
   assets:
     - assets/images/
     - assets/courses/
-    - assets/rive/
     - assets/prompts/
 
 flutter_launcher_icons:
@@ -83,17 +79,17 @@ flutter_launcher_icons:
   min_sdk_android: 24
 
 flutter_native_splash:
-  color: "#6750A4"
+  color: "#3D5AFE"
   image: assets/images/splash_logo.png
   android_12:
     image: assets/images/splash_logo.png
-    color: "#6750A4"
+    color: "#3D5AFE"
 
 msix_config:
-  display_name: 灵犀学院
-  publisher_display_name: Lingxi Academy
-  identity_name: com.lingxiacademy.lingxiacademy
-  msix_version: 0.3.0.0
+  display_name: 问学
+  publisher_display_name: Quest Academy
+  identity_name: com.questacademy.quest_academy
+  msix_version: 0.6.0.0
   logo_path: assets/images/app_icon.png
   capabilities: internetClient
   architecture: x64

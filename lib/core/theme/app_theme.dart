@@ -2,56 +2,83 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'lingxi_colors.dart';
-import 'lingxi_elevations.dart';
-import 'lingxi_gradients.dart';
+import 'app_typography.dart';
+import 'background_textures.dart';
+import 'quest_colors.dart';
+import 'quest_elevations.dart';
+import 'quest_gradients.dart';
+import 'motion_tokens.dart';
+import 'shape_tokens.dart';
 import 'shape_variants.dart';
+import 'theme_flavor_provider.dart';
 
-/// 灵犀学院 Material 3 Expressive 主题
+/// 问学 Material 3 Expressive 主题。
 ///
-/// 以紫色调种子色生成动态配色，结合 Noto Sans SC（正文中文优先）与
-/// Quicksand（标题圆润字体）字体，并注册 [LingxiColors] 自定义颜色扩展、
-/// [LingxiGradients] 渐变扩展、[LingxiElevations] 语义阴影扩展。
+/// 支持三种主题风味（standard / minimal / minecraft）与可配置种子色。
+/// 注册 [QuestColors]、[QuestGradients]、[QuestElevations]、
+/// [AppTypography]、[BackgroundTextures]、[ShapeTokens]、[MotionTokens]
+/// 等 ThemeExtension。
 class AppTheme {
   const AppTheme._();
 
-  /// 主题种子色 - 紫色调，契合"灵犀"意境（Material 3 默认种子色）
+  /// 默认主题种子色 - 紫色调（怀旧星空紫）。
   static const Color seedColor = Color(0xFF6750A4);
 
-  /// 暗色模式 OLED trueBlack 背景
-  ///
-  /// 在 OLED 屏幕上使用纯黑（0xFF000000）作为 scaffold 背景可关闭像素发光，
-  /// 提升对比度并降低功耗。配合 Material 3 自动生成的 surface（#141218 系列）
-  /// 形成"纯黑底 + 深紫灰卡片"的视觉层级。
+  /// 暗色模式 OLED trueBlack 背景。
   static const Color darkTrueBlack = Color(0xFF000000);
 
-  /// 亮色主题
-  static ThemeData get lightTheme => _buildTheme(Brightness.light);
+  /// 亮色主题（默认种子色、standard 风味）。
+  static ThemeData get lightTheme => themeFor(
+        Brightness.light,
+        seed: seedColor,
+        flavor: ThemeFlavor.standard,
+      );
 
-  /// 暗色主题
-  static ThemeData get darkTheme => _buildTheme(Brightness.dark);
+  /// 暗色主题（默认种子色、standard 风味）。
+  static ThemeData get darkTheme => themeFor(
+        Brightness.dark,
+        seed: seedColor,
+        flavor: ThemeFlavor.standard,
+      );
 
-  static ThemeData _buildTheme(Brightness brightness) {
+  /// 根据亮度、种子色与主题风味生成主题。
+  static ThemeData themeFor(
+    Brightness brightness, {
+    required Color seed,
+    required ThemeFlavor flavor,
+  }) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
+      seedColor: seed,
       brightness: brightness,
     );
 
-    final baseTextTheme = GoogleFonts.notoSansScTextTheme(
-      ThemeData(brightness: brightness, useMaterial3: true).textTheme,
+    final isMinimal = flavor == ThemeFlavor.minimal;
+    final isMinecraft = flavor == ThemeFlavor.minecraft;
+
+    final textTheme = buildTextTheme(brightness: brightness, flavor: flavor);
+
+    final shapeTokens = ShapeTokens.forFlavor(flavor);
+    final motionTokens = MotionTokens.forFlavor(flavor);
+    final questColors = QuestColors.fromSeed(seed, flavor);
+    final questColorsResolved =
+        brightness == Brightness.dark ? questColors.toDark() : questColors;
+    final questGradients = QuestGradients.fromSeed(
+      seed,
+      questColorsResolved,
+      flavor,
     );
-    final textTheme = _applyQuicksandTitles(baseTextTheme);
+    final questGradientsResolved =
+        brightness == Brightness.dark ? questGradients.toDark() : questGradients;
+    final questElevations = QuestElevations.fromSeed(seed, brightness, flavor);
+    final typography = AppTypography.forFlavor(flavor);
+    final textures = BackgroundTextures.forFlavor(flavor, brightness);
 
-    final cardRadius = ShapeVariants.roundedLarge.borderRadius;
-    final buttonRadius = ShapeVariants.roundedLarge.borderRadius;
-    final chipRadius = ShapeVariants.roundedMedium.borderRadius;
-    final inputRadius = ShapeVariants.roundedLarge.borderRadius;
-    final dialogRadius = ShapeVariants.roundedExtraLarge.borderRadius;
-
-    // 暗色模式使用 OLED trueBlack 作为 scaffold 背景，提升对比度与降低功耗；
-    // colorScheme.surface 等仍由 Material 3 自动生成，保持卡片与背景的层级关系。
     final scaffoldColor = brightness == Brightness.dark
         ? darkTrueBlack
+        : colorScheme.surface;
+
+    final appBarBackground = isMinecraft
+        ? const Color(0xFF5D8C22)
         : colorScheme.surface;
 
     return ThemeData(
@@ -60,33 +87,37 @@ class AppTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor: scaffoldColor,
       appBarTheme: AppBarThemeData(
-        centerTitle: true,
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        centerTitle: !isMinimal,
+        backgroundColor: appBarBackground,
+        foregroundColor: isMinecraft ? Colors.white : colorScheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        titleTextStyle: GoogleFonts.quicksand(
-          textStyle: textTheme.titleLarge,
-        ),
+        titleTextStyle: textTheme.titleLarge,
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         color: colorScheme.surfaceContainerLow,
         surfaceTintColor: colorScheme.surfaceTint.withValues(alpha: 0.03),
-        shape: RoundedRectangleBorder(borderRadius: cardRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.cardRadius),
+        ),
       ),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(borderRadius: chipRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.chipRadius),
+        ),
         side: BorderSide.none,
       ),
       inputDecorationTheme: InputDecorationThemeData(
-        border: OutlineInputBorder(borderRadius: inputRadius),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.inputRadius),
+        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: BorderRadius.circular(shapeTokens.inputRadius),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: BorderRadius.circular(shapeTokens.inputRadius),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
@@ -104,17 +135,25 @@ class AppTheme {
         backgroundColor: colorScheme.surface,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        shape: RoundedRectangleBorder(borderRadius: buttonRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.buttonRadius),
+        ),
       ),
       dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(borderRadius: dialogRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.dialogRadius),
+        ),
       ),
       snackBarTheme: SnackBarThemeData(
-        shape: RoundedRectangleBorder(borderRadius: chipRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.chipRadius),
+        ),
         behavior: SnackBarBehavior.floating,
       ),
       buttonTheme: ButtonThemeData(
-        shape: RoundedRectangleBorder(borderRadius: buttonRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(shapeTokens.buttonRadius),
+        ),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
@@ -125,29 +164,14 @@ class AppTheme {
         },
       ),
       extensions: <ThemeExtension<dynamic>>[
-        brightness == Brightness.dark ? LingxiColors.dark : LingxiColors.light,
-        brightness == Brightness.dark
-            ? LingxiGradients.dark
-            : LingxiGradients.light,
-        brightness == Brightness.dark
-            ? LingxiElevations.dark
-            : LingxiElevations.light,
+        questColorsResolved,
+        questGradientsResolved,
+        questElevations,
+        typography,
+        textures,
+        shapeTokens,
+        motionTokens,
       ],
-    );
-  }
-
-  /// 在正文（Noto Sans SC）基础上，将标题相关样式覆盖为 Quicksand 圆润字体
-  static TextTheme _applyQuicksandTitles(TextTheme base) {
-    return base.copyWith(
-      displayLarge: GoogleFonts.quicksand(textStyle: base.displayLarge),
-      displayMedium: GoogleFonts.quicksand(textStyle: base.displayMedium),
-      displaySmall: GoogleFonts.quicksand(textStyle: base.displaySmall),
-      headlineLarge: GoogleFonts.quicksand(textStyle: base.headlineLarge),
-      headlineMedium: GoogleFonts.quicksand(textStyle: base.headlineMedium),
-      headlineSmall: GoogleFonts.quicksand(textStyle: base.headlineSmall),
-      titleLarge: GoogleFonts.quicksand(textStyle: base.titleLarge),
-      titleMedium: GoogleFonts.quicksand(textStyle: base.titleMedium),
-      titleSmall: GoogleFonts.quicksand(textStyle: base.titleSmall),
     );
   }
 }

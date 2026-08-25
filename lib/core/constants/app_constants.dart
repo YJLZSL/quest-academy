@@ -1,11 +1,11 @@
 /// 应用级常量定义
-const String kAppName = '灵犀学院';
-const String kAppVersion = '0.4.0';
+const String kAppName = '问学';
+const String kAppVersion = '0.6.0';
 
 /// GitHub 仓库信息（用于自动更新与"关于"页展示）
 const String kRepoOwner = 'YJLZSL';
-const String kRepoName = 'polaris-learn';
-const String kRepoUrl = 'https://github.com/YJLZSL/polaris-learn';
+const String kRepoName = 'quest-academy';
+const String kRepoUrl = 'https://github.com/YJLZSL/quest-academy';
 const String kGitHubApiBase = 'https://api.github.com';
 
 /// 自动更新检查间隔（小时），启动后静默检查的节流窗口

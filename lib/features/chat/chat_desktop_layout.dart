@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 桌面端对话双栏布局。
 ///
@@ -53,7 +53,7 @@ class _ChatDesktopLayoutState extends ConsumerState<ChatDesktopLayout> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('对话')),
+      appBar: const QuestAppBar(title: Text('对话')),
       body: Row(
         children: [
           // 左栏：对话列表
@@ -181,7 +181,7 @@ class _ConversationTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: LingxiCard(
+      child: QuestCard(
         color: isSelected ? colorScheme.primaryContainer : null,
         onTap: () {
           AnimationUtils.hapticLight();

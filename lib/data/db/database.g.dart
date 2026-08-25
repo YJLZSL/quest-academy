@@ -3295,9 +3295,9 @@ class StreaksCompanion extends UpdateCompanion<Streak> {
   }
 }
 
-abstract class _$LingxiDatabase extends GeneratedDatabase {
-  _$LingxiDatabase(QueryExecutor e) : super(e);
-  $LingxiDatabaseManager get managers => $LingxiDatabaseManager(this);
+abstract class _$QuestDatabase extends GeneratedDatabase {
+  _$QuestDatabase(QueryExecutor e) : super(e);
+  $QuestDatabaseManager get managers => $QuestDatabaseManager(this);
   late final $ConversationsTable conversations = $ConversationsTable(this);
   late final $MessagesTable messages = $MessagesTable(this);
   late final $NotesTable notes = $NotesTable(this);
@@ -3344,7 +3344,7 @@ typedef $$ConversationsTableUpdateCompanionBuilder =
     });
 
 class $$ConversationsTableFilterComposer
-    extends Composer<_$LingxiDatabase, $ConversationsTable> {
+    extends Composer<_$QuestDatabase, $ConversationsTable> {
   $$ConversationsTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3384,7 +3384,7 @@ class $$ConversationsTableFilterComposer
 }
 
 class $$ConversationsTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $ConversationsTable> {
+    extends Composer<_$QuestDatabase, $ConversationsTable> {
   $$ConversationsTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3424,7 +3424,7 @@ class $$ConversationsTableOrderingComposer
 }
 
 class $$ConversationsTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $ConversationsTable> {
+    extends Composer<_$QuestDatabase, $ConversationsTable> {
   $$ConversationsTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3454,7 +3454,7 @@ class $$ConversationsTableAnnotationComposer
 class $$ConversationsTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $ConversationsTable,
           Conversation,
           $$ConversationsTableFilterComposer,
@@ -3464,13 +3464,13 @@ class $$ConversationsTableTableManager
           $$ConversationsTableUpdateCompanionBuilder,
           (
             Conversation,
-            BaseReferences<_$LingxiDatabase, $ConversationsTable, Conversation>,
+            BaseReferences<_$QuestDatabase, $ConversationsTable, Conversation>,
           ),
           Conversation,
           PrefetchHooks Function()
         > {
   $$ConversationsTableTableManager(
-    _$LingxiDatabase db,
+    _$QuestDatabase db,
     $ConversationsTable table,
   ) : super(
         TableManagerState(
@@ -3528,7 +3528,7 @@ class $$ConversationsTableTableManager
 
 typedef $$ConversationsTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $ConversationsTable,
       Conversation,
       $$ConversationsTableFilterComposer,
@@ -3538,7 +3538,7 @@ typedef $$ConversationsTableProcessedTableManager =
       $$ConversationsTableUpdateCompanionBuilder,
       (
         Conversation,
-        BaseReferences<_$LingxiDatabase, $ConversationsTable, Conversation>,
+        BaseReferences<_$QuestDatabase, $ConversationsTable, Conversation>,
       ),
       Conversation,
       PrefetchHooks Function()
@@ -3565,7 +3565,7 @@ typedef $$MessagesTableUpdateCompanionBuilder =
     });
 
 class $$MessagesTableFilterComposer
-    extends Composer<_$LingxiDatabase, $MessagesTable> {
+    extends Composer<_$QuestDatabase, $MessagesTable> {
   $$MessagesTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3605,7 +3605,7 @@ class $$MessagesTableFilterComposer
 }
 
 class $$MessagesTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $MessagesTable> {
+    extends Composer<_$QuestDatabase, $MessagesTable> {
   $$MessagesTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3645,7 +3645,7 @@ class $$MessagesTableOrderingComposer
 }
 
 class $$MessagesTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $MessagesTable> {
+    extends Composer<_$QuestDatabase, $MessagesTable> {
   $$MessagesTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3677,7 +3677,7 @@ class $$MessagesTableAnnotationComposer
 class $$MessagesTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $MessagesTable,
           Message,
           $$MessagesTableFilterComposer,
@@ -3685,11 +3685,11 @@ class $$MessagesTableTableManager
           $$MessagesTableAnnotationComposer,
           $$MessagesTableCreateCompanionBuilder,
           $$MessagesTableUpdateCompanionBuilder,
-          (Message, BaseReferences<_$LingxiDatabase, $MessagesTable, Message>),
+          (Message, BaseReferences<_$QuestDatabase, $MessagesTable, Message>),
           Message,
           PrefetchHooks Function()
         > {
-  $$MessagesTableTableManager(_$LingxiDatabase db, $MessagesTable table)
+  $$MessagesTableTableManager(_$QuestDatabase db, $MessagesTable table)
     : super(
         TableManagerState(
           db: db,
@@ -3746,7 +3746,7 @@ class $$MessagesTableTableManager
 
 typedef $$MessagesTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $MessagesTable,
       Message,
       $$MessagesTableFilterComposer,
@@ -3754,7 +3754,7 @@ typedef $$MessagesTableProcessedTableManager =
       $$MessagesTableAnnotationComposer,
       $$MessagesTableCreateCompanionBuilder,
       $$MessagesTableUpdateCompanionBuilder,
-      (Message, BaseReferences<_$LingxiDatabase, $MessagesTable, Message>),
+      (Message, BaseReferences<_$QuestDatabase, $MessagesTable, Message>),
       Message,
       PrefetchHooks Function()
     >;
@@ -3786,7 +3786,7 @@ typedef $$NotesTableUpdateCompanionBuilder =
     });
 
 class $$NotesTableFilterComposer
-    extends Composer<_$LingxiDatabase, $NotesTable> {
+    extends Composer<_$QuestDatabase, $NotesTable> {
   $$NotesTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3841,7 +3841,7 @@ class $$NotesTableFilterComposer
 }
 
 class $$NotesTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $NotesTable> {
+    extends Composer<_$QuestDatabase, $NotesTable> {
   $$NotesTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3896,7 +3896,7 @@ class $$NotesTableOrderingComposer
 }
 
 class $$NotesTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $NotesTable> {
+    extends Composer<_$QuestDatabase, $NotesTable> {
   $$NotesTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3937,7 +3937,7 @@ class $$NotesTableAnnotationComposer
 class $$NotesTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $NotesTable,
           Note,
           $$NotesTableFilterComposer,
@@ -3945,11 +3945,11 @@ class $$NotesTableTableManager
           $$NotesTableAnnotationComposer,
           $$NotesTableCreateCompanionBuilder,
           $$NotesTableUpdateCompanionBuilder,
-          (Note, BaseReferences<_$LingxiDatabase, $NotesTable, Note>),
+          (Note, BaseReferences<_$QuestDatabase, $NotesTable, Note>),
           Note,
           PrefetchHooks Function()
         > {
-  $$NotesTableTableManager(_$LingxiDatabase db, $NotesTable table)
+  $$NotesTableTableManager(_$QuestDatabase db, $NotesTable table)
     : super(
         TableManagerState(
           db: db,
@@ -4018,7 +4018,7 @@ class $$NotesTableTableManager
 
 typedef $$NotesTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $NotesTable,
       Note,
       $$NotesTableFilterComposer,
@@ -4026,7 +4026,7 @@ typedef $$NotesTableProcessedTableManager =
       $$NotesTableAnnotationComposer,
       $$NotesTableCreateCompanionBuilder,
       $$NotesTableUpdateCompanionBuilder,
-      (Note, BaseReferences<_$LingxiDatabase, $NotesTable, Note>),
+      (Note, BaseReferences<_$QuestDatabase, $NotesTable, Note>),
       Note,
       PrefetchHooks Function()
     >;
@@ -4056,7 +4056,7 @@ typedef $$ProgressTableUpdateCompanionBuilder =
     });
 
 class $$ProgressTableFilterComposer
-    extends Composer<_$LingxiDatabase, $ProgressTable> {
+    extends Composer<_$QuestDatabase, $ProgressTable> {
   $$ProgressTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -4106,7 +4106,7 @@ class $$ProgressTableFilterComposer
 }
 
 class $$ProgressTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $ProgressTable> {
+    extends Composer<_$QuestDatabase, $ProgressTable> {
   $$ProgressTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -4156,7 +4156,7 @@ class $$ProgressTableOrderingComposer
 }
 
 class $$ProgressTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $ProgressTable> {
+    extends Composer<_$QuestDatabase, $ProgressTable> {
   $$ProgressTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4198,7 +4198,7 @@ class $$ProgressTableAnnotationComposer
 class $$ProgressTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $ProgressTable,
           ProgressData,
           $$ProgressTableFilterComposer,
@@ -4208,12 +4208,12 @@ class $$ProgressTableTableManager
           $$ProgressTableUpdateCompanionBuilder,
           (
             ProgressData,
-            BaseReferences<_$LingxiDatabase, $ProgressTable, ProgressData>,
+            BaseReferences<_$QuestDatabase, $ProgressTable, ProgressData>,
           ),
           ProgressData,
           PrefetchHooks Function()
         > {
-  $$ProgressTableTableManager(_$LingxiDatabase db, $ProgressTable table)
+  $$ProgressTableTableManager(_$QuestDatabase db, $ProgressTable table)
     : super(
         TableManagerState(
           db: db,
@@ -4278,7 +4278,7 @@ class $$ProgressTableTableManager
 
 typedef $$ProgressTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $ProgressTable,
       ProgressData,
       $$ProgressTableFilterComposer,
@@ -4288,7 +4288,7 @@ typedef $$ProgressTableProcessedTableManager =
       $$ProgressTableUpdateCompanionBuilder,
       (
         ProgressData,
-        BaseReferences<_$LingxiDatabase, $ProgressTable, ProgressData>,
+        BaseReferences<_$QuestDatabase, $ProgressTable, ProgressData>,
       ),
       ProgressData,
       PrefetchHooks Function()
@@ -4317,7 +4317,7 @@ typedef $$ApiKeysTableUpdateCompanionBuilder =
     });
 
 class $$ApiKeysTableFilterComposer
-    extends Composer<_$LingxiDatabase, $ApiKeysTable> {
+    extends Composer<_$QuestDatabase, $ApiKeysTable> {
   $$ApiKeysTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -4362,7 +4362,7 @@ class $$ApiKeysTableFilterComposer
 }
 
 class $$ApiKeysTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $ApiKeysTable> {
+    extends Composer<_$QuestDatabase, $ApiKeysTable> {
   $$ApiKeysTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -4407,7 +4407,7 @@ class $$ApiKeysTableOrderingComposer
 }
 
 class $$ApiKeysTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $ApiKeysTable> {
+    extends Composer<_$QuestDatabase, $ApiKeysTable> {
   $$ApiKeysTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4444,7 +4444,7 @@ class $$ApiKeysTableAnnotationComposer
 class $$ApiKeysTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $ApiKeysTable,
           ApiKey,
           $$ApiKeysTableFilterComposer,
@@ -4452,11 +4452,11 @@ class $$ApiKeysTableTableManager
           $$ApiKeysTableAnnotationComposer,
           $$ApiKeysTableCreateCompanionBuilder,
           $$ApiKeysTableUpdateCompanionBuilder,
-          (ApiKey, BaseReferences<_$LingxiDatabase, $ApiKeysTable, ApiKey>),
+          (ApiKey, BaseReferences<_$QuestDatabase, $ApiKeysTable, ApiKey>),
           ApiKey,
           PrefetchHooks Function()
         > {
-  $$ApiKeysTableTableManager(_$LingxiDatabase db, $ApiKeysTable table)
+  $$ApiKeysTableTableManager(_$QuestDatabase db, $ApiKeysTable table)
     : super(
         TableManagerState(
           db: db,
@@ -4517,7 +4517,7 @@ class $$ApiKeysTableTableManager
 
 typedef $$ApiKeysTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $ApiKeysTable,
       ApiKey,
       $$ApiKeysTableFilterComposer,
@@ -4525,7 +4525,7 @@ typedef $$ApiKeysTableProcessedTableManager =
       $$ApiKeysTableAnnotationComposer,
       $$ApiKeysTableCreateCompanionBuilder,
       $$ApiKeysTableUpdateCompanionBuilder,
-      (ApiKey, BaseReferences<_$LingxiDatabase, $ApiKeysTable, ApiKey>),
+      (ApiKey, BaseReferences<_$QuestDatabase, $ApiKeysTable, ApiKey>),
       ApiKey,
       PrefetchHooks Function()
     >;
@@ -4545,7 +4545,7 @@ typedef $$SettingsTableUpdateCompanionBuilder =
     });
 
 class $$SettingsTableFilterComposer
-    extends Composer<_$LingxiDatabase, $SettingsTable> {
+    extends Composer<_$QuestDatabase, $SettingsTable> {
   $$SettingsTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -4570,7 +4570,7 @@ class $$SettingsTableFilterComposer
 }
 
 class $$SettingsTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $SettingsTable> {
+    extends Composer<_$QuestDatabase, $SettingsTable> {
   $$SettingsTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -4595,7 +4595,7 @@ class $$SettingsTableOrderingComposer
 }
 
 class $$SettingsTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $SettingsTable> {
+    extends Composer<_$QuestDatabase, $SettingsTable> {
   $$SettingsTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4616,7 +4616,7 @@ class $$SettingsTableAnnotationComposer
 class $$SettingsTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $SettingsTable,
           Setting,
           $$SettingsTableFilterComposer,
@@ -4624,11 +4624,11 @@ class $$SettingsTableTableManager
           $$SettingsTableAnnotationComposer,
           $$SettingsTableCreateCompanionBuilder,
           $$SettingsTableUpdateCompanionBuilder,
-          (Setting, BaseReferences<_$LingxiDatabase, $SettingsTable, Setting>),
+          (Setting, BaseReferences<_$QuestDatabase, $SettingsTable, Setting>),
           Setting,
           PrefetchHooks Function()
         > {
-  $$SettingsTableTableManager(_$LingxiDatabase db, $SettingsTable table)
+  $$SettingsTableTableManager(_$QuestDatabase db, $SettingsTable table)
     : super(
         TableManagerState(
           db: db,
@@ -4673,7 +4673,7 @@ class $$SettingsTableTableManager
 
 typedef $$SettingsTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $SettingsTable,
       Setting,
       $$SettingsTableFilterComposer,
@@ -4681,7 +4681,7 @@ typedef $$SettingsTableProcessedTableManager =
       $$SettingsTableAnnotationComposer,
       $$SettingsTableCreateCompanionBuilder,
       $$SettingsTableUpdateCompanionBuilder,
-      (Setting, BaseReferences<_$LingxiDatabase, $SettingsTable, Setting>),
+      (Setting, BaseReferences<_$QuestDatabase, $SettingsTable, Setting>),
       Setting,
       PrefetchHooks Function()
     >;
@@ -4707,7 +4707,7 @@ typedef $$AchievementsTableUpdateCompanionBuilder =
     });
 
 class $$AchievementsTableFilterComposer
-    extends Composer<_$LingxiDatabase, $AchievementsTable> {
+    extends Composer<_$QuestDatabase, $AchievementsTable> {
   $$AchievementsTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -4747,7 +4747,7 @@ class $$AchievementsTableFilterComposer
 }
 
 class $$AchievementsTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $AchievementsTable> {
+    extends Composer<_$QuestDatabase, $AchievementsTable> {
   $$AchievementsTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -4787,7 +4787,7 @@ class $$AchievementsTableOrderingComposer
 }
 
 class $$AchievementsTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $AchievementsTable> {
+    extends Composer<_$QuestDatabase, $AchievementsTable> {
   $$AchievementsTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4821,7 +4821,7 @@ class $$AchievementsTableAnnotationComposer
 class $$AchievementsTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $AchievementsTable,
           Achievement,
           $$AchievementsTableFilterComposer,
@@ -4831,12 +4831,12 @@ class $$AchievementsTableTableManager
           $$AchievementsTableUpdateCompanionBuilder,
           (
             Achievement,
-            BaseReferences<_$LingxiDatabase, $AchievementsTable, Achievement>,
+            BaseReferences<_$QuestDatabase, $AchievementsTable, Achievement>,
           ),
           Achievement,
           PrefetchHooks Function()
         > {
-  $$AchievementsTableTableManager(_$LingxiDatabase db, $AchievementsTable table)
+  $$AchievementsTableTableManager(_$QuestDatabase db, $AchievementsTable table)
     : super(
         TableManagerState(
           db: db,
@@ -4893,7 +4893,7 @@ class $$AchievementsTableTableManager
 
 typedef $$AchievementsTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $AchievementsTable,
       Achievement,
       $$AchievementsTableFilterComposer,
@@ -4903,7 +4903,7 @@ typedef $$AchievementsTableProcessedTableManager =
       $$AchievementsTableUpdateCompanionBuilder,
       (
         Achievement,
-        BaseReferences<_$LingxiDatabase, $AchievementsTable, Achievement>,
+        BaseReferences<_$QuestDatabase, $AchievementsTable, Achievement>,
       ),
       Achievement,
       PrefetchHooks Function()
@@ -4922,7 +4922,7 @@ typedef $$StreaksTableUpdateCompanionBuilder =
     });
 
 class $$StreaksTableFilterComposer
-    extends Composer<_$LingxiDatabase, $StreaksTable> {
+    extends Composer<_$QuestDatabase, $StreaksTable> {
   $$StreaksTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -4947,7 +4947,7 @@ class $$StreaksTableFilterComposer
 }
 
 class $$StreaksTableOrderingComposer
-    extends Composer<_$LingxiDatabase, $StreaksTable> {
+    extends Composer<_$QuestDatabase, $StreaksTable> {
   $$StreaksTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -4972,7 +4972,7 @@ class $$StreaksTableOrderingComposer
 }
 
 class $$StreaksTableAnnotationComposer
-    extends Composer<_$LingxiDatabase, $StreaksTable> {
+    extends Composer<_$QuestDatabase, $StreaksTable> {
   $$StreaksTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4995,7 +4995,7 @@ class $$StreaksTableAnnotationComposer
 class $$StreaksTableTableManager
     extends
         RootTableManager<
-          _$LingxiDatabase,
+          _$QuestDatabase,
           $StreaksTable,
           Streak,
           $$StreaksTableFilterComposer,
@@ -5003,11 +5003,11 @@ class $$StreaksTableTableManager
           $$StreaksTableAnnotationComposer,
           $$StreaksTableCreateCompanionBuilder,
           $$StreaksTableUpdateCompanionBuilder,
-          (Streak, BaseReferences<_$LingxiDatabase, $StreaksTable, Streak>),
+          (Streak, BaseReferences<_$QuestDatabase, $StreaksTable, Streak>),
           Streak,
           PrefetchHooks Function()
         > {
-  $$StreaksTableTableManager(_$LingxiDatabase db, $StreaksTable table)
+  $$StreaksTableTableManager(_$QuestDatabase db, $StreaksTable table)
     : super(
         TableManagerState(
           db: db,
@@ -5048,7 +5048,7 @@ class $$StreaksTableTableManager
 
 typedef $$StreaksTableProcessedTableManager =
     ProcessedTableManager<
-      _$LingxiDatabase,
+      _$QuestDatabase,
       $StreaksTable,
       Streak,
       $$StreaksTableFilterComposer,
@@ -5056,14 +5056,14 @@ typedef $$StreaksTableProcessedTableManager =
       $$StreaksTableAnnotationComposer,
       $$StreaksTableCreateCompanionBuilder,
       $$StreaksTableUpdateCompanionBuilder,
-      (Streak, BaseReferences<_$LingxiDatabase, $StreaksTable, Streak>),
+      (Streak, BaseReferences<_$QuestDatabase, $StreaksTable, Streak>),
       Streak,
       PrefetchHooks Function()
     >;
 
-class $LingxiDatabaseManager {
-  final _$LingxiDatabase _db;
-  $LingxiDatabaseManager(this._db);
+class $QuestDatabaseManager {
+  final _$QuestDatabase _db;
+  $QuestDatabaseManager(this._db);
   $$ConversationsTableTableManager get conversations =>
       $$ConversationsTableTableManager(_db, _db.conversations);
   $$MessagesTableTableManager get messages =>

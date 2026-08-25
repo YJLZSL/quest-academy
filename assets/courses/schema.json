@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Lingxi Academy Course",
-  "description": "灵犀学院课程内容 JSON Schema，用于社区共建时校验课程文件结构。",
+  "title": "Quest Academy Course",
+  "description": "问学课程内容 JSON Schema，用于社区共建时校验课程文件结构。",
   "type": "object",
   "required": ["id", "title", "level", "modules"],
   "properties": {

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.lingxiacademy" "\0"
-            VALUE "FileDescription", "lingxi_academy" "\0"
+            VALUE "CompanyName", "com.questacademy" "\0"
+            VALUE "FileDescription", "问学" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "lingxi_academy" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.lingxiacademy. All rights reserved." "\0"
-            VALUE "OriginalFilename", "lingxi_academy.exe" "\0"
-            VALUE "ProductName", "lingxi_academy" "\0"
+            VALUE "InternalName", "问学" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.questacademy. All rights reserved." "\0"
+            VALUE "OriginalFilename", "quest_academy.exe" "\0"
+            VALUE "ProductName", "问学" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

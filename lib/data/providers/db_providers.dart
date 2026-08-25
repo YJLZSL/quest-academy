@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/repositories/achievement_repository.dart';
-import 'package:lingxi_academy/data/repositories/conversation_repository.dart';
-import 'package:lingxi_academy/data/repositories/learner_profile_repository.dart';
-import 'package:lingxi_academy/data/repositories/learning_event_repository.dart';
-import 'package:lingxi_academy/data/repositories/message_repository.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/repositories/achievement_repository.dart';
+import 'package:quest_academy/data/repositories/conversation_repository.dart';
+import 'package:quest_academy/data/repositories/learner_profile_repository.dart';
+import 'package:quest_academy/data/repositories/learning_event_repository.dart';
+import 'package:quest_academy/data/repositories/message_repository.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
 
 /// 数据库单例 Provider。
 ///
-/// 应用启动时通过 [LingxiDatabase.open] 创建跨端连接，全局共享同一实例。
+/// 应用启动时通过 [QuestDatabase.open] 创建跨端连接，全局共享同一实例。
 /// 测试时可通过 `overrideWith` 注入内存数据库。
-final databaseProvider = Provider<LingxiDatabase>((ref) {
-  final db = LingxiDatabase.open();
+final databaseProvider = Provider<QuestDatabase>((ref) {
+  final db = QuestDatabase.open();
   ref.onDispose(db.close);
   return db;
 });

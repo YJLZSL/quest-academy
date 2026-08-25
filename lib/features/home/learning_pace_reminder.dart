@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/features/progress/streak_service.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/features/progress/streak_service.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 学习节奏提醒 Widget。
 ///
@@ -25,7 +25,7 @@ class LearningPaceReminder extends ConsumerWidget {
         if (!snapshot.hasData) return const SizedBox.shrink();
         final info = snapshot.data!;
 
-        return LingxiCard(
+        return QuestCard(
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [

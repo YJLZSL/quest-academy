@@ -3,13 +3,13 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
-import 'package:lingxi_academy/features/progress/streak_service.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/features/progress/streak_service.dart';
 
 /// 创建内存数据库与 StreakService 实例。
-(LingxiDatabase, SettingsRepository, StreakService) _setup() {
-  final db = LingxiDatabase.forTesting(NativeDatabase.memory());
+(QuestDatabase, SettingsRepository, StreakService) _setup() {
+  final db = QuestDatabase.forTesting(NativeDatabase.memory());
   final settings = SettingsRepository(db);
   final service = StreakService(db, settings);
   return (db, settings, service);
@@ -28,7 +28,7 @@ bool _isSameDay(DateTime a, DateTime b) {
 
 /// 向 Streaks 表直接插入一条预设记录，用于测试前置状态。
 Future<void> _seedStreak(
-  LingxiDatabase db, {
+  QuestDatabase db, {
   required int dayCount,
   required DateTime? lastStudyDate,
 }) async {

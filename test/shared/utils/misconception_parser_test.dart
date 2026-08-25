@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/shared/utils/misconception_parser.dart';
+import 'package:quest_academy/shared/utils/misconception_parser.dart';
 
 void main() {
   group('MisconceptionParser.parse', () {

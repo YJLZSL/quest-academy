@@ -1,16 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/providers/app_providers.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/providers/storage_providers.dart';
-import 'package:lingxi_academy/data/repositories/message_repository.dart';
-import 'package:lingxi_academy/features/ai/ai_provider.dart';
-import 'package:lingxi_academy/features/ai/ai_providers.dart';
-import 'package:lingxi_academy/features/ai/prompt_manager.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
+import 'package:quest_academy/core/providers/app_providers.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/providers/storage_providers.dart';
+import 'package:quest_academy/data/repositories/message_repository.dart';
+import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/ai/ai_providers.dart';
+import 'package:quest_academy/features/ai/prompt_manager.dart';
 
 /// 对话控制器状态。
 class ChatControllerState {
@@ -73,7 +71,7 @@ class ChatControllerState {
   }
 }
 
-/// 对话控制器：管理消息收发、流式渲染、持久化与吉祥物联动。
+/// 对话控制器：管理消息收发、流式渲染与持久化。
 ///
 /// 流式响应采用动态节流刷新 UI：首 token 立即刷新以降低首屏延迟，
 /// 后续每 50ms 至多刷新一次避免高频 delta 卡顿，流式结束时强制刷新
@@ -118,9 +116,8 @@ class ChatController extends StateNotifier<ChatControllerState> {
   /// 2. 读取当前 ProviderConfig 获取 temperature/maxTokens 与 provider/model 元信息；
   /// 3. 若对话不存在则创建（填充 provider/model）；
   /// 4. 持久化用户消息；
-  /// 5. 联动吉祥物思考态；
-  /// 6. 注入系统提示词（按苏格拉底开关）发起流式请求；
-  /// 7. 监听增量、完成、错误事件。
+  /// 5. 注入系统提示词（按苏格拉底开关）发起流式请求；
+  /// 6. 监听增量、完成、错误事件。
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || state.isStreaming) return;
@@ -133,7 +130,6 @@ class ChatController extends StateNotifier<ChatControllerState> {
         error: '暂无可用 AI 服务，请先在设置中配置。',
         isStreaming: false,
       );
-      _ref.read(mascotControllerProvider.notifier).setMood(MascotMood.sad);
       return;
     }
 
@@ -142,7 +138,6 @@ class ChatController extends StateNotifier<ChatControllerState> {
         .read(providerConfigRepositoryProvider)
         .getDefaultProvider();
 
-    final mascot = _ref.read(mascotControllerProvider.notifier);
     final convRepo = _ref.read(conversationRepositoryProvider);
     final msgRepo = _ref.read(messageRepositoryProvider);
 
@@ -180,7 +175,6 @@ class ChatController extends StateNotifier<ChatControllerState> {
       isStreaming: true,
       currentAssistantText: '',
     );
-    mascot.setAiThinking(true);
 
     // 6. 获取系统提示词。
     final PromptManager promptManager =
@@ -281,7 +275,7 @@ class ChatController extends StateNotifier<ChatControllerState> {
     state = state.copyWith(currentAssistantText: _flushed.toString());
   }
 
-  /// 完成流式：刷新剩余文本、落盘助手消息、触发吉祥物庆祝。
+  /// 完成流式：刷新剩余文本并落盘助手消息。
   Future<void> _commitAssistant() async {
     if (_completing) return;
     _completing = true;
@@ -313,10 +307,9 @@ class ChatController extends StateNotifier<ChatControllerState> {
       currentAssistantText: '',
     );
     _completing = false;
-    _ref.read(mascotControllerProvider.notifier).celebrate();
   }
 
-  /// 以错误结束流式：设置错误信息、吉祥物切换为难过。
+  /// 以错误结束流式：设置错误信息。
   ///
   /// 如果已接收到部分流式内容，会先将其落盘为 assistant 消息并追加到状态，
   /// 这样用户能看到"AI 回复了一部分然后出错"，而不是已显示的内容突然消失。
@@ -350,8 +343,6 @@ class ChatController extends StateNotifier<ChatControllerState> {
         error: message,
       );
     }
-    // 同步切换吉祥物为难过。
-    _ref.read(mascotControllerProvider.notifier).setMood(MascotMood.sad);
     // 异步：取消订阅 + 落盘部分内容。
     await sub?.cancel();
     if (partialText.isNotEmpty) {
@@ -387,7 +378,6 @@ class ChatController extends StateNotifier<ChatControllerState> {
     state = state.copyWith(
       messages: <ChatMessage>[...state.messages, ChatMessage.assistant(content)],
     );
-    _ref.read(mascotControllerProvider.notifier).celebrate();
   }
 
   /// 将一条 AI 消息内容保存为笔记。

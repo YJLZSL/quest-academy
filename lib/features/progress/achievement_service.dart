@@ -2,14 +2,13 @@
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/repositories/achievement_repository.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/achievement_repository.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
 
 import 'achievement_definitions.dart';
 
@@ -39,23 +38,20 @@ class AchievementWithProgress {
 /// `ach_progress_<code>`。
 class AchievementService {
   AchievementService({
-    required LingxiDatabase db,
+    required QuestDatabase db,
     required AchievementRepository achievementRepo,
     required SettingsRepository settings,
-    required MascotController mascot,
     required NoteRepository noteRepo,
     required ProgressRepository progressRepo,
   })  : _db = db,
         _achievementRepo = achievementRepo,
         _settings = settings,
-        _mascot = mascot,
         _noteRepo = noteRepo,
         _progressRepo = progressRepo;
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
   final AchievementRepository _achievementRepo;
   final SettingsRepository _settings;
-  final MascotController _mascot;
   final NoteRepository _noteRepo;
   final ProgressRepository _progressRepo;
 
@@ -113,7 +109,7 @@ class AchievementService {
     return result;
   }
 
-  /// 解锁徽章。若已解锁则跳过。解锁后触发吉祥物庆祝。
+  /// 解锁徽章。若已解锁则跳过。
   Future<void> unlock(String code) async {
     await _ensureSeeded();
     final row = await (_db.select(_db.achievements)
@@ -122,7 +118,6 @@ class AchievementService {
     if (row == null || row.unlocked) return;
 
     await _achievementRepo.unlockAchievement(code);
-    _mascot.celebrate();
   }
 
   /// 更新进度（0.0 - 1.0）。progress >= 1 时自动解锁。
@@ -249,7 +244,6 @@ final achievementServiceProvider = Provider<AchievementService>((ref) {
     db: ref.watch(databaseProvider),
     achievementRepo: ref.watch(achievementRepositoryProvider),
     settings: ref.watch(settingsRepositoryProvider),
-    mascot: ref.watch(mascotControllerProvider.notifier),
     noteRepo: ref.watch(noteRepositoryProvider),
     progressRepo: ref.watch(progressRepositoryProvider),
   );

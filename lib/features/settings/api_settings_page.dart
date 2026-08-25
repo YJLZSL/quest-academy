@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/provider_config.dart';
 import '../../data/providers/storage_providers.dart';
 import '../ai/ai_providers.dart';
-import '../mascot/mascot_widget.dart';
-import '../../shared/widgets/lingxi_app_bar.dart';
-import '../../shared/widgets/lingxi_card.dart';
+import '../../shared/widgets/quest_app_bar.dart';
+import '../../shared/widgets/quest_card.dart';
 import 'provider_edit_dialog.dart';
 
 /// 当前已配置的 Provider 列表 FutureProvider。
@@ -118,7 +117,7 @@ class ApiSettingsPage extends ConsumerWidget {
     final asyncConfigs = ref.watch(providerConfigsProvider);
 
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('API 配置')),
+      appBar: const QuestAppBar(title: Text('API 配置')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditDialog(ref, context),
         icon: const Icon(Icons.add),
@@ -137,7 +136,7 @@ class ApiSettingsPage extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
             children: [
               // 说明卡片
-              LingxiCard(
+              QuestCard(
                 color: theme.colorScheme.secondaryContainer,
                 child: Row(
                   children: [
@@ -198,7 +197,7 @@ class _ProviderCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final isActive = config.enabled;
-    return LingxiCard(
+    return QuestCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -286,7 +285,7 @@ class _ProviderCard extends StatelessWidget {
   }
 }
 
-/// 空状态：吉祥物 + CTA。
+/// 空状态：图标 + CTA。
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.onAdd});
 
@@ -302,7 +301,11 @@ class _EmptyState extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const MascotWidget(size: 140, enableTapInteraction: false),
+            Icon(
+              Icons.cloud_off_outlined,
+              size: 80,
+              color: theme.colorScheme.primary,
+            ),
             const SizedBox(height: 24),
             Text('还没有 API 配置', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),

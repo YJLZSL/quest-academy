@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart' as physics;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
 
 /// SpringMotion 单元测试。
 ///

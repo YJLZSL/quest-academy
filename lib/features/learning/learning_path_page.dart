@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/page_transitions.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/lingxi_gradients.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/providers/course_providers.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/repositories/progress_repository.dart';
-import 'package:lingxi_academy/features/learning/course_level_extensions.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/animated_progress_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_chip.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/page_transitions.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/providers/course_providers.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
+import 'package:quest_academy/features/learning/course_level_extensions.dart';
+import 'package:quest_academy/features/learning/widgets/level_node.dart';
+import 'package:quest_academy/features/learning/widgets/level_path.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_chip.dart';
 
 /// 学习路径页。
 ///
@@ -36,28 +37,19 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
   /// 当前选中的级别筛选；null 表示显示全部。
   CourseLevel? _selectedLevel;
 
+  /// 顶部路径视图的级别状态计算 Future（按课程列表缓存，避免筛选时重新加载）。
+  Future<List<_LevelSummary>>? _levelSummaryFuture;
+
+  /// 上次用于计算 [_levelSummaryFuture] 的课程列表。
+  List<Course>? _lastCourses;
+
   @override
   Widget build(BuildContext context) {
     final coursesAsync = ref.watch(allCoursesProvider);
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('学习路径'),
-            SizedBox(width: 4),
-            Text('🦏', style: TextStyle(fontSize: 20)),
-          ],
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: MascotHero(
-              child: MascotWidget(size: 40),
-            ),
-          ),
-        ],
+        title: const Text('学习路径'),
       ),
       body: coursesAsync.when(
         data: (courses) {
@@ -72,7 +64,7 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
     );
   }
 
-  /// 空状态：吉祥物 + "课程即将上线"文案。
+  /// 空状态：提示课程即将上线。
   Widget _buildEmpty(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
@@ -84,7 +76,11 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const MascotWidget(size: 120),
+              Icon(
+                Icons.menu_book,
+                size: 64,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(height: 16),
               Text(
                 '课程即将上线',
@@ -92,7 +88,7 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                '小犀正在精心准备内容，敬请期待～',
+                '精彩内容正在准备中，敬请期待～',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -124,6 +120,8 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
       children: [
         // 级别筛选 Chip 行
         _buildLevelFilter(allLevels, theme),
+        // 顶部关卡路径总览（与下方列表互补，支持点击快速筛选）
+        _buildPathHeader(courses),
         // 路径列表
         Expanded(
           child: _StaggeredPathList(
@@ -153,9 +151,9 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              LingxiChip(
+              QuestChip(
                 label: const Text('全部'),
-                variant: LingxiChipVariant.filter,
+                variant: QuestChipVariant.filter,
                 selected: _selectedLevel == null,
                 onSelected: (_) {
                   AnimationUtils.hapticLight();
@@ -164,13 +162,13 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
               ),
               const SizedBox(width: 8),
               for (final level in allLevels) ...[
-                LingxiChip(
+                QuestChip(
                   label: Text(_levelShortName(level)),
                   avatar: Icon(
                     _levelIcon(level),
                     size: 16,
                   ),
-                  variant: LingxiChipVariant.filter,
+                  variant: QuestChipVariant.filter,
                   selected: _selectedLevel == level,
                   onSelected: (selected) {
                     AnimationUtils.hapticLight();
@@ -201,6 +199,168 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
         CourseLevel.l3 => Icons.psychology,
         CourseLevel.l4 => Icons.emoji_events,
       };
+
+  /// 构建顶部关卡路径总览：横向 L0-L4 节点，点击可快速筛选对应级别。
+  Widget _buildPathHeader(List<Course> courses) {
+    final theme = Theme.of(context);
+    final reduceMotion = AnimationUtils.reduceMotionOf(context);
+    return SpringMotion.slideFadeTransition(
+      direction: AxisDirection.down,
+      duration:
+          reduceMotion ? SpringMotion.fastDuration : SpringMotion.gentleDuration,
+      distance: 12,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: QuestCard(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 4),
+                child: Text(
+                  '学习路线',
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+              FutureBuilder<List<_LevelSummary>>(
+                future: _ensureSummaryFuture(courses),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox(
+                      height: 80,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  final summaries = snapshot.data!;
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: LevelPath(
+                      axis: Axis.horizontal,
+                      spacing: 64,
+                      padding: EdgeInsets.zero,
+                      nodes: [
+                        for (final summary in summaries)
+                          LevelNode(
+                            level: summary.level,
+                            state: summary.state,
+                            onTap: () {
+                              AnimationUtils.hapticLight();
+                              setState(() {
+                                _selectedLevel = _selectedLevel == summary.level
+                                    ? null
+                                    : summary.level;
+                              });
+                            },
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 缓存并复用级别状态 Future，避免 setState 时重新触发加载。
+  Future<List<_LevelSummary>> _ensureSummaryFuture(List<Course> courses) {
+    if (_levelSummaryFuture != null && identical(courses, _lastCourses)) {
+      return _levelSummaryFuture!;
+    }
+    _lastCourses = courses;
+    _levelSummaryFuture = _computeLevelSummaries(courses);
+    return _levelSummaryFuture!;
+  }
+
+  /// 计算每个级别的完成状态。
+  Future<List<_LevelSummary>> _computeLevelSummaries(
+    List<Course> courses,
+  ) async {
+    final repo = ref.read(progressRepositoryProvider);
+    final allLevels = CourseLevel.values;
+    final byLevel = <CourseLevel, List<Course>>{};
+    for (final course in courses) {
+      byLevel.putIfAbsent(course.level, () => <Course>[]).add(course);
+    }
+
+    final summaries = <_LevelSummary>[];
+    for (final level in allLevels) {
+      final levelCourses = byLevel[level] ?? <Course>[];
+      var totalPoints = 0;
+      var completedPoints = 0;
+      var anyStarted = false;
+      var allCompleted = true;
+      for (final course in levelCourses) {
+        final courseTotal = _knowledgePointCount(course);
+        if (courseTotal == 0) {
+          allCompleted = false;
+          continue;
+        }
+        totalPoints += courseTotal;
+        final rate = await repo.getCompletionRate(course.id);
+        completedPoints += (rate * courseTotal).round();
+        if (rate > 0) anyStarted = true;
+        if (rate < 1.0) allCompleted = false;
+      }
+
+      final state = _levelState(
+        hasCourses: levelCourses.isNotEmpty,
+        anyStarted: anyStarted,
+        allCompleted: allCompleted && totalPoints > 0,
+      );
+      summaries.add(
+        _LevelSummary(
+          level: level,
+          state: state,
+          completedPoints: completedPoints,
+          totalPoints: totalPoints,
+        ),
+      );
+    }
+    return summaries;
+  }
+
+  /// 统计课程下全部知识点数量。
+  int _knowledgePointCount(Course course) {
+    var count = 0;
+    for (final module in course.modules) {
+      for (final lesson in module.lessons) {
+        count += lesson.knowledgePoints.length;
+      }
+    }
+    return count;
+  }
+
+  /// 根据学习进度确定级别节点状态。
+  LevelNodeState _levelState({
+    required bool hasCourses,
+    required bool anyStarted,
+    required bool allCompleted,
+  }) {
+    if (!hasCourses) return LevelNodeState.locked;
+    if (allCompleted) return LevelNodeState.completed;
+    if (anyStarted) return LevelNodeState.current;
+    return LevelNodeState.locked;
+  }
+}
+
+/// 单个级别的进度摘要，用于顶部关卡路径视图。
+class _LevelSummary {
+  const _LevelSummary({
+    required this.level,
+    required this.state,
+    required this.completedPoints,
+    required this.totalPoints,
+  });
+
+  final CourseLevel level;
+  final LevelNodeState state;
+  final int completedPoints;
+  final int totalPoints;
 }
 
 /// 交错动画路径列表：使用单个 [AnimationController] 驱动每个级别区块的
@@ -391,7 +551,7 @@ class _LevelSection extends StatelessWidget {
 
   /// 级别对应渐变色（复用 [CourseLevelColorX.levelColor] 派生同色系渐变，
   /// 与首页 `_CourseProgressCard` 风格统一，避免硬编码十六进制色值）。
-  List<Color> _levelGradient(LingxiColors colors) {
+  List<Color> _levelGradient(QuestColors colors) {
     final base = level.levelColor(colors);
     return [base, base.withValues(alpha: 0.7)];
   }
@@ -407,7 +567,7 @@ class _LevelSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gradient = _levelGradient(context.lingxiColors);
+    final gradient = _levelGradient(context.questColors);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -721,13 +881,13 @@ class _CourseCardState extends ConsumerState<_CourseCard> {
     final theme = Theme.of(context);
     final total = _totalKnowledgePoints;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
-    // 级别色条颜色：按 CourseLevel 映射到 LingxiColors 语义色。
+    // 级别色条颜色：按 CourseLevel 映射到 QuestColors 语义色。
     final levelColor =
-        widget.course.level.levelColor(context.lingxiColors);
+        widget.course.level.levelColor(context.questColors);
     // 进度条渐变统一使用主题成功色（绿 → 深绿）。
-    final successGradient = context.lingxiGradients.success;
+    final successGradient = context.questGradients.success;
 
-    return LingxiCard(
+    return QuestCard(
       animateEntrance: !reduceMotion,
       entranceDelay: Duration(milliseconds: 40 + widget.indexInLevel * 50),
       padding: EdgeInsets.zero,
@@ -818,7 +978,7 @@ class _CourseCardState extends ConsumerState<_CourseCard> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        // 动画进度条：使用 LingxiGradients.success 渐变。
+                        // 动画进度条：使用 QuestGradients.success 渐变。
                         AnimatedProgressBar(
                           progress: progress,
                           height: 8,
@@ -903,7 +1063,7 @@ class _CourseIconState extends State<_CourseIcon> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: widget.isCompleted
-                  ? context.lingxiGradients.success.colors
+                  ? context.questGradients.success.colors
                   : widget.gradient,
             ),
             boxShadow: [
@@ -987,7 +1147,7 @@ class _CheckmarkPopState extends State<_CheckmarkPop>
 
   @override
   Widget build(BuildContext context) {
-    final successGradient = context.lingxiGradients.success;
+    final successGradient = context.questGradients.success;
     if (AnimationUtils.reduceMotionOf(context)) {
       return Icon(Icons.check_circle, color: successGradient.colors.last, size: 22);
     }

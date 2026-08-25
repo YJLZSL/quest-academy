@@ -1,0 +1,179 @@
+{
+  "summary": {
+    "projectName": "灵犀学院 Lingxi Academy",
+    "locale": "zh-CN",
+    "modelId": "agent-work-loop-v4",
+    "reportContractVersion": 25,
+    "overview": "项目有一份覆盖面极广的根 AGENTS.md 与 CI/发布双流水线，但测试门禁在两条流水线中均被 continue-on-error 旁路，规则文件与代码现实出现多处已证实的漂移。最优先的三步：恢复 CI 测试阻塞信号、堵住失败构建的发布出口、让 AGENTS.md 回到单一事实来源。",
+    "aiAgentPractice": {
+      "inspectedSurfaces": [
+        "Rules",
+        "Workflows"
+      ],
+      "coverageRows": [
+        {
+          "surface": "Rules",
+          "scopes": [
+            "Project"
+          ],
+          "count": 1,
+          "paths": [
+            "AGENTS.md"
+          ]
+        },
+        {
+          "surface": "Workflows",
+          "scopes": [
+            "Project"
+          ],
+          "count": 2,
+          "paths": [
+            ".github/workflows/ci.yml",
+            ".github/workflows/release.yml"
+          ]
+        },
+        {
+          "surface": "Custom Agents",
+          "scopes": [
+            "Project"
+          ],
+          "count": 0
+        }
+      ]
+    },
+    "assignmentSummaries": [],
+    "dimensions": [
+      {
+        "id": "task-understanding",
+        "label": "任务理解",
+        "score": 52,
+        "summary": "AGENTS.md 提供了明确的任务边界、分层与命名约定，是清晰的任务入口；但吉祥物/rive 章节、依赖版本表与多处事实已被证实与当前代码脱节，权威上下文存在误导后续任务的风险。",
+        "findingRefs": [
+          "agents-md-mascot-guidance-drift",
+          "agents-md-dual-source-overload"
+        ]
+      },
+      {
+        "id": "controlled-execution",
+        "label": "可控执行",
+        "score": 58,
+        "summary": "构建/运行命令、SDK 版本与测试数据库路线成文清晰（Present 级证据）；但文档中的开发机 SDK 路径为单机专属 Temp 目录，对其他协作者不可复现，且无任何会话证据证明声明路线被实际走通。",
+        "findingRefs": [
+          "agents-md-machine-specific-stale-facts"
+        ]
+      },
+      {
+        "id": "change-validation",
+        "label": "改动验证",
+        "score": 45,
+        "summary": "仓库有 29 个测试文件，CI 含 analyze 与 build_runner 步骤；但 flutter test 步骤被 continue-on-error 永久放行，红测不产生阻塞信号，相关验证（relevant-check）处于被旁路的未决状态。",
+        "findingRefs": [
+          "ci-test-gate-bypassed"
+        ]
+      },
+      {
+        "id": "reliable-delivery",
+        "label": "可靠交付",
+        "score": 40,
+        "summary": "release.yml 允许在测试失败状态下打包发布，且该应用带应用内自动更新分发；同时约 82 文件 / 1.1 万行重构以未提交状态堆积在 main，无 git 恢复点，交付边界与回滚路径均不成立。",
+        "findingRefs": [
+          "release-can-ship-failing-tests",
+          "main-workspace-uncommitted-pileup"
+        ]
+      },
+      {
+        "id": "learning-capture",
+        "label": "经验沉淀",
+        "score": 35,
+        "summary": "观察窗口（近 7 天）内无可评审的任务片段（会话仅自我分析类，来源根存在缺失/禁用告警），项目 Memory 标题与 Skill 均为 0。本分仅表示完成了一次有界评审；学习闭环各环节均不可判定，不构成缺陷结论。",
+        "findingRefs": []
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "ci-test-gate-bypassed",
+      "title": "CI 测试步骤被 continue-on-error 永久旁路，回归不再产生阻塞信号",
+      "severity": "High",
+      "reason": "事实：ci.yml 将 flutter test --coverage 设为 continue-on-error: true，注释自述约 36 个预存失败不阻塞构建；AGENTS.md 明文要求合并前 flutter analyze + flutter test 必须通过，且声明零 error 零 warning，而 CI 实际使用 --no-fatal-warnings。推断：新回归会淹没在既有失败中，绿灯不代表测试通过，需人工翻 artifact 甄别。owner：.github/workflows/ci.yml 的 test 步骤与 AGENTS.md 质量门槛段落。不确定性：36 个失败数字仅来自 YAML 注释，本次未运行测试，实际失败集 UNVERIFIED；Actions 运行历史未查。",
+      "expectedOutput": [
+        "flutter test 在 CI 中恢复失败即阻塞，已知失败被显式隔离并有跟踪清单，文档承诺与流水线口径一致。"
+      ],
+      "expectedArtifact": "CI 门禁配置",
+      "aiFixPrompt": "/better-harness fix this issue\n\n恢复 CI 测试门禁的阻塞语义：先在本地运行 flutter test 记录真实失败集；用 skip 标注或 --exclude-tags 隔离已知失败并建立跟踪清单；然后移除 ci.yml test 步骤的 continue-on-error；同步收敛 AGENTS.md 中「零 error 零 warning」「合并前必须通过 flutter test」的表述使其与流水线一致。\n\n## Validation\n\n- 本地 flutter test（排除已隔离用例）全绿\n- 在分支上故意弄断一个未隔离测试，确认 CI 变红并阻塞\n- AGENTS.md 门槛表述与 ci.yml 实际 flags 逐条一致",
+      "dimensionRefs": [
+        "change-validation"
+      ]
+    },
+    {
+      "id": "release-can-ship-failing-tests",
+      "title": "打 tag 即可在测试失败状态下发布安装包，并经应用内自动更新分发到终端用户",
+      "severity": "High",
+      "reason": "事实：release.yml 的测试步骤同样设置 continue-on-error: true，发布流程不因测试失败而中止；该应用自 v0.4.0 起内置基于 GitHub Releases 的自动更新（UpdateService），发布产物会被推送给存量用户。推断：一次带回归的 tag 构建可直接分发到 Android/Windows 终端用户，缺少发布前的风险决策点。owner：.github/workflows/release.yml 的测试步骤。不确定性：未查 Actions 历史，无证据表明已实际发布过失败构建。",
+      "expectedOutput": [
+        "任何进入自动更新分发渠道的产物都经过测试门禁或显式人工批准，失败构建无法静默发布。"
+      ],
+      "expectedArtifact": "发布流水线配置",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为发布流水线恢复测试门禁：在 release.yml 中移除测试步骤的 continue-on-error（或改为显式的人工确认门），使打 tag 发布前必须通过与 ci.yml 相同的已隔离测试集；保留现有构建与上传步骤不变。\n\n## Validation\n\n- 在测试失败的分支上打预发布 tag，确认发布流水线中止且不产生 Release 产物\n- 测试通过的 tag 仍能正常产出 APK 与 Windows ZIP",
+      "dimensionRefs": [
+        "reliable-delivery"
+      ]
+    },
+    {
+      "id": "agents-md-mascot-guidance-drift",
+      "title": "AGENTS.md 吉祥物/rive 约定指向已删除的模块与依赖",
+      "severity": "Medium",
+      "reason": "事实：当前工作区 lib/features/mascot/ 下 5 个文件全部处于删除状态，lib/ 内对 mascot 的引用为 0，pubspec.yaml 已无 rive 依赖；而 AGENTS.md 仍以强约束口吻要求新页面集成吉祥物、统一走 mascotControllerProvider，技术栈表仍列 rive ^0.13.13，错误处理规范仍要求联动吉祥物 sad 状态。推断：照文档执行的 AI 协作者会尝试恢复或接入已被移除的模块。owner：AGENTS.md 中吉祥物集成/交互章节、技术栈表 rive 行、AI Provider 错误处理的吉祥物联动句。不确定性：该批变更尚未提交，作者可能计划在提交前补文档。",
+      "expectedOutput": [
+        "AGENTS.md 不再引用任何已删除的模块、Provider 或依赖，AI 协作者不会被引导去恢复已移除的功能。"
+      ],
+      "expectedArtifact": "规则文档修订",
+      "aiFixPrompt": "/better-harness fix this issue\n\n将 AGENTS.md 与当前代码对齐：删除或改写吉祥物集成约定、吉祥物交互扩展规范、技术栈表中的 rive 行，以及 AI Provider 错误处理中的吉祥物联动要求；同步核对 docs/吉祥物设计.md 的所有权行。以 git ls-files 与 pubspec.yaml 为准，不臆测未来计划。\n\n## Validation\n\n- 在 AGENTS.md 中检索 mascot 与 rive，结果为 0 或每处引用都有对应的现存实体\n- AGENTS.md 中出现的 lib/** 路径逐一存在于 git ls-files",
+      "dimensionRefs": [
+        "task-understanding"
+      ]
+    },
+    {
+      "id": "agents-md-dual-source-overload",
+      "title": "根 AGENTS.md 内嵌大量可推断内容并强制双源同步，漂移已实际发生",
+      "severity": "Medium",
+      "reason": "事实：根 AGENTS.md 达 1185 行，整表复制 pubspec.yaml 依赖版本、内嵌目录树与主题系统全文，同时「文档同步工作流」章节把 pubspec 变更后人工同步 AGENTS.md 表格定为强制清单；依赖表漂移已被证实（rive 行仍在而依赖已移除）。推断：双源人工维护使漂移只是时间问题，安全红线等强约束被数百行背景内容压在文件中部，在上下文加载时信号密度被稀释。owner：AGENTS.md 根文件结构（拆分目标为既有 docs/* 文档与链接式引用）。不确定性：无会话证据实测该文件的上下文负载影响；行数门限来自实践参考而非运行时测量。",
+      "expectedOutput": [
+        "根规则文件只保留代理必需的约束与指向权威来源的链接，依赖与结构信息以仓库本身为单一事实来源。"
+      ],
+      "expectedArtifact": "规则文档重构",
+      "aiFixPrompt": "/better-harness fix this issue\n\n对 AGENTS.md 做渐进披露重构：保留任务边界、安全红线、分层与命名等代理必需的强约束；将依赖版本表、目录树、主题系统详解等可从仓库直接推断或已有 docs/* 承载的内容改为一句话加链接；将「pubspec 变更须人工同步表格」的强制清单改为指向 pubspec.yaml 单一事实来源。\n\n## Validation\n\n- AGENTS.md 不再整表复制 pubspec.yaml 依赖版本，相关章节改为引用\n- 安全红线章节位置前移或在文件头部有显著索引\n- 逐行 diff 确认未丢失任何强约束语义",
+      "dimensionRefs": [
+        "task-understanding"
+      ]
+    },
+    {
+      "id": "agents-md-machine-specific-stale-facts",
+      "title": "AGENTS.md 含单机专属路径与已过期事实，削弱跨环境可执行性",
+      "severity": "Low",
+      "reason": "事实：AGENTS.md 将开发环境 Flutter SDK 路径写死为特定用户 Temp 目录下的绝对路径（系统清理即失效，对其他协作者与 CI 外环境不可执行）；.gitignore 摘录仍列 macOS 专属条目而 v0.4.0 已自述彻底移除 macOS；安全红线的自动更新白名单仓库标识与项目包名不一致。推断：代理可能照抄失效路径或校验错误的仓库标识。owner：AGENTS.md 的 Flutter SDK 路径段与安全红线相关条目。不确定性：白名单仓库标识是否为真实上游无法在项目范围内证实；实际 .gitignore 内容未开检。",
+      "expectedOutput": [
+        "任何协作者或 CI 环境按文档执行都不依赖单机路径，安全白名单校验对象与代码实现一致。"
+      ],
+      "expectedArtifact": "规则文档修订",
+      "aiFixPrompt": "/better-harness fix this issue\n\n清理 AGENTS.md 中的单机与过期事实：将 SDK 路径段改为「flutter 需在 PATH 中」加本机自定义说明的占位写法，移除含用户名的绝对路径；比对实际 .gitignore 内容修正摘录中的 macOS 残留；核对 lib/features/update/ 中 UpdateService 的仓库常量，使安全红线白名单与真实上游仓库一致并注明来源。\n\n## Validation\n\n- AGENTS.md 全文检索不再包含用户名或 Temp 目录形式的绝对路径\n- .gitignore 摘录与实际文件逐行一致\n- 白名单仓库标识与 UpdateService 源码常量一致",
+      "dimensionRefs": [
+        "controlled-execution"
+      ]
+    },
+    {
+      "id": "main-workspace-uncommitted-pileup",
+      "title": "约 82 文件 / 1.1 万行重构堆积在 main 未提交，无 git 恢复点",
+      "severity": "Medium",
+      "reason": "事实：当前分支为 main，最后提交在 2026-07-24，其后 5 天的游戏化重设计（含整个 mascot 模块删除、主题体系重写、20+ 个新 dart 文件）全部以未提交/未跟踪状态存在（git status 计 82 个脏文件，证据包计 87 文件 / 11,056 行）；AGENTS.md 自述的分支策略与 Conventional Commits 未被这批变更执行，仓库内也无 pre-commit 等机械挡板。推断：一次误操作即可丢失全部工作，一次性提交则形成不可评审的 big-bang 变更。owner：当前待提交变更集（拆分至 feature 分支分批提交）。不确定性：远端 main 是否配置分支保护无法从本地验证；不排除作者本就计划切分支后提交。",
+      "expectedOutput": [
+        "全部在制变更获得 git 恢复点，并以可评审粒度进入自述的分支/PR 流程。"
+      ],
+      "expectedArtifact": "分支与提交拆分",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为堆积变更建立恢复点并回到自述流程：先从 main 切出 feature 分支，将当前工作区变更按模块（如 mascot 移除、主题重构、新增页面）拆为多个语义化提交；每个提交前运行 flutter analyze 确认可编译。注意：提交操作需用户确认后执行，不要自行推送远端。\n\n## Validation\n\n- git branch --show-current 为 feature 分支且 main 上 git status --porcelain 为空\n- 每个提交遵循 Conventional Commits 且 diff 规模可评审\n- flutter analyze 在每个提交点无 error",
+      "dimensionRefs": [
+        "reliable-delivery"
+      ]
+    }
+  ]
+}

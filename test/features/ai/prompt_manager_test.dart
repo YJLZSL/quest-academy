@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:lingxi_academy/features/ai/prompt_manager.dart';
+import 'package:quest_academy/features/ai/prompt_manager.dart';
 
 /// 设置 assets 平台通道的 mock 处理器。
 ///

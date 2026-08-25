@@ -2,19 +2,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/data/repositories/note_repository.dart';
-import 'package:lingxi_academy/data/repositories/settings_repository.dart';
-import 'package:lingxi_academy/features/progress/streak_service.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/animated_count_text.dart';
-import 'package:lingxi_academy/shared/widgets/animated_progress_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/note_repository.dart';
+import 'package:quest_academy/data/repositories/settings_repository.dart';
+import 'package:quest_academy/features/progress/streak_service.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/animated_count_text.dart';
+import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 时间范围枚举。
 enum StatsTimeRange {
@@ -120,7 +120,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
   Widget build(BuildContext context) {
     final asyncData = ref.watch(statisticsDataProvider);
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('学习统计')),
+      appBar: const QuestAppBar(title: Text('学习统计')),
       body: asyncData.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
@@ -210,7 +210,7 @@ class _StatsCardsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fireColor = context.lingxiColors.streakFire;
+    final fireColor = context.questColors.streakFire;
     final isStreakActive = data.streakDays > 0;
 
     final cards = [
@@ -225,7 +225,7 @@ class _StatsCardsRow extends StatelessWidget {
       ),
       _StatCardData(
         icon: Icons.forum,
-        iconColor: context.lingxiColors.socraticBlue,
+        iconColor: context.questColors.socraticBlue,
         value: data.socraticCount,
         label: '苏格拉底对话',
       ),
@@ -237,7 +237,7 @@ class _StatsCardsRow extends StatelessWidget {
       ),
       _StatCardData(
         icon: Icons.check_circle,
-        iconColor: context.lingxiColors.achievementGold,
+        iconColor: context.questColors.achievementGold,
         value: data.knowledgePointsCompleted,
         label: '已完成知识点',
       ),
@@ -301,7 +301,7 @@ class _StatCard extends StatelessWidget {
       );
     }
 
-    final card = LingxiCard(
+    final card = QuestCard(
       animateEntrance: !reduceMotion,
       entranceDelay: Duration(milliseconds: 50 * index),
       padding: const EdgeInsets.all(16),
@@ -432,7 +432,7 @@ class _BarChartCardState extends State<_BarChartCard>
       duration: SpringMotion.gentleDuration,
       curve: SpringMotion.entranceCurve,
       opacity: _visible ? 1.0 : 0.0,
-      child: LingxiCard(
+      child: QuestCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,7 +623,7 @@ class _CourseCompletionCardState extends State<_CourseCompletionCard>
       duration: SpringMotion.gentleDuration,
       curve: SpringMotion.entranceCurve,
       opacity: _visible ? 1.0 : 0.0,
-      child: LingxiCard(
+      child: QuestCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -771,7 +771,7 @@ class _HeatmapCardState extends State<_HeatmapCard>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fireColor = context.lingxiColors.streakFire;
+    final fireColor = context.questColors.streakFire;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -787,7 +787,7 @@ class _HeatmapCardState extends State<_HeatmapCard>
       duration: SpringMotion.gentleDuration,
       curve: SpringMotion.entranceCurve,
       opacity: _visible ? 1.0 : 0.0,
-      child: LingxiCard(
+      child: QuestCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

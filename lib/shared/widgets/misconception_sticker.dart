@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/motion/animation_utils.dart';
 import '../../core/motion/spring_motion.dart';
-import '../../core/theme/lingxi_colors.dart';
+import '../../core/theme/quest_colors.dart';
 import '../../core/theme/shape_variants.dart';
 
 /// 常见误解贴纸组件。
@@ -66,8 +66,9 @@ class _MisconceptionStickerState extends State<MisconceptionSticker>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
-    final lingxi = theme.extension<LingxiColors>() ?? LingxiColors.light;
-    final redColor = lingxi.misconceptionRed;
+    // 使用 BuildContext 扩展统一读取语义色 Token。
+    final quest = context.questColors;
+    final redColor = quest.misconceptionRed;
     final borderRadius = ShapeVariants.roundedMedium.borderRadius;
 
     return AnimatedOpacity(

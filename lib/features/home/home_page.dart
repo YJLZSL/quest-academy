@@ -3,29 +3,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/page_transitions.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/core/theme/lingxi_colors.dart';
-import 'package:lingxi_academy/core/theme/lingxi_gradients.dart';
-import 'package:lingxi_academy/core/theme/shape_variants.dart';
-import 'package:lingxi_academy/data/models/course_content.dart';
-import 'package:lingxi_academy/data/providers/course_providers.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/learning/course_level_extensions.dart';
-import 'package:lingxi_academy/features/mascot/mascot_controller.dart';
-import 'package:lingxi_academy/features/mascot/mascot_state.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/features/progress/achievement_service.dart';
-import 'package:lingxi_academy/features/progress/streak_service.dart';
-import 'package:lingxi_academy/shared/widgets/animated_count_text.dart';
-import 'package:lingxi_academy/shared/widgets/animated_progress_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
-
-/// 首页：展示欢迎信息、吉祥物、连续学习天数、继续学习入口与快捷操作。
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
+import 'package:quest_academy/core/theme/quest_gradients.dart';
+import 'package:quest_academy/core/theme/shape_variants.dart';
+import 'package:quest_academy/data/models/course_content.dart';
+import 'package:quest_academy/data/providers/course_providers.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/features/learning/course_level_extensions.dart';
+import 'package:quest_academy/features/progress/achievement_service.dart';
+import 'package:quest_academy/features/progress/celebration_service.dart';
+import 'package:quest_academy/features/progress/streak_service.dart';
+import 'package:quest_academy/shared/widgets/achievement_badge_row.dart';
+import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/streak_flame_badge.dart';
+import 'package:quest_academy/shared/widgets/xp_progress_ring.dart';
+/// 首页：展示欢迎信息、连续学习天数、继续学习入口与快捷操作。
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -66,9 +64,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!mounted) return;
       setState(() => _streakDays = streak.currentStreak);
 
-      // streak >= 3 时触发吉祥物开心
+      // streak >= 3 时触发星光庆祝
       if (streak.currentStreak >= 3) {
-        ref.read(mascotControllerProvider.notifier).setMood(MascotMood.happy);
+        final size = MediaQuery.sizeOf(context);
+        CelebrationService.instance.celebrate(
+          CelebrationEvent(
+            origin: Offset(size.width / 2, size.height * 0.35),
+            type: CelebrationType.sparkles,
+            particleCount: 24,
+          ),
+        );
       }
 
       // 检查 streak 相关成就
@@ -94,21 +99,19 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final gradients = context.lingxiGradients;
-    final lingxiColors = context.lingxiColors;
+    final gradients = context.questGradients;
+    final questColors = context.questColors;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
     final isStreakActive = _streakDays > 0;
 
     return Scaffold(
-      appBar: LingxiAppBar(
+      appBar: QuestAppBar(
         title: const Text('首页'),
         scrollController: _scrollController,
         actions: [
-          _StreakBadge(
+          StreakFlameBadge(
             days: _streakDays,
             isActive: isStreakActive,
-            fireGradient: gradients.streakFire,
-            fireColor: lingxiColors.streakFire,
             onTap: () => context.go(RouteNames.statisticsPath),
           ),
           const SizedBox(width: 8),
@@ -124,7 +127,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── 1. Hero 问候区（渐变背景 + 吉祥物呼吸动画）──
+                // ── 1. Hero 问候区（渐变背景）──
                 _buildHeroSection(
                   colorScheme: colorScheme,
                   gradients: gradients,
@@ -155,19 +158,26 @@ class _HomePageState extends ConsumerState<HomePage> {
                   startIndex: 3,
                 ),
 
+                const SizedBox(height: 20),
+
+                // ── 4. 最近成就 ──
+                _buildRecentAchievements(
+                  entranceDelay: _entranceDelayFor(5),
+                ),
+
                 const SizedBox(height: 28),
 
-                // ── 4. 快捷操作网格 ──
+                // ── 5. 快捷操作网格 ──
                 _SectionTitle(
                   title: '快捷入口',
                   subtitle: '一键直达常用功能',
-                  entranceDelay: _entranceDelayFor(5),
+                  entranceDelay: _entranceDelayFor(6),
                 ),
                 const SizedBox(height: 12),
                 _buildQuickActions(
                   theme: theme,
                   colorScheme: colorScheme,
-                  startIndex: 6,
+                  startIndex: 7,
                 ),
 
                 const SizedBox(height: 32),
@@ -186,29 +196,22 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Widget _buildHeroSection({
     required ColorScheme colorScheme,
-    required LingxiGradients gradients,
+    required QuestGradients gradients,
     required bool reduceMotion,
   }) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth >= _desktopBreakpoint;
-    // 桌面端：右侧 200px；移动端：顶部 160px
-    final mascotSize = isDesktop ? 200.0 : 160.0;
-    final mascotWidget = MascotWidget(size: mascotSize);
 
     // 副标题：今日日期（如 "7月20日 周日"）
     final now = DateTime.now();
     const weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     final dateStr = '${now.month}月${now.day}日 ${weekdays[now.weekday - 1]}';
 
-    // 文字对齐方式：桌面端左对齐，移动端居中
-    final textAlignment = isDesktop ? TextAlign.left : TextAlign.center;
-    final crossAxisAlign =
-        isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center;
-
-    // 三级字号梯度：主问候语 24px bold / 副标题 18px medium / 引导文案 14px regular
-    final textColumn = Column(
+    // 文字区域
+    final textContent = Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: crossAxisAlign,
+      crossAxisAlignment:
+          isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Text(
           '欢迎来到灵犀学院',
@@ -218,7 +221,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             color: colorScheme.onSurface,
             height: 1.2,
           ),
-          textAlign: textAlignment,
+          textAlign: isDesktop ? TextAlign.left : TextAlign.center,
         ),
         const SizedBox(height: 6),
         Text(
@@ -228,50 +231,47 @@ class _HomePageState extends ConsumerState<HomePage> {
             fontWeight: FontWeight.w500,
             color: colorScheme.onSurfaceVariant,
           ),
-          textAlign: textAlignment,
+          textAlign: isDesktop ? TextAlign.left : TextAlign.center,
         ),
         const SizedBox(height: 6),
         Text(
-          '和小犀一起，开启你的 AI 学习之旅',
+          '开启你的 AI 学习之旅',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: colorScheme.onSurfaceVariant,
           ),
-          textAlign: textAlignment,
+          textAlign: isDesktop ? TextAlign.left : TextAlign.center,
         ),
       ],
     );
 
-    // 吉祥物：呼吸脉动效果 + Hero 共享元素过渡
-    // MascotHero 内部判断 reduceMotion 并降级为即时切换
-    final mascot = reduceMotion
-        ? MascotHero(child: mascotWidget)
-        : MascotHero(
-            child: SpringMotion.pulseBreathing(
-              minScale: 1.0,
-              maxScale: 1.03,
-              period: const Duration(seconds: 3),
-              child: mascotWidget,
-            ),
-          );
+    // 游戏化反馈区：XP 环 + 火焰徽章
+    final gamificationRow = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _XpSummaryRing(),
+        const SizedBox(width: 16),
+        StreakFlameBadge(
+          days: _streakDays,
+          isActive: _streakDays > 0,
+          onTap: () => context.go(RouteNames.statisticsPath),
+        ),
+      ],
+    );
 
-    // 桌面端：吉祥物在右侧；移动端：吉祥物在顶部
     final content = isDesktop
         ? Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(child: textColumn),
-              const SizedBox(width: 24),
-              mascot,
+              Expanded(child: textContent),
+              gamificationRow,
             ],
           )
         : Column(
             children: [
-              mascot,
-              const SizedBox(height: 16),
-              textColumn,
+              textContent,
+              const SizedBox(height: 20),
+              gamificationRow,
             ],
           );
 
@@ -290,6 +290,102 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+  /// 从学习进度计算 XP 并渲染 [XpProgressRing]。
+  Widget _XpSummaryRing() {
+    final progressRepo = ref.watch(progressRepositoryProvider);
+    return FutureBuilder<int>(
+      future: _computeTotalXp(progressRepo),
+      builder: (context, snapshot) {
+        final totalXp = snapshot.data ?? 0;
+        const xpPerLevel = 100;
+        final level = totalXp ~/ xpPerLevel;
+        final currentXp = totalXp % xpPerLevel;
+        return XpProgressRing(
+          currentXp: currentXp,
+          xpToNextLevel: xpPerLevel,
+          level: level,
+          size: 96,
+          onTap: () => context.go(RouteNames.statisticsPath),
+        );
+      },
+    );
+  }
+
+  /// 每个已完成知识点计 10 XP。
+  Future<int> _computeTotalXp(ProgressRepository repo) async {
+    final progressList = await repo.getAllProgress();
+    final completed = progressList.where((p) => p.status == 'completed').length;
+    return completed * 10;
+  }
+
+  /// 构建最近成就徽章行：展示最近解锁的 5 枚成就，不足时补位即将解锁的成就。
+  Widget _buildRecentAchievements({required Duration entranceDelay}) {
+    final achievementService = ref.watch(achievementServiceProvider);
+    return FutureBuilder<List<AchievementWithProgress>>(
+      future: achievementService.getAll(),
+      builder: (context, snapshot) {
+        final all = snapshot.data ?? const [];
+        final unlocked = all.where((a) => a.unlocked).toList();
+        final upcoming = all.where((a) => !a.unlocked).toList();
+        // 优先展示最近解锁，再补位进度最高的未解锁成就。
+        final display = [
+          ...unlocked.take(5),
+          ...upcoming.take(5 - unlocked.length.clamp(0, 5)),
+        ];
+
+        final items = [
+          for (final a in display)
+            AchievementBadgeItem(
+              icon: a.achievement.icon,
+              title: a.achievement.name,
+              unlocked: a.unlocked,
+              progress: a.progress,
+            ),
+        ];
+
+        return _StaggeredEntrance(
+          delay: entranceDelay,
+          duration: _staggerDuration,
+          reduceMotion: AnimationUtils.reduceMotionOf(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '最近成就',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(RouteNames.achievementsPath),
+                    child: const Text('查看全部'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              if (items.isEmpty)
+                Text(
+                  '暂无成就，开始学习即可解锁',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                )
+              else
+                AchievementBadgeRow(
+                  items: items,
+                  onTap: () => context.go(RouteNames.achievementsPath),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // ── 继续学习 CTA ────────────────────────────────────────
 
   Widget _buildContinueLearning({
@@ -301,8 +397,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       delay: _entranceDelayFor(1),
       duration: _staggerDuration,
       reduceMotion: reduceMotion,
-      child: LingxiCard(
-        variant: LingxiCardVariant.primary,
+      child: QuestCard(
+        variant: QuestCardVariant.primary,
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
@@ -341,11 +437,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             const SizedBox(width: 12),
-            LingxiButton(
+            QuestButton(
               label: const Text('开始'),
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-              variant: LingxiButtonVariant.filled,
-              size: LingxiButtonSize.medium,
+              variant: QuestButtonVariant.filled,
+              size: QuestButtonSize.medium,
               pulse: !reduceMotion,
               onPressed: () {
                 AnimationUtils.hapticMedium();
@@ -441,7 +537,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       itemCount: actions.length,
       itemBuilder: (context, i) {
         final action = actions[i];
-        final item = LingxiCard(
+        final item = QuestCard(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           onTap: () {
             AnimationUtils.hapticLight();
@@ -493,34 +589,34 @@ class _HomePageState extends ConsumerState<HomePage> {
   // ── 演示数据（已移除 _getDemoCourses，改用真实数据）────────────
 
   List<_QuickAction> _getQuickActions() {
-    final lingxiColors = context.lingxiColors;
+    final questColors = context.questColors;
     return [
       _QuickAction(
         label: 'AI 对话',
         icon: Icons.chat_bubble_outline_rounded,
         // 苏格拉底引导蓝
-        color: lingxiColors.socraticBlue,
+        color: questColors.socraticBlue,
         onTap: (ctx) => ctx.go(RouteNames.chatListPath),
       ),
       _QuickAction(
         label: '我的笔记',
         icon: Icons.edit_note_rounded,
-        // 吉祥物辅色 - 温暖橙
-        color: lingxiColors.mascotSecondary,
+        // 品牌辅色 - 温暖橙
+        color: questColors.brandSecondary,
         onTap: (ctx) => ctx.go(RouteNames.notesPath),
       ),
       _QuickAction(
         label: '成就',
         icon: Icons.emoji_events_outlined,
         // 成就金
-        color: lingxiColors.achievementGold,
+        color: questColors.achievementGold,
         onTap: (ctx) => ctx.go(RouteNames.achievementsPath),
       ),
       _QuickAction(
         label: '统计',
         icon: Icons.bar_chart_rounded,
-        // 吉祥物主色 - 星空紫
-        color: lingxiColors.mascotPrimary,
+        // 品牌主色 - 星空紫
+        color: questColors.brandPrimary,
         onTap: (ctx) => ctx.go(RouteNames.statisticsPath),
       ),
     ];
@@ -551,7 +647,7 @@ class _CourseProgressCard extends ConsumerWidget {
 
     // 级别渐变：以 [CourseLevel.levelColor] 语义色为主色，配以 70% 透明度
     // 形成同色系渐变，避免硬编码十六进制色值。
-    final levelColor = course.level.levelColor(context.lingxiColors);
+    final levelColor = course.level.levelColor(context.questColors);
     final gradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
@@ -580,7 +676,7 @@ class _CourseProgressCard extends ConsumerWidget {
               ? '$levelLabel · 已完成 ${(progress * 100).round()}%'
               : '$levelLabel · $totalKnowledgePoints 个知识点';
 
-          return LingxiCard(
+          return QuestCard(
             animateEntrance: true,
             entranceDelay: entranceDelay,
             onTap: () {
@@ -794,110 +890,4 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-// ── Streak 徽章（升级：数字动画 + 火焰渐变 + 流光）──────
 
-/// AppBar 中的连续学习天数徽章。
-class _StreakBadge extends StatelessWidget {
-  const _StreakBadge({
-    required this.days,
-    required this.isActive,
-    required this.fireGradient,
-    required this.fireColor,
-    required this.onTap,
-  });
-
-  final int days;
-  final bool isActive;
-  final Gradient fireGradient;
-  final Color fireColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final reduceMotion = AnimationUtils.reduceMotionOf(context);
-
-    Widget icon = Icon(
-      Icons.local_fire_department_rounded,
-      color: isActive ? fireColor : theme.colorScheme.outline,
-      size: 22,
-    );
-
-    // 活跃状态下给火焰图标添加流光效果
-    if (isActive && !reduceMotion) {
-      icon = SpringMotion.shimmerGlow(
-        glowColor: fireColor,
-        period: const Duration(seconds: 2),
-        child: icon,
-      );
-    }
-
-    final countText = isActive
-        ? _GradientCountText(
-            value: days,
-            gradient: fireGradient,
-            duration: const Duration(milliseconds: 800),
-          )
-        : AnimatedCountText(
-            value: days,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: theme.colorScheme.outline,
-            ),
-            duration: const Duration(milliseconds: 800),
-            curve: SpringMotion.entranceCurve,
-          );
-
-    return SpringMotion.scalePressFeedback(
-      onTap: onTap,
-      pressedScale: 0.92,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            const SizedBox(width: 4),
-            countText,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 使用渐变着色的数字动画文本（用于火焰 streak 数字）。
-class _GradientCountText extends StatelessWidget {
-  const _GradientCountText({
-    required this.value,
-    required this.gradient,
-    required this.duration,
-  });
-
-  final int value;
-  final Gradient gradient;
-  final Duration duration;
-
-  @override
-  Widget build(BuildContext context) {
-    // AnimatedCountText 内部最终通过 Text 渲染，
-    // 这里用 ShaderMask + 空 style+foreground 方式让文字以渐变填充。
-    return ShaderMask(
-      shaderCallback: (bounds) => gradient.createShader(
-        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-      ),
-      blendMode: BlendMode.srcIn,
-      child: AnimatedCountText(
-        value: value,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          color: Colors.white, // 被 ShaderMask 覆盖，仅作为 fallback
-        ),
-        duration: duration,
-        curve: SpringMotion.entranceCurve,
-      ),
-    );
-  }
-}

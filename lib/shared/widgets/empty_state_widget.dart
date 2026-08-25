@@ -1,35 +1,40 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/motion/animation_utils.dart';
 import '../../core/motion/spring_motion.dart';
-import '../../core/theme/lingxi_gradients.dart';
-import '../../features/mascot/mascot_controller.dart';
-import '../../features/mascot/mascot_state.dart';
-import '../../features/mascot/mascot_widget.dart';
-import 'lingxi_button.dart';
+import '../../core/theme/background_textures.dart';
+import '../../core/theme/quest_gradients.dart';
+import '../../core/theme/motion_tokens.dart';
+import 'quest_button.dart';
 
 /// 通用空状态组件。
 ///
-/// 垂直居中展示吉祥物（指定情绪）+ 标题 + 描述 + 可选 CTA 按钮，
-/// 以弹簧动画入场。吉祥物后方有圆形渐变光晕呼吸效果，CTA 按钮带呼吸脉动。
-class EmptyStateWidget extends ConsumerStatefulWidget {
+/// 主题适配说明：
+/// - 中心图标后方光晕使用 [QuestGradients.brandGlow]；
+/// - 装饰粒子颜色取自 [QuestGradients.celebration] 渐变色；
+/// - 背景纹理通过 [BackgroundTextures] 按风味切换：Minimal 用网格、Standard 用网点、Minecraft 用 dirt 像素块；
+/// - Minimal 风味下禁用粒子与呼吸光晕，保持专注、低干扰；
+/// - 所有颜色/渐变/纹理均来自主题 Token，无硬编码。
+///
+/// 垂直居中展示图标 + 标题 + 描述 + 可选 CTA 按钮，以弹簧动画入场。
+/// 图标后方有圆形渐变光晕呼吸效果，CTA 按钮带呼吸脉动。
+class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({
     super.key,
-    required this.mascotMood,
+    required this.icon,
     required this.title,
     required this.description,
     this.ctaText,
     this.onCta,
     this.illustration,
-    this.mascotSize = 150,
+    this.iconSize = 120,
     this.showDecorations = true,
   });
 
-  /// 吉祥物情绪
-  final MascotMood mascotMood;
+  /// 中心图标
+  final IconData icon;
 
   /// 标题
   final String title;
@@ -43,125 +48,141 @@ class EmptyStateWidget extends ConsumerStatefulWidget {
   /// CTA 点击回调
   final VoidCallback? onCta;
 
-  /// 自定义插图，优先于吉祥物展示
+  /// 自定义插图，优先于图标展示
   final Widget? illustration;
 
-  /// 吉祥物尺寸（正方形边长），范围 120-180
-  final double mascotSize;
+  /// 图标尺寸（正方形边长），范围 80-180
+  final double iconSize;
 
   /// 是否显示装饰星星和光晕
   final bool showDecorations;
 
   @override
-  ConsumerState<EmptyStateWidget> createState() => _EmptyStateWidgetState();
-}
-
-class _EmptyStateWidgetState extends ConsumerState<EmptyStateWidget> {
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final mascotSize = widget.mascotSize.clamp(120.0, 180.0);
+    final gradients = context.questGradients;
+    final motionTokens = context.motionTokens;
+    final backgroundTextures = context.backgroundTextures;
+    final effectiveIconSize = iconSize.clamp(80.0, 180.0);
 
-    return GestureDetector(
-      onTap: () => ref.read(mascotControllerProvider.notifier).triggerTap(),
-      behavior: HitTestBehavior.opaque,
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: SpringMotion.springTransition(
-            beginScale: 0.9,
-            beginOffset: const Offset(0, 0.05),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 吉祥物/插图 + 光晕 + 星星
-                SizedBox(
-                  width: mascotSize + 40,
-                  height: mascotSize + 40,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // 光晕背景
-                      if (widget.showDecorations)
-                        SpringMotion.pulseBreathing(
-                          minScale: 0.9,
-                          maxScale: 1.1,
-                          period: const Duration(seconds: 4),
-                          child: Container(
-                            width: mascotSize + 30,
-                            height: mascotSize + 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  colorScheme.primaryContainer.withValues(alpha: 0.5),
-                                  colorScheme.primaryContainer.withValues(alpha: 0.0),
-                                ],
-                              ),
-                            ),
+    // 根据 Token 推断风味：Minimal 关闭粒子；Minecraft 使用像素 dirt 纹理。
+    final isMinimal = motionTokens.pageEntranceDelay == Duration.zero &&
+        !motionTokens.enableParticles;
+    final isMinecraft = motionTokens.enableParticles &&
+        motionTokens.buttonPressedScale == 0.9;
+
+    final backgroundTexture = switch ((isMinimal, isMinecraft)) {
+      (true, _) => backgroundTextures.gridPattern,
+      (false, true) => backgroundTextures.minecraftDirt,
+      (false, false) => backgroundTextures.dotPattern,
+    };
+
+    final content = Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: SpringMotion.springTransition(
+          beginScale: 0.9,
+          beginOffset: const Offset(0, 0.05),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 插图/图标 + 光晕 + 星星
+              SizedBox(
+                width: effectiveIconSize + 40,
+                height: effectiveIconSize + 40,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // 光晕背景：Minimal 风味通过 forceReduceMotion 关闭呼吸动画，仅保留静态光晕。
+                    if (showDecorations)
+                      SpringMotion.pulseBreathing(
+                        minScale: 0.9,
+                        maxScale: 1.1,
+                        period: const Duration(seconds: 4),
+                        forceReduceMotion: isMinimal,
+                        child: Container(
+                          width: effectiveIconSize + 30,
+                          height: effectiveIconSize + 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: gradients.brandGlow,
                           ),
                         ),
-                      // 装饰粒子场（多粒子动画，使用 LingxiGradients.celebration 渐变色）
-                      if (widget.showDecorations)
-                        _ParticleField(mascotSize: mascotSize),
-                      // 插图或吉祥物
-                      widget.illustration ??
-                          MascotWidget(
-                            size: mascotSize,
-                            mood: widget.mascotMood,
-                          ),
-                    ],
-                  ),
+                      ),
+                    // 装饰粒子场（多粒子动画，使用 QuestGradients.celebration 渐变色）
+                    if (showDecorations && motionTokens.enableParticles)
+                      _ParticleField(iconSize: effectiveIconSize),
+                    // 插图或图标
+                    illustration ??
+                        Icon(
+                          icon,
+                          size: effectiveIconSize,
+                          color: theme.colorScheme.primary,
+                        ),
+                  ],
                 ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                title,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                description,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (ctaText != null && onCta != null) ...[
                 const SizedBox(height: 24),
-                Text(
-                  widget.title,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
+                QuestButton(
+                  label: Text(ctaText!),
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: onCta,
+                  pulse: true,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  widget.description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                if (widget.ctaText != null && widget.onCta != null) ...[
-                  const SizedBox(height: 24),
-                  LingxiButton(
-                    label: Text(widget.ctaText!),
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: widget.onCta,
-                    pulse: true,
-                  ),
-                ],
               ],
-            ),
+            ],
           ),
         ),
       ),
     );
-  }
 
+    if (!showDecorations) {
+      return content;
+    }
+
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: CustomPaint(
+            painter: backgroundTexture,
+          ),
+        ),
+        content,
+      ],
+    );
+  }
 }
 
 // ── 多粒子动画系统 ────────────────────────────────────────────
 //
 // 替代 v0.2.0 的 `_TwinklingStar` 静态闪烁星星，升级为 Lottie 风格的多粒子
-// 动画场。7 个粒子分布在吉祥物周围，使用三种轨迹（圆形 / 螺旋 / 抛物线）
-// 与不同延迟、周期，配合 `LingxiGradients.celebration` 渐变色（紫 → 粉 → 橙）
+// 动画场。7 个粒子分布在中心图标周围，使用三种轨迹（圆形 / 螺旋 / 抛物线）
+// 与不同延迟、周期，配合 `QuestGradients.celebration` 渐变色（紫 → 粉 → 橙）
 // 营造庆祝氛围。
 //
 // 设计要点：
 // - **两层 RepaintBoundary 隔离**：外层隔离整个粒子场与页面其他元素，
 //   内层（每个 `_Particle`）隔离各粒子彼此，避免单个粒子动画触发整场重绘。
-// - **reduceMotion 降级**：当 `MediaQuery.disableAnimations` 为 true 时，
+// - reduceMotion 降级：当 `MediaQuery.disableAnimations` 为 true 时，
 //   粒子以固定位置 + 60% opacity 静态渲染，不创建 AnimationController。
-// - **轨迹数学**：
+// - 轨迹数学：
 //   - `circular`：粒子在初始位置周围做圆周运动。
 //   - `spiral`：半径在 0 → orbitRadius → 0 间振荡，角度旋转 2 圈，形成螺旋。
 //   - `parabolic`：水平正弦摆动 + 垂直抛物线（喷泉轨迹 0 → 峰值 → 0）。
@@ -210,77 +231,77 @@ class _ParticleSpec {
 
 /// 粒子场：管理所有粒子的布局与生命周期
 ///
-/// 通过 [context.lingxiGradients] 读取 `celebration` 渐变色并传递给所有粒子。
+/// 通过 [context.questGradients] 读取 `celebration` 渐变色并传递给所有粒子。
 /// 整个粒子场由外层 [RepaintBoundary] 隔离，避免动画触发父级重绘。
 class _ParticleField extends StatelessWidget {
-  const _ParticleField({required this.mascotSize});
+  const _ParticleField({required this.iconSize});
 
-  /// 吉祥物尺寸，用于计算粒子分布范围
-  final double mascotSize;
+  /// 中心图标尺寸，用于计算粒子分布范围
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
-    final gradients = context.lingxiGradients;
+    final gradients = context.questGradients;
     final gradientColors = gradients.celebration.colors;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
-    final parentSize = mascotSize + 40;
+    final parentSize = iconSize + 40;
 
     final specs = <_ParticleSpec>[
       _ParticleSpec(
         size: 8,
-        initialOffsetFromCenter: Offset(-mascotSize * 0.42, -mascotSize * 0.42),
+        initialOffsetFromCenter: Offset(-iconSize * 0.42, -iconSize * 0.42),
         trajectory: _ParticleTrajectory.circular,
         period: const Duration(milliseconds: 2800),
         delayFraction: 0.0,
-        orbitRadius: mascotSize * 0.05,
+        orbitRadius: iconSize * 0.05,
       ),
       _ParticleSpec(
         size: 6,
-        initialOffsetFromCenter: Offset(mascotSize * 0.42, -mascotSize * 0.38),
+        initialOffsetFromCenter: Offset(iconSize * 0.42, -iconSize * 0.38),
         trajectory: _ParticleTrajectory.spiral,
         period: const Duration(milliseconds: 3400),
         delayFraction: 0.15,
-        orbitRadius: mascotSize * 0.07,
+        orbitRadius: iconSize * 0.07,
       ),
       _ParticleSpec(
         size: 10,
-        initialOffsetFromCenter: Offset(-mascotSize * 0.46, mascotSize * 0.12),
+        initialOffsetFromCenter: Offset(-iconSize * 0.46, iconSize * 0.12),
         trajectory: _ParticleTrajectory.parabolic,
         period: const Duration(milliseconds: 3000),
         delayFraction: 0.3,
-        orbitRadius: mascotSize * 0.06,
+        orbitRadius: iconSize * 0.06,
       ),
       _ParticleSpec(
         size: 5,
-        initialOffsetFromCenter: Offset(mascotSize * 0.46, mascotSize * 0.18),
+        initialOffsetFromCenter: Offset(iconSize * 0.46, iconSize * 0.18),
         trajectory: _ParticleTrajectory.circular,
         period: const Duration(milliseconds: 3600),
         delayFraction: 0.45,
-        orbitRadius: mascotSize * 0.04,
+        orbitRadius: iconSize * 0.04,
       ),
       _ParticleSpec(
         size: 7,
-        initialOffsetFromCenter: Offset(0, -mascotSize * 0.52),
+        initialOffsetFromCenter: Offset(0, -iconSize * 0.52),
         trajectory: _ParticleTrajectory.spiral,
         period: const Duration(milliseconds: 2400),
         delayFraction: 0.6,
-        orbitRadius: mascotSize * 0.06,
+        orbitRadius: iconSize * 0.06,
       ),
       _ParticleSpec(
         size: 6,
-        initialOffsetFromCenter: Offset(-mascotSize * 0.18, mascotSize * 0.48),
+        initialOffsetFromCenter: Offset(-iconSize * 0.18, iconSize * 0.48),
         trajectory: _ParticleTrajectory.parabolic,
         period: const Duration(milliseconds: 3200),
         delayFraction: 0.2,
-        orbitRadius: mascotSize * 0.05,
+        orbitRadius: iconSize * 0.05,
       ),
       _ParticleSpec(
         size: 5,
-        initialOffsetFromCenter: Offset(mascotSize * 0.22, mascotSize * 0.44),
+        initialOffsetFromCenter: Offset(iconSize * 0.22, iconSize * 0.44),
         trajectory: _ParticleTrajectory.circular,
         period: const Duration(milliseconds: 3800),
         delayFraction: 0.5,
-        orbitRadius: mascotSize * 0.05,
+        orbitRadius: iconSize * 0.05,
       ),
     ];
 
@@ -464,9 +485,9 @@ class _ParticleState extends State<_Particle>
   }
 }
 
-/// 粒子绘制器：以 [LingxiGradients.celebration] 渐变色填充五角星路径
+/// 粒子绘制器：以 [QuestGradients.celebration] 渐变色填充五角星路径
 ///
-/// `gradientColors` 引用自 [LingxiGradients.celebration.colors]，列表实例
+/// `gradientColors` 引用自 [QuestGradients.celebration.colors]，列表实例
 /// 在 [_ParticleField] 中创建后稳定传递给所有粒子，[shouldRepaint] 通过
 /// 引用相等判断即可避免无效重绘。
 class _ParticlePainter extends CustomPainter {

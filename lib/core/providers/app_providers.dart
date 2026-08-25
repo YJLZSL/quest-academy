@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../theme/theme_flavor_provider.dart';
+
 /// SharedPreferences 提供者。
 ///
 /// 在 `main()` 中通过 `overrideWithValue` 注入已初始化的实例，
@@ -17,21 +19,27 @@ class AppConfig {
     required this.locale,
     required this.socraticMode,
     required this.onboardingCompleted,
+    required this.themeFlavor,
+    required this.seedColor,
   });
 
   final ThemeMode themeMode;
   final Locale locale;
   final bool socraticMode;
   final bool onboardingCompleted;
+  final ThemeFlavor themeFlavor;
+  final Color seedColor;
 }
 
-/// 应用配置提供者，从 SharedPreferences 读取主题、语言、苏格拉底模式默认值。
+/// 应用配置提供者，从 SharedPreferences 读取主题、语言、苏格拉底模式等默认值。
 ///
 /// SharedPreferences 中存储的键：
 /// - `theme_mode`：int (0=system, 1=light, 2=dark)
 /// - `locale`：String ('zh' | 'en')
 /// - `socratic_mode`：bool
 /// - `onboarding_completed`：bool
+/// - `theme_flavor`：String ('standard' | 'minimal' | 'minecraft')
+/// - `seed_color`：int (Color.value)
 final appConfigProvider = Provider<AppConfig>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   final themeIndex = prefs.getInt('theme_mode') ?? 0;
@@ -43,6 +51,8 @@ final appConfigProvider = Provider<AppConfig>((ref) {
         : const Locale('zh', 'CN'),
     socraticMode: prefs.getBool('socratic_mode') ?? true,
     onboardingCompleted: prefs.getBool('onboarding_completed') ?? false,
+    themeFlavor: ThemeFlavor.fromString(prefs.getString('theme_flavor')),
+    seedColor: Color(prefs.getInt('seed_color') ?? 0xFF6750A4),
   );
 });
 
@@ -91,3 +101,13 @@ final socraticModeProvider = StateNotifierProvider<SocraticModeNotifier, bool>(
 final onboardingCompletedProvider = StateProvider<bool>(
   (ref) => ref.watch(appConfigProvider).onboardingCompleted,
 );
+
+/// 重新导出主题风味相关 Provider，方便统一导入。
+export '../theme/theme_flavor_provider.dart'
+    show
+        ThemeFlavor,
+        ThemeFlavorNotifier,
+        themeFlavorProvider,
+        SeedColorNotifier,
+        seedColorProvider,
+        SeedColorPresets;

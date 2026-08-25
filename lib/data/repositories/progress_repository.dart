@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:lingxi_academy/data/db/database.dart';
+import 'package:quest_academy/data/db/database.dart';
 
 /// Drift 生成的 Progress 表数据类为 [ProgressData]（避免与表名冲突）。
 /// 这里使用 `ProgressEntry` 别名，对外保持业务语义清晰。
@@ -11,7 +11,12 @@ typedef ProgressEntry = ProgressData;
 class ProgressRepository {
   ProgressRepository(this._db);
 
-  final LingxiDatabase _db;
+  final QuestDatabase _db;
+
+  /// 获取全部进度记录。
+  Future<List<ProgressEntry>> getAllProgress() {
+    return _db.select(_db.progress).get();
+  }
 
   /// 获取指定课程下的全部进度记录。
   Future<List<ProgressEntry>> getProgress(String courseId) {

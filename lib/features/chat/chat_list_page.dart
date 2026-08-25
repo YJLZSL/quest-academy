@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lingxi_academy/core/motion/animation_utils.dart';
-import 'package:lingxi_academy/core/motion/spring_motion.dart';
-import 'package:lingxi_academy/core/router/route_names.dart';
-import 'package:lingxi_academy/data/db/database.dart';
-import 'package:lingxi_academy/data/providers/db_providers.dart';
-import 'package:lingxi_academy/features/mascot/mascot_widget.dart';
-import 'package:lingxi_academy/shared/utils/responsive.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_app_bar.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_button.dart';
-import 'package:lingxi_academy/shared/widgets/lingxi_card.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
+import 'package:quest_academy/core/motion/spring_motion.dart';
+import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/data/db/database.dart';
+import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/shared/utils/responsive.dart';
+import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
+import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
+import 'package:quest_academy/shared/widgets/quest_card.dart';
 
 /// 对话列表页。
 ///
 /// 列出全部历史对话（按更新时间倒序），点击进入对应 [ChatPage]，
-/// 右上角与列表项支持新建/删除。无对话时展示吉祥物空状态与
-/// "开始第一次对话" CTA。列表项使用 [LingxiCard] 带交错入场动画，
+/// 右上角与列表项支持新建/删除。无对话时展示空状态与
+/// "开始第一次对话" CTA。列表项使用 [QuestCard] 带交错入场动画，
 /// 新建对话 FAB 带弹性缩放入场。
 class ChatListPage extends ConsumerStatefulWidget {
   const ChatListPage({super.key});
@@ -51,7 +50,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const LingxiAppBar(title: Text('对话')),
+      appBar: const QuestAppBar(title: Text('对话')),
       floatingActionButton: _AnimatedFAB(onPressed: _createConversation),
       body: StreamBuilder<List<Conversation>>(
         stream: _stream,
@@ -70,46 +69,19 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     );
   }
 
-  /// 空状态：吉祥物 + CTA（带入场动画）。
+  /// 空状态：图标 + CTA。
   Widget _buildEmpty(BuildContext context) {
-    final theme = Theme.of(context);
-    final reduceMotion = AnimationUtils.reduceMotionOf(context);
-    final child = Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const MascotWidget(size: 160, enableTapInteraction: false),
-          const SizedBox(height: 24),
-          Text('还没有对话', style: theme.textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text(
-            '和小犀开始第一次对话吧',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 16),
-          LingxiButton(
-            icon: const Icon(Icons.chat_bubble_outline),
-            label: const Text('开始第一次对话'),
-            onPressed: _createConversation,
-            pulse: true,
-          ),
-        ],
-      ),
-    );
-    if (reduceMotion) return child;
-    return SpringMotion.slideFadeTransition(
-      direction: AxisDirection.up,
-      distance: 24,
-      duration: SpringMotion.gentleDuration,
-      curve: SpringMotion.entranceCurve,
-      child: child,
+    return EmptyStateWidget(
+      icon: Icons.chat_bubble_outline,
+      title: '还没有对话',
+      description: '开始第一次对话吧',
+      ctaText: '开始第一次对话',
+      onCta: _createConversation,
     );
   }
 
   /// 对话列表：桌面端双列网格，移动端单列。
-  /// 列表项使用 LingxiCard(animateEntrance: true) 配合 40ms 交错延迟。
+  /// 列表项使用 QuestCard(animateEntrance: true) 配合 40ms 交错延迟。
   Widget _buildList(BuildContext context, List<Conversation> list) {
     final isDesktop = Responsive.isDesktop(context);
     if (isDesktop) {
@@ -134,10 +106,10 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     );
   }
 
-  /// 单个对话卡片：LingxiCard 带交错入场动画（每项延迟 40ms）。
+  /// 单个对话卡片：QuestCard 带交错入场动画（每项延迟 40ms）。
   Widget _buildTile(BuildContext context, Conversation conv, int index) {
     final theme = Theme.of(context);
-    return LingxiCard(
+    return QuestCard(
       animateEntrance: true,
       entranceDelay: Duration(milliseconds: 40 * index),
       onTap: () => context.go('${RouteNames.chatListPath}/${conv.id}'),

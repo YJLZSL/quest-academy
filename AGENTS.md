@@ -127,7 +127,7 @@ lib/
 │   ├── help/                     #   帮助中心
 │   ├── home/                     #   首页（含 empty_states 子目录）
 │   ├── learning/                 #   学习路径与课时（含 widgets 子目录）
-│   ├── mascot/                   #   吉祥物（controller, state, widget, overlay, rive）
+
 │   ├── notes/                    #   笔记列表与编辑
 │   ├── onboarding/               #   引导与 API 配置向导
 │   ├── progress/                 #   进度统计、成就服务、连续学习服务
@@ -165,8 +165,9 @@ lib/
 
 | 文件 | 职责 |
 |------|------|
-| `app_theme.dart` | `AppTheme` 静态类，提供 `lightTheme` / `darkTheme`，注册 `LingxiColors` / `LingxiGradients` / `LingxiElevations` 三组 ThemeExtension（按 `brightness` 三元切换 light/dark 实例） |
-| `lingxi_colors.dart` | `LingxiColors extends ThemeExtension<LingxiColors>`，6 个语义色（mascotPrimary 星空紫 / streakFire 火焰红 / achievementGold 成就金 / misconceptionRed 误解红 / successGreen 成功绿 / infoBlue 信息蓝），light/dark 双实例，dark 实例校准 streakFire（0xFFFF7043→0xFFFF8A65）与 achievementGold（0xFFFFE082→0xFFFFD54F）以满足 WCAG AA 对比度 |
+| `app_theme.dart` | `AppTheme` 静态类，提供 `lightTheme` / `darkTheme` 与 `themeFor(seed, flavor)`；注册 `LingxiColors` / `LingxiGradients` / `LingxiElevations` / `AppTypography` / `BackgroundTextures` / `ShapeTokens` / `MotionTokens` 等多组 ThemeExtension |
+| `theme_flavor_provider.dart` | `ThemeFlavor` 枚举（`standard` / `minimal` / `minecraft`）、`themeFlavorProvider` 持久化状态、`SeedColorPresets` 预设种子色；启动时自动迁移旧 `minimal_mode` 开关 |
+| `lingxi_colors.dart` | `LingxiColors extends ThemeExtension<LingxiColors>`，语义色包括 `brandPrimary` / `brandSecondary` / `streakFire` / `achievementGold` / `xpBlue` / `misconceptionRed` / `successGreen` / `infoBlue` 等；按 `fromSeed(seed, flavor)` 构造，`toDark()` 生成暗色实例，确保 WCAG AA 对比度 |
 | `lingxi_gradients.dart` | `LingxiGradients extends ThemeExtension<LingxiGradients>`，6 个语义渐变（mascotHero 吉祥物主光 / streakFire 火焰 / achievementGold 成就金 / primarySurface 主色面 / celebration 庆祝 / success 成功），light/dark 双实例 |
 | `lingxi_elevations.dart` | `LingxiElevations extends ThemeExtension<LingxiElevations>`，3 档语义阴影 `subtle` / `elevated` / `highlighted`（light/dark 双实例），同时保留 `level0`~`level4` 兼容旧调用 |
 | `shape_variants.dart` | 形状变体定义 |
