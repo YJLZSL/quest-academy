@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quest_academy/core/motion/animation_utils.dart';
 import 'package:quest_academy/core/motion/spring_motion.dart';
 import 'package:quest_academy/core/theme/quest_elevations.dart';
+import 'package:quest_academy/core/theme/quest_spacing.dart';
 import 'package:quest_academy/core/theme/motion_tokens.dart';
 import 'package:quest_academy/core/theme/shape_tokens.dart';
 import 'package:quest_academy/core/theme/theme_flavor_provider.dart';
@@ -210,7 +211,7 @@ class _QuestCardState extends ConsumerState<QuestCard> {
     final shadows = _resolveShadows(context, flavor, clickable, reduceMotion);
 
     final content = Padding(
-      padding: widget.padding ?? const EdgeInsets.all(16),
+      padding: widget.padding ?? EdgeInsets.all(context.questSpacing.lg),
       child: widget.child,
     );
 

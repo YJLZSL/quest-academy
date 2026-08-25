@@ -100,20 +100,20 @@ void main() {
       SharedPreferences.setMockInitialValues(<String, Object>{});
     });
 
-    test('默认使用星空紫 #6750A4', () async {
+    test('默认使用问学品牌色求知靛蓝 #3D5AFE', () async {
       final prefs = await SharedPreferences.getInstance();
       final notifier = SeedColorNotifier(prefs);
-      expect(notifier.state, const Color(0xFF6750A4));
+      expect(notifier.state, const Color(0xFF3D5AFE));
     });
 
     test('set 更新状态并持久化', () async {
       final prefs = await SharedPreferences.getInstance();
       final notifier = SeedColorNotifier(prefs);
 
-      notifier.set(const Color(0xFFFF6B6B));
+      notifier.set(const Color(0xFF009688));
 
-      expect(notifier.state, const Color(0xFFFF6B6B));
-      expect(prefs.getInt('seed_color'), 0xFFFF6B6B);
+      expect(notifier.state, const Color(0xFF009688));
+      expect(prefs.getInt('seed_color'), 0xFF009688);
     });
   });
 }
