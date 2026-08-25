@@ -1,13 +1,13 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format-tokens/",
-  "$description": "灵犀学院（Lingxi Academy）结构化设计令牌。基于现有 lib/core/theme 下的 AppTheme、LingxiColors、ShapeVariants、SpringMotion 提炼，并补充重设计所需的新增令牌。",
+  "$description": "问学 Quest Academy 结构化设计令牌。基于现有 lib/core/theme 下的 AppTheme、QuestColors、ShapeVariants、SpringMotion 提炼，并补充重设计所需的新增令牌。",
   "meta": {
-    "project": "灵犀学院 Lingxi Academy",
+    "project": "问学 Quest Academy",
     "platform": ["android", "windows"],
     "flutter": "3.44.4",
     "dart": "3.12.2",
     "materialVersion": "Material 3 Expressive",
-    "seedColor": "#6750A4"
+    "seedColor": "#3D5AFE"
   },
   "color": {
     "primary": {
@@ -155,33 +155,6 @@
       "dark": "#49454F",
       "rgb": { "light": "202, 196, 208", "dark": "73, 69, 79" }
     },
-    "mascot": {
-      "primary": {
-        "value": "#7C4DFF",
-        "rgb": "124, 77, 255",
-        "note": "吉祥物主色-星空紫，浅深色通用"
-      },
-      "secondary": {
-        "value": "#FFB74D",
-        "rgb": "255, 183, 77",
-        "note": "吉祥物辅色-温暖橙，浅深色通用"
-      },
-      "bodyGradientTop": "#7C4DFF",
-      "bodyGradientBottom": "#B39DDB",
-      "capColor": "#1C1B2E",
-      "tasselColor": "#FFD54F",
-      "starColor": "#FFE082",
-      "scleraColor": "#FFFFFF",
-      "pupilColor": "#2A2118",
-      "mouthColor": "#3E2723",
-      "hornTop": "#FFFFFF",
-      "hornBottom": "#B39DDB",
-      "tongueColor": "#FF8A95",
-      "blushColor": "#66FF8A95",
-      "wingFillColor": "#59FFFFFF",
-      "highlightColor": "#55FFFFFF",
-      "teardropColor": "#4FC3F7"
-    },
     "streakFire": {
       "light": "#FF5722",
       "dark": "#FF7043",
@@ -203,11 +176,6 @@
       "rgb": { "light": "239, 83, 80", "dark": "239, 154, 154" }
     },
     "gradient": {
-      "mascotHero": {
-        "colors": ["#7C4DFF", "#FFB74D"],
-        "direction": "topLeft-bottomRight",
-        "note": "学习卡片主图区渐变，alpha 0.6"
-      },
       "celebrateConfetti": {
         "colors": ["#FFE082", "#FF8A95", "#81D4FA", "#B39DDB", "#FFAB91"],
         "note": "庆祝撒花调色板"

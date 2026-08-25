@@ -1,11 +1,11 @@
 # 贡献指南
 
-首先，感谢你有兴趣为灵犀学院贡献代码！🎉 无论是修复 Bug、完善文档，还是开发新功能，每一份贡献都让这个项目变得更好。
+首先，感谢你有兴趣为问学 Quest Academy 贡献代码！🎉 无论是修复 Bug、完善文档，还是开发新功能，每一份贡献都让这个项目变得更好。
 
 ## 贡献流程
 
 1. **Fork 仓库** —— 点击 GitHub 页面右上角的 Fork 按钮，将项目 fork 到你的账号下
-2. **克隆仓库** —— `git clone https://github.com/<你的用户名>/lingxi-academy.git`
+2. **克隆仓库** —— `git clone https://github.com/<你的用户名>/quest-academy.git`
 3. **创建分支** —— `git checkout -b feat/your-feature-name`（分支命名见下方命名约定）
 4. **编写代码** —— 遵循下方的代码规范
 5. **提交更改** —— 遵循 Conventional Commits 规范编写提交信息
@@ -59,7 +59,6 @@ lib/
 │   ├── help/                 #   帮助中心
 │   ├── home/                 #   首页
 │   ├── learning/             #   学习路径与课时
-│   ├── mascot/               #   吉祥物小犀
 │   ├── notes/                #   笔记
 │   ├── onboarding/           #   引导与 API 配置
 │   ├── progress/             #   进度统计与成就服务
@@ -68,7 +67,7 @@ lib/
 │   └── update/               #   应用内自动更新
 └── shared/                   # 共享层：跨 feature 复用
     ├── utils/                #   工具函数
-    └── widgets/              #   通用组件（LingxiCard / LingxiButton 等）
+    └── widgets/              #   通用组件（QuestCard / QuestButton 等）
 ```
 
 > 完整目录结构与分层职责见 [AGENTS.md](AGENTS.md) 「目录结构与分层约定」章节。
@@ -148,7 +147,7 @@ docs(readme): 更新构建指南
 
 ## 课程内容贡献指南
 
-灵犀学院的课程内容以 JSON 格式存储在 `assets/courses/` 目录，社区贡献者可以通过 PR 提交新课程或改进现有内容。
+问学 Quest Academy 的课程内容以 JSON 格式存储在 `assets/courses/` 目录，社区贡献者可以通过 PR 提交新课程或改进现有内容。
 
 ### 课程文件结构
 
@@ -210,7 +209,7 @@ assets/courses/
 ## 联系方式
 
 <!-- 联系方式占位（后续补充） -->
-- GitHub Issues：[提交 Issue](https://github.com/YJLZSL/polaris-learn/issues)
+- GitHub Issues：[提交 Issue](https://github.com/YJLZSL/quest-academy/issues)
 - Email：待补充
 
 再次感谢你的贡献！💪

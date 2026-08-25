@@ -91,21 +91,21 @@ class QuestElevations extends ThemeExtension<QuestElevations> {
 
   /// 亮色模式实例（默认种子色）。
   static final QuestElevations light = QuestElevations.fromSeed(
-    const Color(0xFF6750A4),
+    const Color(0xFF3D5AFE),
     Brightness.light,
     ThemeFlavor.standard,
   );
 
   /// 暗色模式实例（默认种子色）。
   static final QuestElevations dark = QuestElevations.fromSeed(
-    const Color(0xFF6750A4),
+    const Color(0xFF3D5AFE),
     Brightness.dark,
     ThemeFlavor.standard,
   );
 
   /// 极简模式实例（默认种子色）。
   static final QuestElevations minimal = QuestElevations.fromSeed(
-    const Color(0xFF6750A4),
+    const Color(0xFF3D5AFE),
     Brightness.light,
     ThemeFlavor.minimal,
   );

@@ -152,4 +152,10 @@ abstract class AiProvider {
   ///
   /// 实现应发送一次极小的探测请求，返回 true 表示连通且鉴权通过。
   Future<bool> testConnection();
+
+  /// 获取当前 API Key 下可用的模型列表（自动检测）。
+  ///
+  /// 用于设置页「检测可用模型」，拉取服务商 /models 等列表接口。
+  /// 默认返回空列表（表示该服务商不支持自动检测），支持的服务商可覆盖。
+  Future<List<String>> fetchModels() async => const [];
 }

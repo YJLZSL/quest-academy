@@ -84,6 +84,11 @@ class ApiTestService {
   AiProvider _createProvider(ProviderConfig config) {
     switch (config.providerType) {
       case ProviderType.openaiCompatible:
+      case ProviderType.deepseek:
+      case ProviderType.moonshot:
+      case ProviderType.qwen:
+      case ProviderType.zhipu:
+      case ProviderType.groq:
         return OpenAICompatibleProvider(
           baseUrl: config.baseUrl,
           apiKey: config.apiKey,
@@ -137,6 +142,21 @@ class ApiTestService {
     } catch (e) {
       // 兜底：将异常文本脱敏后返回，避免原始错误中可能包含的密钥
       return ApiTestUnknownError(sanitize(e.toString()));
+    } finally {
+      provider.cancel();
+    }
+  }
+
+  /// 获取 [config] 对应服务商当前 API Key 下可用的模型列表（自动检测）。
+  ///
+  /// 复用 [_createProvider] 临时构造实例并调用 [AiProvider.fetchModels]。
+  /// 返回空列表表示该服务商不支持自动检测或拉取失败。
+  Future<List<String>> fetchModels(ProviderConfig config) async {
+    final provider = _createProvider(config);
+    try {
+      return await provider.fetchModels();
+    } catch (_) {
+      return const [];
     } finally {
       provider.cancel();
     }

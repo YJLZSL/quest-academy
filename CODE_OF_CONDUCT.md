@@ -1,6 +1,6 @@
 # 贡献者行为准则
 
-> 本文档定义灵犀学院社区所有参与者（维护者、贡献者、用户）的行为规范。
+> 本文档定义问学 Quest Academy 社区所有参与者（维护者、贡献者、用户）的行为规范。
 
 ## 承诺
 
@@ -32,7 +32,7 @@
 
 ### 适用范围
 
-本准则适用于灵犀学院社区的所有空间，包括但不限于：
+本准则适用于问学 Quest Academy 社区的所有空间，包括但不限于：
 
 - GitHub 仓库（Issues、Pull Requests、Discussions、Wiki）
 - 代码评审与 commit message
@@ -54,7 +54,7 @@
 
 如遇违规行为，请通过以下方式报告：
 
-- **GitHub Issues**：[提交 Issue](https://github.com/YJLZSL/polaris-learn/issues)（请勿在公开 Issue 中披露敏感私人信息，可先通过下方邮箱私密联系）
+- **GitHub Issues**：[提交 Issue](https://github.com/YJLZSL/quest-academy/issues)（请勿在公开 Issue 中披露敏感私人信息，可先通过下方邮箱私密联系）
 - **Email**：待补充（项目维护者将在后续版本补充联系方式）
 
 ## 来源与致谢
@@ -65,7 +65,7 @@
 
 ## 联系方式
 
-- GitHub Issues：[提交 Issue](https://github.com/YJLZSL/polaris-learn/issues)
+- GitHub Issues：[提交 Issue](https://github.com/YJLZSL/quest-academy/issues)
 - Email：待补充
 
-感谢每一位贡献者让灵犀学院变得更好。
+感谢每一位贡献者让问学 Quest Academy 变得更好。

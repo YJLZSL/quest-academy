@@ -1,6 +1,6 @@
-# AGENTS.md — 灵犀学院 AI 协作者规范
+# AGENTS.md — 问学 Quest Academy AI 协作者规范
 
-> 本文档面向所有参与灵犀学院开发的 AI 协作者（Trae/Claude/Cursor 等），规定了项目约定、代码规范与安全红线。**阅读本文档后再开始任何代码修改。**
+> 本文档面向所有参与问学 Quest Academy 开发的 AI 协作者（Trae/Claude/Cursor 等），规定了项目约定、代码规范与安全红线。**阅读本文档后再开始任何代码修改。**
 >
 > ⚠️ **安全红线章节（见下文）为强制约束，违反将导致密钥泄露等严重后果，任何修改都必须严格遵守。**
 
@@ -8,7 +8,7 @@
 
 ## 项目概述与定位
 
-- **项目名称**：灵犀学院（Lingxi Academy，包名 `lingxi_academy`）
+- **项目名称**：问学 Quest Academy（包名 `quest_academy`）
 - **定位**：引导式 AI 学习应用，面向 AI 编程与 AI 应用方向的初学者与进阶学习者，提供结构化课程、苏格拉底式对话、笔记、成就与连续学习激励。
 - **目标用户**：自学者、学生、对 AI 应用开发感兴趣的开发者。
 - **核心理念**：
@@ -25,9 +25,10 @@
 | 版本 | 发布日期 | 核心交付 |
 |------|----------|----------|
 | **v0.1.0** | 2026-07-15 | 初始版本：基础功能闭环（课程学习、自由对话、笔记、成就与连续学习激励），完成项目骨架搭建 |
-| **v0.2.0** | 2026-07-20 | 美术与动画全面优化：`LingxiGradients.dark` 双主题渐变对齐、`_MascotPainter` 6 状态精细化绘制、`SpringMotion` 6 档弹簧参数对齐 Material 3 规范、`ChatController` 流式 50ms 动态节流 |
-| **v0.3.0** | 2026-07-23 | 打磨·测试·发布：Hero 共享元素动画（`MascotHero` + `mascotHeroFlightShuttleBuilder`）、按压微交互（`LingxiButton` scale 0.96 / `LingxiCard` scale 0.99 / `LingxiChip` `AnimatedSwitcher`）、`SpringMotion.fastSpeed` 时长修复（151ms → 148ms ≤ 150ms）、列表滚动优化（`cacheExtent: 500` + `RepaintBoundary`）、PageView 手感升级（`BouncingScrollPhysics` + `reduceMotion` 按钮降级）、GoRouter 过渡统一（`slideFadeTransitionBuilder` + `SpringMotion.entranceCurve`）、新增 149 个测试用例 |
+| **v0.2.0** | 2026-07-20 | 美术与动画全面优化：`QuestGradients.dark` 双主题渐变对齐、`_MascotPainter` 6 状态精细化绘制、`SpringMotion` 6 档弹簧参数对齐 Material 3 规范、`ChatController` 流式 50ms 动态节流 |
+| **v0.3.0** | 2026-07-23 | 打磨·测试·发布：Hero 共享元素动画（`MascotHero` + `mascotHeroFlightShuttleBuilder`）、按压微交互（`QuestButton` scale 0.96 / `QuestCard` scale 0.99 / `QuestChip` `AnimatedSwitcher`）、`SpringMotion.fastSpeed` 时长修复（151ms → 148ms ≤ 150ms）、列表滚动优化（`cacheExtent: 500` + `RepaintBoundary`）、PageView 手感升级（`BouncingScrollPhysics` + `reduceMotion` 按钮降级）、GoRouter 过渡统一（`slideFadeTransitionBuilder` + `SpringMotion.entranceCurve`）、新增 149 个测试用例 |
 | **v0.4.0** | 2026-07-24 | 双端专注版：移除 macOS 支持、新增应用内自动更新（`UpdateService`/`UpdateController`/`UpdateDialog`/`UpdateState`，基于 GitHub Releases API，Android APK + Windows ZIP 双端）、新增 `LearnerProfiles` / `LearningEvents` 两张 Drift 表（schemaVersion v3）、新增 `package_info_plus` / `open_filex` / `archive` / `msix` 依赖、前端 UI 审查修复（硬编码颜色改用语义色、死代码清理）、CI/CD 修复（Windows zip 路径、ScrollCacheExtent 类型、MSVC /WX 标志、rive_common 编译） |
+| **v0.6.0** | 2026-08-25 | 品牌升级·问学 Quest Academy：包名 `lingxi_academy`→`quest_academy`、GitHub 仓库 `YJLZSL/polaris-learn`→`YJLZSL/quest-academy`、类名 `Lingxi*`→`Quest*` 全面更名；彻底移除吉祥物与 Rive 依赖；前端重设计收尾与新品牌图标落地 |
 
 ---
 
@@ -68,7 +69,6 @@
 | `uuid` | ^4.4.0 | UUID v4 主键生成 |
 | `flutter_secure_storage` | ^9.2.2 | API Key 加密存储 |
 | `dio` | ^5.4.3+1 | HTTP 客户端 |
-| `rive` | ^0.13.13 | 吉祥物动画（目标方案） |
 | `flutter_markdown` | ^0.7.2+1 | Markdown 渲染 |
 | `flutter_math_fork` | ^0.7.2 | 数学公式渲染 |
 | `markdown` | ^7.2.0 | Markdown 解析 |
@@ -107,13 +107,13 @@
 ```
 lib/
 ├── main.dart                     # 应用入口（初始化 SharedPreferences → ProviderScope）
-├── app.dart                      # LingxiApp（MaterialApp.router 根 Widget）
+├── app.dart                      # QuestApp（MaterialApp.router 根 Widget）
 ├── core/                         # 核心层：与业务无关的基础设施
 │   ├── constants/                #   常量（app_constants.dart）
 │   ├── motion/                   #   动画曲线（spring_motion.dart, animation_utils.dart, page_transitions.dart）
 │   ├── providers/                #   全局 Provider（app_providers.dart）
 │   ├── router/                   #   路由（app_router.dart, route_names.dart）
-│   └── theme/                    #   主题（app_theme.dart, lingxi_colors.dart, lingxi_gradients.dart, lingxi_elevations.dart, shape_variants.dart）
+│   └── theme/                    #   主题（app_theme.dart, quest_colors.dart, quest_gradients.dart, quest_elevations.dart, shape_variants.dart）
 ├── data/                         # 数据层：本地持久化与数据模型
 │   ├── db/                       #   Drift 数据库（database.dart, connection.dart, secure_database.dart）
 │   ├── models/                   #   纯数据模型（provider_config.dart, course_content.dart）
@@ -136,7 +136,7 @@ lib/
 │   └── update/                   #   应用内自动更新（controller, dialog, service, state）
 └── shared/                       # 共享层：跨 feature 复用
     ├── utils/                    #   工具（responsive.dart, misconception_parser.dart）
-    └── widgets/                  #   通用组件（lingxi_card, lingxi_button, lingxi_app_bar 等）
+    └── widgets/                  #   通用组件（quest_card, quest_button, quest_app_bar 等）
 ```
 
 ### 各层职责
@@ -165,31 +165,31 @@ lib/
 
 | 文件 | 职责 |
 |------|------|
-| `app_theme.dart` | `AppTheme` 静态类，提供 `lightTheme` / `darkTheme` 与 `themeFor(seed, flavor)`；注册 `LingxiColors` / `LingxiGradients` / `LingxiElevations` / `AppTypography` / `BackgroundTextures` / `ShapeTokens` / `MotionTokens` 等多组 ThemeExtension |
+| `app_theme.dart` | `AppTheme` 静态类，提供 `lightTheme` / `darkTheme` 与 `themeFor(seed, flavor)`；注册 `QuestColors` / `QuestGradients` / `QuestElevations` / `AppTypography` / `BackgroundTextures` / `ShapeTokens` / `MotionTokens` 等多组 ThemeExtension |
 | `theme_flavor_provider.dart` | `ThemeFlavor` 枚举（`standard` / `minimal` / `minecraft`）、`themeFlavorProvider` 持久化状态、`SeedColorPresets` 预设种子色；启动时自动迁移旧 `minimal_mode` 开关 |
-| `lingxi_colors.dart` | `LingxiColors extends ThemeExtension<LingxiColors>`，语义色包括 `brandPrimary` / `brandSecondary` / `streakFire` / `achievementGold` / `xpBlue` / `misconceptionRed` / `successGreen` / `infoBlue` 等；按 `fromSeed(seed, flavor)` 构造，`toDark()` 生成暗色实例，确保 WCAG AA 对比度 |
-| `lingxi_gradients.dart` | `LingxiGradients extends ThemeExtension<LingxiGradients>`，6 个语义渐变（mascotHero 吉祥物主光 / streakFire 火焰 / achievementGold 成就金 / primarySurface 主色面 / celebration 庆祝 / success 成功），light/dark 双实例 |
-| `lingxi_elevations.dart` | `LingxiElevations extends ThemeExtension<LingxiElevations>`，3 档语义阴影 `subtle` / `elevated` / `highlighted`（light/dark 双实例），同时保留 `level0`~`level4` 兼容旧调用 |
+| `quest_colors.dart` | `QuestColors extends ThemeExtension<QuestColors>`，语义色包括 `brandPrimary` / `brandSecondary` / `streakFire` / `achievementGold` / `xpBlue` / `misconceptionRed` / `successGreen` / `infoBlue` 等；按 `fromSeed(seed, flavor)` 构造，`toDark()` 生成暗色实例，确保 WCAG AA 对比度 |
+| `quest_gradients.dart` | `QuestGradients extends ThemeExtension<QuestGradients>`，6 个语义渐变（brandGlow 品牌主光 / streakFire 火焰 / achievementGold 成就金 / primarySurface 主色面 / celebration 庆祝 / success 成功），light/dark 双实例 |
+| `quest_elevations.dart` | `QuestElevations extends ThemeExtension<QuestElevations>`，3 档语义阴影 `subtle` / `elevated` / `highlighted`（light/dark 双实例），同时保留 `level0`~`level4` 兼容旧调用 |
 | `shape_variants.dart` | 形状变体定义 |
 
 #### 使用方式
 
 ```dart
 // ✅ 正确：通过 context 扩展获取
-final colors = context.lingxiColors;
-final gradients = context.lingxiGradients;
-final elevations = context.lingxiElevations;
+final colors = context.questColors;
+final gradients = context.questGradients;
+final elevations = context.questElevations;
 
 // ❌ 错误：硬编码颜色
 Container(color: Color(0xFF6750A4));
 
 // ❌ 错误：直接引用静态实例（不随主题切换）
-LingxiColors.light.mascotPrimary;
+QuestColors.light.brandPrimary;
 ```
 
-#### LingxiCard elevation 映射
+#### QuestCard elevation 映射
 
-`lib/shared/widgets/lingxi_card.dart` 的 `elevation` 参数映射到 `LingxiElevations`：
+`lib/shared/widgets/quest_card.dart` 的 `elevation` 参数映射到 `QuestElevations`：
 
 | elevation 值 | 对应阴影 | 场景 |
 |--------------|----------|------|
@@ -201,7 +201,7 @@ LingxiColors.light.mascotPrimary;
 
 #### 新增主题令牌步骤
 
-1. 在对应 `ThemeExtension` 类（`LingxiColors` / `LingxiGradients` / `LingxiElevations`）添加字段。
+1. 在对应 `ThemeExtension` 类（`QuestColors` / `QuestGradients` / `QuestElevations`）添加字段。
 2. 同时更新 `light` 与 `dark` 两个静态实例，**dark 实例必须满足 WCAG AA 对比度**（与背景对比度 ≥ 4.5:1）。
 3. 在 `lerp` 与 `copyWith` 中处理新字段。
 4. 如需 `BuildContext` 扩展，在对应文件底部添加 `extension on BuildContext`。
@@ -217,11 +217,11 @@ LingxiColors.light.mascotPrimary;
 | 类名 | PascalCase | `ChatController`、`ApiSettingsPage` |
 | 变量/函数 | camelCase | `sendMessage()`、`currentAssistantText` |
 | 常量 | camelCase 或 `k` 前缀 | `kAppName`、`kRedactedPlaceholder`、`defaultLocale` |
-| 枚举值 | camelCase | `MascotMood.thinking`、`ProviderType.openaiCompatible` |
+| 枚举值 | camelCase | `ProviderType.openaiCompatible` |
 | Provider | `xxxProvider` / `xxxServiceProvider` | `chatControllerProvider`、`secureStorageServiceProvider` |
 | Repository | `XxxRepository` | `ConversationRepository`、`NoteRepository` |
 | Page | `XxxPage` | `ChatPage`、`LearningPathPage` |
-| Widget | `XxxWidget` / `XxxCard` / `XxxButton` / `XxxAppBar` | `LingxiCard`、`LingxiButton`、`LingxiAppBar` |
+| Widget | `XxxWidget` / `XxxCard` / `XxxButton` / `XxxAppBar` | `QuestCard`、`QuestButton`、`QuestAppBar` |
 | Controller（StateNotifier） | `XxxController` + `XxxControllerState` | `ChatController` + `ChatControllerState` |
 | 路由路径 | `/kebab-case` | `/onboarding/api-setup` |
 | 路由 name | camelCase，通过 `RouteNames.xxx` 引用 | `RouteNames.apiSetup`、`RouteNames.noteEditor` |
@@ -240,7 +240,7 @@ LingxiColors.light.mascotPrimary;
 | `StateProvider` | 简单可变状态（一个值的 getter/setter） | `themeModeProvider`、`localeProvider`、`socraticModeProvider` |
 | `FutureProvider` | 异步一次性数据（加载完不变） | `currentAiProviderProvider`、`promptManagerProvider` |
 | `StreamProvider` | 持续推送的数据流 | （暂未使用，监听 Drift `watch()` 时可用） |
-| `StateNotifierProvider` | 复杂状态机、需要封装业务方法 | `chatControllerProvider`、`mascotControllerProvider` |
+| `StateNotifierProvider` | 复杂状态机、需要封装业务方法 | `chatControllerProvider`、`updateControllerProvider` |
 | `NotifierProvider` | 新版 Notifier（项目目前以 StateNotifier 为主） | （暂未使用） |
 
 ### 何时用 autoDispose
@@ -349,7 +349,7 @@ Table（database.dart）  →  Repository（repositories/）  →  Provider（db
 ```
 
 - **Table**：在 `lib/data/db/database.dart` 中以 `class XxxTable extends Table` 定义，主键统一用 UUID v4（`clientDefault(_uuid)`）。
-- **Repository**：每个表对应一个 Repository 类，构造函数接收 `LingxiDatabase`，**只暴露业务语义化方法**，不直接暴露 `db.select/update`。
+- **Repository**：每个表对应一个 Repository 类，构造函数接收 `QuestDatabase`，**只暴露业务语义化方法**，不直接暴露 `db.select/update`。
 - **Provider**：在 `lib/data/providers/db_providers.dart` 注册，依赖 `databaseProvider` 单例。
 
 ### 当前表清单（schemaVersion = 3，以 `database.dart` 实际值为准）
@@ -371,7 +371,7 @@ Table（database.dart）  →  Repository（repositories/）  →  Provider（db
 
 1. 在 `database.dart` 添加 `class XxxTable extends Table`，主键用 `clientDefault(_uuid)`。
 2. 在 `@DriftDatabase(tables: [...])` 注解中添加新表。
-3. 在 `LingxiDatabase` 类内可通过 `_$LingxiDatabase` 生成的访问器访问。
+3. 在 `QuestDatabase` 类内可通过 `_$QuestDatabase` 生成的访问器访问。
 4. 在 `repositories/` 添加 `XxxRepository`。
 5. 在 `db_providers.dart` 注册 `xxxRepositoryProvider`。
 6. **必须**：递增 `schemaVersion` 并在 `migration.onUpgrade` 中添加迁移代码（见下）。
@@ -420,7 +420,7 @@ DriftDatabaseOptions get options =>
 
 `lib/data/db/connection.dart` 中 `openConnection()`：
 
-- 数据库文件：`getApplicationDocumentsDirectory()/lingxi_academy.db`
+- 数据库文件：`getApplicationDocumentsDirectory()/quest_academy.db`
 - **Android**：使用 `sqflite`；旧版本（<7.0）调用 `applyWorkaroundToOpenSqlite3OnOldAndroidVersions()`。
 - **桌面（Windows）**：使用 `sqlite3_flutter_libs` 提供的 FFI。
 - 通过 `NativeDatabase.createInBackground` 在后台 isolate 打开，避免阻塞 UI。
@@ -429,7 +429,7 @@ DriftDatabaseOptions get options =>
 ### 测试用数据库
 
 ```dart
-factory LingxiDatabase.forTesting(QueryExecutor e) => LingxiDatabase(e);
+factory QuestDatabase.forTesting(QueryExecutor e) => QuestDatabase(e);
 // 测试中：NativeDatabase.memory()
 ```
 
@@ -491,7 +491,7 @@ factory LingxiDatabase.forTesting(QueryExecutor e) => LingxiDatabase(e);
 
 - 网络错误、HTTP 非 2xx、JSON 解析失败 → emit `ErrorEvent(message)`。
 - 鉴权失败（401/403）→ emit `ErrorEvent`，message 提示用户检查 API Key。
-- `ChatController` 监听到 `ErrorEvent` 后调用 `_finishStreamingWithError`，设置 `state.error` 并联动吉祥物 `sad` 状态。
+- `ChatController` 监听到 `ErrorEvent` 后调用 `_finishStreamingWithError`，设置 `state.error`。
 - **不要**在 Provider 内部 `print` 错误，统一通过 `ErrorEvent` 上抛。
 
 ---
@@ -556,47 +556,8 @@ available ──skip──> skipped
 
 ### 集成入口
 
-- **启动时**：`lib/app.dart` 的 `_LingxiAppState.initState` 中 `Future.delayed(Duration(seconds: 3))` 后调用 `checkForUpdates(silent: true)`，并 `ref.listen(updateControllerProvider.select((s) => s.status))` 监听 `available` 状态自动弹 `UpdateDialog`。
+- **启动时**：`lib/app.dart` 的 `_QuestAppState.initState` 中 `Future.delayed(Duration(seconds: 3))` 后调用 `checkForUpdates(silent: true)`，并 `ref.listen(updateControllerProvider.select((s) => s.status))` 监听 `available` 状态自动弹 `UpdateDialog`。
 - **手动触发**：`lib/features/settings/settings_page.dart` 中"检查更新"入口调用 `UpdateDialog.show(context, force: true)`。
-
----
-
-## 吉祥物集成约定
-
-### MascotMood 6 状态
-
-定义在 `lib/features/mascot/mascot_state.dart`：
-
-| 状态 | 含义 | 触发场景 |
-|------|------|----------|
-| `idle` | 待机（眨眼、轻微摇摆） | 默认状态 |
-| `happy` | 开心（跳跃、微笑） | 用户点击吉祥物 |
-| `thinking` | 思考（托腮、问号） | AI 流式响应中 |
-| `sad` | 难过（低头、泪滴） | AI 出错 |
-| `celebrate` | 庆祝（欢呼、星星） | AI 完成回复 / 连续点击 5 次彩蛋 |
-| `curious` | 好奇（歪头、放大镜） | 进入新页面（预留） |
-
-### 新页面集成吉祥物的步骤
-
-1. 在页面顶部或合适位置嵌入 `MascotWidget`（或 `MascotOverlay`）。
-2. 通过 `ref.watch(mascotControllerProvider)` 订阅状态。
-3. 通过 `ref.read(mascotControllerProvider.notifier).setMood(...)` 切换情绪。
-4. **不要**在页面内自行管理吉祥物状态，统一走 `mascotControllerProvider`。
-
-### 状态联动规范
-
-- **AI 思考中** → `setAiThinking(true)` → 切换为 `thinking`。
-- **AI 完成** → `celebrate()` → 切换为 `celebrate`，3 秒后自动恢复 `idle`。
-- **AI 出错** → `setMood(MascotMood.sad)`。
-- **用户点击** → `triggerTap()`：单次点击切 `happy` 1.5 秒后恢复；2 秒内连续 5 次触发 `celebrate` 彩蛋。
-
-参考实现：`lib/features/chat/chat_controller.dart` 中的 `sendMessage` / `_commitAssistant` / `_finishStreamingWithError`。
-
-### 点击交互与彩蛋
-
-- 2 秒内连续点击 5 次 → 触发庆祝彩蛋（`celebrate` 持续 3 秒）。
-- 单次点击 → `happy` 持续 1.5 秒后恢复 `idle`。
-- `mounted` 检查：`Future.delayed` 回调中必须判断 `mounted`，避免 Controller 已销毁后修改状态。
 
 ---
 
@@ -655,7 +616,7 @@ macos/Runner/*.entitlements.priv
 
 ### 6. 自动更新权限边界（v0.4.0 新增）
 
-- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release（`YJLZSL/polaris-learn`）的 APK，**不得**用于安装任意来源的包。
+- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release（`YJLZSL/quest-academy`）的 APK，**不得**用于安装任意来源的包。
 - `FileProvider`（`androidx.core.content.FileProvider`）仅共享应用临时目录下的更新文件，配置见 `android/app/src/main/res/xml/file_paths.xml`，**禁止**扩展共享范围至外部存储。
 - `UpdateService` **不读取/写入 API Key**，**不经过** `SecureLogInterceptor`（GitHub Releases API 为公开接口，无敏感信息需脱敏）。
 - 下载**必须**使用 HTTPS，仅允许访问 `api.github.com` 与 `github.com` 域名，**禁止**将下载指向其他域名。
@@ -701,7 +662,7 @@ test/
 ### 内存数据库测试
 
 ```dart
-final db = LingxiDatabase.forTesting(NativeDatabase.memory());
+final db = QuestDatabase.forTesting(NativeDatabase.memory());
 // 测试结束：await db.close();
 ```
 
@@ -801,7 +762,7 @@ flutter analyze   # 必须零 error、零 warning
 
 ### scope 选择
 
-scope 取功能模块名，如 `chat`、`mascot`、`ai`、`database`、`router`、`theme`、`settings`、`learning`、`notes`、`progress`、`onboarding`。
+scope 取功能模块名，如 `chat`、`ai`、`database`、`router`、`theme`、`settings`、`learning`、`notes`、`progress`、`onboarding`。
 
 ### 中文 commit message 示例
 
@@ -809,7 +770,7 @@ scope 取功能模块名，如 `chat`、`mascot`、`ai`、`database`、`router`�
 feat(chat): 添加苏格拉底式对话引导模式
 
 - 在 ChatController 中根据 socraticModeProvider 注入系统提示词
-- 完成流式响应后联动吉祥物庆祝动画
+- 完成流式响应后触发庆祝反馈动画
 - 新增 saveAsNote 方法支持将 AI 回复保存为笔记
 
 Closes #42
@@ -826,7 +787,7 @@ docs(agents): 新增 AGENTS.md AI 协作者规范文档
 ```
 
 ```
-test(mascot): 补充 MascotController 彩蛋触发测试
+test(chat): 补充 ChatController 流式渲染测试
 ```
 
 ---
@@ -849,7 +810,7 @@ test(mascot): 补充 MascotController 彩蛋触发测试
 | `fix/splash-crash` | 修复：启动屏崩溃 |
 | `docs/agents-md` | 文档：AGENTS.md |
 | `refactor/chat-controller` | 重构：对话控制器 |
-| `test/mascot` | 测试：吉祥物 |
+| `test/chat` | 测试：对话 |
 
 ### PR 流程
 
@@ -868,7 +829,6 @@ test(mascot): 补充 MascotController 彩蛋触发测试
 
 | 项 | 现状 | 待优化方向 |
 |----|------|------------|
-| 吉祥物动画 | v0.2.0 已完成 `_MascotPainter` 6 状态精细化绘制（径向渐变身体 / 角部高光 / 瞳孔高光 / 6 情绪差异化），v0.3.0 已完成 Hero 共享元素动画接入；Rive `.riv` 资源仍未就绪 | Rive 动画资源待完善：待美术产出 `assets/rive/lingxi_mascot.riv` 后，在 `RiveMascotWidget` 中完成状态机映射，并保留 `MascotWidget` 作为加载失败 fallback |
 | 图表 | `fl_chart` 未引入，统计页图表用 `CustomPainter` 手绘 | 待引入 `fl_chart`，重写统计页图表 |
 | 国际化 | UI 文案大量硬编码中文，仅 `app.dart` 配置了 `supportedLocales` 与 delegates | 待抽取 `intl` ARB 文件，启用 `flutter gen-l10n` |
 | 课程内容 | 已有 L0 Python 基础 + L1 Python 数据结构，但 L2-L4 仍空缺，`assets/courses/` 内容单薄 | 待扩充 L2/L3/L4 课程，引入其他语言（如 JavaScript / Go）课程 |
@@ -932,7 +892,7 @@ flutter devices                                       # 列出可用设备
 1. **先阅读 `AGENTS.md`（本文档）**，特别是"安全红线"章节。
 2. **阅读相关代码**：不要凭文件名猜测实现，先 `Read` 实际文件理解上下文。
 3. **大改动先写 spec**：涉及多文件、跨模块的改动，先在 `docs/` 下写一份设计文档（spec），经确认后再实现。
-4. **复用现有模式**：新增 Repository/Provider/Widget 时，参考同类已有实现（如 `ConversationRepository`、`LingxiCard`），保持风格一致。
+4. **复用现有模式**：新增 Repository/Provider/Widget 时，参考同类已有实现（如 `ConversationRepository`、`QuestCard`），保持风格一致。
 
 ### 修改中
 
@@ -1012,7 +972,6 @@ flutter devices                                       # 列出可用设备
 | `CODE_OF_CONDUCT.md` | 社区行为准则变更 | 仓库管理员 |
 | `docs/架构设计.md` | 分层架构、数据流、路由结构变更 | PR 作者 |
 | `docs/代码百科.md` | 模块/Provider/Repository 变更 | PR 作者 |
-| `docs/吉祥物设计.md` | 吉祥物视觉、状态机、交互变更 | PR 作者 |
 | `docs/前端重设计指南.md` | **已归档**（v0.2.0 前的历史蓝图，仅作参考） | 不再维护 |
 
 ### 21.3 CHANGELOG.md 维护规则
@@ -1036,7 +995,7 @@ flutter devices                                       # 列出可用设备
 
 ## AI 助手行为规范（面向不同年龄段）
 
-灵犀学院面向 K12 至大学阶段的学习者，AI 助手（苏格拉底对话）需根据用户画像中的 `ageGroup` 调整交互风格。
+问学 Quest Academy 面向 K12 至大学阶段的学习者，AI 助手（苏格拉底对话）需根据用户画像中的 `ageGroup` 调整交互风格。
 
 ### 小学高年级 / 初中生（`ageGroup: young`）
 
@@ -1109,39 +1068,6 @@ flutter devices                                       # 列出可用设备
 
 ---
 
-## 吉祥物交互扩展规范
-
-### 新场景接入规则
-
-新页面或功能需要接入吉祥物时：
-1. 使用 `ref.read(mascotControllerProvider.notifier)` 控制情绪
-2. 不要在页面内自行管理吉祥物状态
-3. 情绪切换后设置定时恢复（happy: 1.5s、celebrate: 3s）
-4. 所有 `Future.delayed` 回调中必须判断 `mounted`
-
-### 情绪触发优先级
-
-当多个事件同时触发时，按以下优先级：
-
-1. `sad`（AI 出错）— 最高优先级
-2. `celebrate`（完成成就/彩蛋）
-3. `thinking`（AI 请求中）
-4. `happy`（用户点击/streak≥3）
-5. `curious`（预留：进入新页面）
-6. `idle`（默认恢复状态）
-
-### 动画时长标准
-
-| 状态 | 持续时间 | 恢复目标 |
-|------|----------|----------|
-| happy | 1.5s | idle |
-| celebrate | 3.0s | idle |
-| thinking | 不定（跟随 AI 响应） | celebrate/sad |
-| sad | 不自动恢复 | 等待下次交互 |
-| curious | 2.0s | idle |
-
----
-
 ## 性能预算
 
 | 指标 | 目标 | 测量方式 |
@@ -1170,7 +1096,7 @@ flutter devices                                       # 列出可用设备
 |------|------|----------|
 | `PerformanceOverlay` | debug 模式实时帧率查看 | `MaterialApp(showPerformanceOverlay: true)` 或 `MediaQuery.of(context).copyWith(...)`，**不出现红条**即达标；release 模式下无效 |
 | `debugProfileBuildsEnabled` | 开启 build 阶段分析 | 在 `main()` 中置 `debugProfileBuildsEnabled = true`，配合 Dart DevTools 的 Timeline 定位非必要 `build()` 调用 |
-| `RepaintBoundary` | 隔离持续动画的重绘范围 | 包裹 `_AuraGlow` / `CelebrationOverlay` / `AnimatedProgressBar` / `ShimmerLoading` / `_ParticleField` / `MascotWidget` 等持续动画节点，避免父级 rebuild 时连带重绘 |
+| `RepaintBoundary` | 隔离持续动画的重绘范围 | 包裹 `CelebrationOverlay` / `AnimatedProgressBar` / `ShimmerLoading` / `_ParticleField` 等持续动画节点，避免父级 rebuild 时连带重绘 |
 | `itemExtent` / `cacheExtent` | 优化列表滚动 | 项高固定时使用 `itemExtent` 跳过测量；项高不固定时使用 `cacheExtent: 500` 预渲染后续项，避免滚动时即时 build 抖动 |
 | `reduceMotion` 无障碍降级 | 全覆盖验证 | 在系统设置开启"移除动画"后，所有动画应降级为即时切换或静态态；项目通过 `SpringMotion.reduceMotionOf(context)` / `MediaQuery.disableAnimationsOf(context)` 统一判断 |
 

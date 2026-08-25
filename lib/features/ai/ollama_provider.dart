@@ -181,6 +181,28 @@ class OllamaProvider implements AiProvider {
     }
   }
 
+  /// 获取本地 Ollama 已安装的模型列表（自动检测）。
+  ///
+  /// 调用 `GET {baseUrl}/api/tags`，解析 `models[].name`（可能带版本号如
+  /// `llama3.2:latest`）。
+  @override
+  Future<List<String>> fetchModels() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '$baseUrl/api/tags',
+      );
+      final models = response.data?['models'] as List<dynamic>?;
+      if (models == null) return const [];
+      return models
+          .map((e) => (e as Map<String, dynamic>)['name'] as String?)
+          .whereType<String>()
+          .where((name) => name.isNotEmpty)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   /// 安全读取 JSON 中的整型字段。
   ///
   /// 兼容 `int` 与 `num`（含 `double`）类型；解析失败返回 0。

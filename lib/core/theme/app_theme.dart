@@ -4,10 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_typography.dart';
 import 'background_textures.dart';
+import 'motion_tokens.dart';
 import 'quest_colors.dart';
 import 'quest_elevations.dart';
 import 'quest_gradients.dart';
-import 'motion_tokens.dart';
+import 'quest_spacing.dart';
 import 'shape_tokens.dart';
 import 'shape_variants.dart';
 import 'theme_flavor_provider.dart';
@@ -21,8 +22,8 @@ import 'theme_flavor_provider.dart';
 class AppTheme {
   const AppTheme._();
 
-  /// 默认主题种子色 - 紫色调（怀旧星空紫）。
-  static const Color seedColor = Color(0xFF6750A4);
+  /// 默认主题种子色 - 求知靛蓝（问学品牌色）。
+  static const Color seedColor = Color(0xFF3D5AFE);
 
   /// 暗色模式 OLED trueBlack 背景。
   static const Color darkTrueBlack = Color(0xFF000000);
@@ -171,6 +172,7 @@ class AppTheme {
         textures,
         shapeTokens,
         motionTokens,
+        QuestSpacing.standard,
       ],
     );
   }

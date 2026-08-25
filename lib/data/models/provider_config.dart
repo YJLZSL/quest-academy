@@ -5,6 +5,10 @@
 /// - [displayName]：UI 展示名称（中文）
 /// - [defaultBaseUrl]：该服务商默认 baseUrl
 /// - [defaultModel]：该服务商默认模型
+///
+/// DeepSeek / Moonshot（Kimi）/ 通义千问 / 智谱 GLM / Groq 均兼容
+/// OpenAI Chat Completions 协议，复用 [OpenAICompatibleProvider] 实现，
+/// 仅预设各自的 baseUrl 与默认模型。
 enum ProviderType {
   openaiCompatible(
     'openai',
@@ -23,6 +27,36 @@ enum ProviderType {
     'Gemini',
     'https://generativelanguage.googleapis.com',
     'gemini-1.5-flash',
+  ),
+  deepseek(
+    'deepseek',
+    'DeepSeek',
+    'https://api.deepseek.com/v1',
+    'deepseek-chat',
+  ),
+  moonshot(
+    'moonshot',
+    'Kimi（Moonshot）',
+    'https://api.moonshot.cn/v1',
+    'moonshot-v1-8k',
+  ),
+  qwen(
+    'qwen',
+    '通义千问（Qwen）',
+    'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    'qwen-plus',
+  ),
+  zhipu(
+    'zhipu',
+    '智谱（GLM）',
+    'https://open.bigmodel.cn/api/paas/v4',
+    'glm-4-flash',
+  ),
+  groq(
+    'groq',
+    'Groq',
+    'https://api.groq.com/openai/v1',
+    'llama-3.3-70b-versatile',
   ),
   ollama(
     'ollama',
@@ -58,6 +92,45 @@ enum ProviderType {
     );
   }
 }
+
+/// 各服务商常见模型预设（用于设置页快速选择）。
+///
+/// 自动检测到的可用模型会优先于此列表展示；此列表作为离线兜底与常用推荐。
+const Map<ProviderType, List<String>> kProviderModelPresets = {
+  ProviderType.openaiCompatible: [
+    'gpt-4o-mini',
+    'gpt-4o',
+    'gpt-4.1-mini',
+    'gpt-4.1',
+  ],
+  ProviderType.anthropic: [
+    'claude-3-5-sonnet-20241022',
+    'claude-3-5-haiku-20241022',
+    'claude-sonnet-4-20250514',
+  ],
+  ProviderType.gemini: [
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+    'gemini-2.0-flash',
+    'gemini-2.5-flash',
+  ],
+  ProviderType.deepseek: ['deepseek-chat', 'deepseek-reasoner'],
+  ProviderType.moonshot: [
+    'moonshot-v1-8k',
+    'moonshot-v1-32k',
+    'moonshot-v1-128k',
+    'kimi-latest',
+  ],
+  ProviderType.qwen: ['qwen-plus', 'qwen-turbo', 'qwen-max', 'qwen-long'],
+  ProviderType.zhipu: ['glm-4-flash', 'glm-4-plus', 'glm-4-air'],
+  ProviderType.groq: [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
+    'mixtral-8x7b-32768',
+    'gemma2-9b-it',
+  ],
+  ProviderType.ollama: ['llama3.2', 'llama3.1', 'qwen2.5', 'mistral', 'gemma2'],
+};
 
 /// AI 服务商配置。
 ///

@@ -138,14 +138,14 @@ class QuestColors extends ThemeExtension<QuestColors> {
 
   /// 亮色模式实例（基于默认种子色，兼容旧代码直接访问）。
   static final QuestColors light =
-      QuestColors.fromSeed(const Color(0xFF6750A4), ThemeFlavor.standard);
+      QuestColors.fromSeed(const Color(0xFF3D5AFE), ThemeFlavor.standard);
 
   /// 暗色模式实例（基于默认种子色）。
   static final QuestColors dark = light.toDark();
 
   /// 极简模式实例（基于默认种子色）。
   static final QuestColors minimal =
-      QuestColors.fromSeed(const Color(0xFF6750A4), ThemeFlavor.minimal);
+      QuestColors.fromSeed(const Color(0xFF3D5AFE), ThemeFlavor.minimal);
 
   @override
   QuestColors copyWith({

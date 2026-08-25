@@ -116,7 +116,7 @@ class QuestGradients extends ThemeExtension<QuestGradients> {
 
   /// 亮色模式实例（基于默认种子色）。
   static final QuestGradients light = QuestGradients.fromSeed(
-    const Color(0xFF6750A4),
+    const Color(0xFF3D5AFE),
     QuestColors.light,
     ThemeFlavor.standard,
   );
@@ -126,7 +126,7 @@ class QuestGradients extends ThemeExtension<QuestGradients> {
 
   /// 极简模式实例（基于默认种子色）。
   static final QuestGradients minimal = QuestGradients.fromSeed(
-    const Color(0xFF6750A4),
+    const Color(0xFF3D5AFE),
     QuestColors.minimal,
     ThemeFlavor.minimal,
   );

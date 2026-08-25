@@ -54,6 +54,11 @@ class AiProviderRegistry {
   AiProvider _createProvider(ProviderConfig config) {
     switch (config.providerType) {
       case ProviderType.openaiCompatible:
+      case ProviderType.deepseek:
+      case ProviderType.moonshot:
+      case ProviderType.qwen:
+      case ProviderType.zhipu:
+      case ProviderType.groq:
         return OpenAICompatibleProvider(
           baseUrl: config.baseUrl,
           apiKey: config.apiKey,

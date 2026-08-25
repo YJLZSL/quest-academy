@@ -205,6 +205,31 @@ class OpenAICompatibleProvider implements AiProvider {
     }
   }
 
+  /// 获取当前 API Key 下可用的模型列表（自动检测）。
+  ///
+  /// 调用 OpenAI 兼容的 `GET {baseUrl}/models` 接口，解析 `data[].id`。
+  /// 失败时返回空列表，由调用方决定提示。
+  @override
+  Future<List<String>> fetchModels() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '$baseUrl/models',
+        options: Options(
+          headers: {'Authorization': 'Bearer $apiKey'},
+        ),
+      );
+      final data = response.data?['data'] as List<dynamic>?;
+      if (data == null) return const [];
+      return data
+          .map((e) => (e as Map<String, dynamic>)['id'] as String?)
+          .whereType<String>()
+          .where((id) => id.isNotEmpty)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   /// 安全读取 JSON 中的整型字段。
   ///
   /// 兼容 `int` 与 `num`（含 `double`）类型；解析失败返回 0。

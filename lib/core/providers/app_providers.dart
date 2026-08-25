@@ -52,7 +52,7 @@ final appConfigProvider = Provider<AppConfig>((ref) {
     socraticMode: prefs.getBool('socratic_mode') ?? true,
     onboardingCompleted: prefs.getBool('onboarding_completed') ?? false,
     themeFlavor: ThemeFlavor.fromString(prefs.getString('theme_flavor')),
-    seedColor: Color(prefs.getInt('seed_color') ?? 0xFF6750A4),
+    seedColor: Color(prefs.getInt('seed_color') ?? 0xFF3D5AFE),
   );
 });
 

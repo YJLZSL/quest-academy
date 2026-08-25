@@ -50,6 +50,8 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
   bool _obscureApiKey = true;
   bool _isTesting = false;
   bool _isSaving = false;
+  bool _isDetecting = false;
+  List<String> _detectedModels = const [];
 
   @override
   void initState() {
@@ -138,6 +140,34 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
       maxTokens: _maxTokens,
       enabled: _isActive,
     );
+  }
+
+  /// 当前服务商的常见模型预设（离线兜底推荐）。
+  List<String> get _presetModels =>
+      kProviderModelPresets[_type] ?? const [];
+
+  /// 自动检测当前 API 下可用的模型，填充 [_detectedModels]。
+  Future<void> _detectModels() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _isDetecting = true);
+    try {
+      final config = _buildConfig();
+      final models =
+          await ref.read(apiTestServiceProvider).fetchModels(config);
+      if (!mounted) return;
+      setState(() => _detectedModels = models);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            models.isEmpty
+                ? '未检测到可用模型（该服务商可能不支持自动检测）'
+                : '检测到 ${models.length} 个可用模型',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isDetecting = false);
+    }
   }
 
   Future<void> _testConnection() async {
@@ -254,13 +284,62 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
                 enableSuggestions: false,
               ),
               const SizedBox(height: 12),
-              // Model
+              // Model（支持预设快速选择 + 自动检测）
               TextFormField(
                 controller: _modelController,
-                decoration: const InputDecoration(labelText: '模型名'),
+                decoration: InputDecoration(
+                  labelText: '模型名',
+                  suffixIcon: IconButton(
+                    tooltip: '检测可用模型',
+                    onPressed:
+                        _isDetecting ? null : () => _detectModels(),
+                    icon: _isDetecting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.manage_search),
+                  ),
+                ),
                 validator: _validateModel,
                 autocorrect: false,
               ),
+              if (_presetModels.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text('常用模型', style: theme.textTheme.labelMedium),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final m in _presetModels)
+                      ActionChip(
+                        label: Text(m),
+                        onPressed: () =>
+                            setState(() => _modelController.text = m),
+                      ),
+                  ],
+                ),
+              ],
+              if (_detectedModels.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text('检测到可用模型（点击选用）',
+                    style: theme.textTheme.labelMedium),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final m in _detectedModels)
+                      ActionChip(
+                        label: Text(m),
+                        onPressed: () =>
+                            setState(() => _modelController.text = m),
+                      ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 16),
               // Temperature
               Text('Temperature: ${_temperature.toStringAsFixed(2)}',

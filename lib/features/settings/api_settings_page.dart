@@ -28,11 +28,20 @@ class ApiSettingsPage extends ConsumerWidget {
   IconData _iconFor(ProviderType type) {
     switch (type) {
       case ProviderType.openaiCompatible:
+      case ProviderType.deepseek:
         return Icons.smart_toy_outlined;
       case ProviderType.anthropic:
         return Icons.psychology_outlined;
       case ProviderType.gemini:
         return Icons.auto_awesome_outlined;
+      case ProviderType.moonshot:
+        return Icons.rocket_launch_outlined;
+      case ProviderType.qwen:
+        return Icons.lightbulb_outline;
+      case ProviderType.zhipu:
+        return Icons.school_outlined;
+      case ProviderType.groq:
+        return Icons.bolt_outlined;
       case ProviderType.ollama:
         return Icons.dns_outlined;
     }

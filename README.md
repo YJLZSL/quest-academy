@@ -1,19 +1,19 @@
-# 灵犀学院 Lingxi Academy
+# 问学 Quest Academy
 
 > 引导式 AI 学习应用 —— 让每个人都能在 AI 时代学会学习
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Windows-blue)](#)
 [![Flutter](https://img.shields.io/badge/Flutter-3.44.4-02569B?logo=flutter)](https://flutter.dev)
-[![Version](https://img.shields.io/badge/Version-v0.4.0-6750A4)](#)
+[![Version](https://img.shields.io/badge/Version-v0.6.0-3D5AFE)](#)
 
-灵犀学院是一款开源的引导式 AI 学习应用，以**苏格拉底式对话**为核心教学方式——通过引导式提问而非直接给答案，培养批判性思维与自主学习能力。
+问学 Quest Academy 是一款开源的引导式 AI 学习应用，以**苏格拉底式对话**为核心教学方式——通过引导式提问而非直接给答案，培养批判性思维与自主学习能力。
 
 ## 项目状态
 
 | 项 | 状态 |
 |----|------|
-| 当前版本 | v0.4.0（双端专注版） |
+| 当前版本 | v0.6.0（问学 Quest Academy 品牌版） |
 | 支持平台 | Android + Windows |
 | CI 状态 | GitHub Actions（质量门禁 + 双端构建发布） |
 | 测试覆盖 | 149+ 测试用例 |
@@ -56,23 +56,25 @@
 v0.3.0 在动画与性能体验上全面打磨，目标 60fps 无丢帧：
 
 - 🎮 **游戏化反馈动画** —— 知识点完成触发粒子爆发、+XP 浮层、Streak 火焰跳动、成就徽章弹性入场
-- 🎨 **微交互反馈** —— 按压（`LingxiButton` scale 0.96 / `LingxiCard` scale 0.99）、选中（`LingxiChip` `AnimatedSwitcher`）、过渡均有弹性动画
+- 🎨 **微交互反馈** —— 按压（`QuestButton` scale 0.96 / `QuestCard` scale 0.99）、选中（`QuestChip` `AnimatedSwitcher`）、过渡均有弹性动画
 - 🌊 **流式响应节流** —— 首 token 立即渲染，后续 50ms 节流刷新，流式结束强制刷新，兼顾即时反馈与性能
 - ♿ **无障碍降级** —— `reduceMotion` 全覆盖，开启系统"移除动画"后所有动画降级为即时切换或按钮切换
 - 📊 **性能预算** —— 60fps 目标，`RepaintBoundary` 隔离持续动画，`cacheExtent` 优化列表滚动，`PerformanceOverlay` 静态审查无红条
 
 ## 下载安装
 
-前往 [Releases](https://github.com/YJLZSL/polaris-learn/releases) 下载最新版本：
+前往 [Releases](https://github.com/YJLZSL/quest-academy/releases) 下载最新版本：
 
 - **Android**：下载 `.apk` 直接安装
 - **Windows**：下载 `.zip` 解压后运行
 
 > 首次启动后会进入引导页，带领完成 API 配置。
+>
+> **升级说明（v0.6.0）**：本次品牌升级将 Android `applicationId` 由 `com.lingxiacademy.lingxi_academy` 变更为 `com.questacademy.quest_academy`，旧版安装包将被视为不同应用，**旧版本数据（课程进度 / 笔记 / 对话 / API Key）不会自动迁移，需重新配置**；建议升级前在「设置 → 数据」中导出备份。Windows 端数据目录同步更新，同样建议先导出备份。
 
 ## 快速开始
 
-1. **下载安装**：从 [Releases](https://github.com/YJLZSL/polaris-learn/releases) 下载对应平台安装包
+1. **下载安装**：从 [Releases](https://github.com/YJLZSL/quest-academy/releases) 下载对应平台安装包
 2. **首次引导**：5 步引导页（欢迎 → API 说明 → 主题选择 → 学习路径 → 苏格拉底介绍）
 3. **配置 API**：选择服务商（OpenAI 兼容 / Anthropic / Gemini / Ollama），填入 API Key 与模型名，点击"测试连接"
 4. **开始学习**：从首页进入"学习路径"选 L0 课程，或进入"对话"自由交流
@@ -91,8 +93,8 @@ v0.3.0 在动画与性能体验上全面打磨，目标 60fps 无丢帧：
 ### 从源码构建
 
 ```bash
-git clone https://github.com/YJLZSL/polaris-learn.git
-cd polaris-learn
+git clone https://github.com/YJLZSL/quest-academy.git
+cd quest-academy
 flutter pub get
 flutter pub run build_runner build --delete-conflicting-outputs
 flutter run                          # 开发模式
@@ -110,7 +112,6 @@ flutter build windows --release      # Windows
 | [drift](https://pub.dev/packages/drift) | ^2.18.0 | SQLite ORM |
 | [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) | ^9.2.2 | API Key 加密存储 |
 | [dio](https://pub.dev/packages/dio) | ^5.4.3+1 | HTTP 客户端 |
-| [rive](https://rive.app) | ^0.13.13 | 动画引擎（吉祥物方案已归档，当前未启用） |
 | [flutter_markdown](https://pub.dev/packages/flutter_markdown) | ^0.7.2+1 | Markdown 渲染 |
 | [flutter_math_fork](https://pub.dev/packages/flutter_math_fork) | ^0.7.2 | 数学公式渲染 |
 | [google_fonts](https://pub.dev/packages/google_fonts) | ^6.2.1 | 字体加载（Noto Sans SC + Quicksand + Press Start 2P + VT323） |
@@ -121,7 +122,7 @@ flutter build windows --release      # Windows
 ## 项目结构
 
 ```
-lingxi-academy/
+quest-academy/
 ├── lib/
 │   ├── main.dart                     # 应用入口
 │   ├── app.dart                      # MaterialApp 根 Widget
@@ -171,5 +172,4 @@ lingxi-academy/
 - [docs/架构设计.md](docs/架构设计.md) —— 架构设计
 - [docs/游戏化重设计实施规范.md](docs/游戏化重设计实施规范.md) —— 游戏化重设计实施规范
 - [docs/前端重设计指南.md](docs/前端重设计指南.md) —— 前端重设计指南（已归档，v0.2.0 前历史蓝图）
-- [docs/吉祥物设计.md](docs/吉祥物设计.md) —— 吉祥物设计（已归档）
 - [docs/代码百科.md](docs/代码百科.md) —— 代码百科

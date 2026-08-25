@@ -51,6 +51,16 @@ ResponseBody _buildStreamResponse(String body, {int statusCode = 200}) {
   });
 }
 
+/// 构造一个返回 [body] JSON 字节流的 [ResponseBody]。
+ResponseBody _buildJsonResponse(String body, {int statusCode = 200}) {
+  final bytes = utf8.encode(body);
+  final stream =
+      Stream<List<int>>.fromIterable([bytes]).cast<Uint8List>();
+  return ResponseBody(stream, statusCode, headers: {
+    Headers.contentTypeHeader: ['application/json'],
+  });
+}
+
 /// 按顺序返回预设响应的 HttpClientAdapter，用于测试重试逻辑。
 ///
 /// [_items] 中的元素可以是 [ResponseBody]（成功）或 [DioException]（失败）。
@@ -1032,6 +1042,65 @@ void main() {
 
     test('cancel 调用不应抛出异常（即使无进行中请求）', () {
       expect(() => registry.cancel(), returnsNormally);
+    });
+  });
+
+  group('fetchModels（自动检测可用模型）', () {
+    test('OpenAI 兼容 Provider 解析 GET /models', () async {
+      final dio = Dio();
+      dio.httpClientAdapter = _MockStreamAdapter(
+        (options) => _buildJsonResponse(
+          '{"object":"list","data":[{"id":"gpt-4o"},{"id":"gpt-4o-mini"}]}',
+        ),
+      );
+      final provider = OpenAICompatibleProvider(
+        baseUrl: 'https://api.openai.com/v1',
+        apiKey: 'sk-test',
+        model: 'gpt-4o-mini',
+        dio: dio,
+      );
+      final models = await provider.fetchModels();
+      expect(models, ['gpt-4o', 'gpt-4o-mini']);
+    });
+
+    test('OpenAI 兼容 Provider 拉取失败时返回空列表', () async {
+      final dio = Dio();
+      dio.httpClientAdapter = _MockStreamAdapter(
+        (options) => _buildStreamResponse('', statusCode: 401),
+      );
+      final provider = OpenAICompatibleProvider(
+        baseUrl: 'https://api.openai.com/v1',
+        apiKey: 'sk-test',
+        model: 'gpt-4o-mini',
+        dio: dio,
+      );
+      final models = await provider.fetchModels();
+      expect(models, isEmpty);
+    });
+
+    test('Ollama Provider 解析 GET /api/tags', () async {
+      final dio = Dio();
+      dio.httpClientAdapter = _MockStreamAdapter(
+        (options) => _buildJsonResponse(
+          '{"models":[{"name":"llama3.2:latest"},{"name":"qwen2.5:7b"}]}',
+        ),
+      );
+      final provider = OllamaProvider(
+        baseUrl: 'http://localhost:11434',
+        model: 'llama3.2',
+        dio: dio,
+      );
+      final models = await provider.fetchModels();
+      expect(models, ['llama3.2:latest', 'qwen2.5:7b']);
+    });
+
+    test('不支持检测的 Provider 默认返回空列表', () async {
+      final provider = GeminiProvider(
+        baseUrl: 'https://generativelanguage.googleapis.com',
+        apiKey: 'test-key',
+        model: 'gemini-1.5-flash',
+      );
+      expect(await provider.fetchModels(), isEmpty);
     });
   });
 

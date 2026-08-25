@@ -9,6 +9,11 @@
 
 ### 新增
 
+- **品牌改名**：项目由「灵犀学院 Lingxi Academy」正式更名为「问学 Quest Academy」
+  - 包名 `lingxi_academy` → `quest_academy`；GitHub 仓库 `YJLZSL/polaris-learn` → `YJLZSL/quest-academy`
+  - 类名 `Lingxi*` → `Quest*`（如 `LingxiApp`→`QuestApp`、`LingxiColors`→`QuestColors`、`LingxiCard`→`QuestCard`）
+  - Android `applicationId` 由 `com.lingxiacademy.lingxi_academy` 变更为 `com.questacademy.quest_academy`，升级后视为新应用，**旧版本本地数据（进度/笔记/对话/API Key）需重新配置**，建议升级前导出备份
+- **新应用图标**：问学 Quest Academy 全新品牌图标（替换原灵犀学院图标）
 - **游戏化重设计**：全面转向 Duolingo 式现代游戏化 UI，移除吉祥物，替换为 Streak、XP、成就徽章、粒子庆祝等非角色化反馈
   - 新增 `XpProgressRing`：今日 XP / 每日目标完成度圆环
   - 新增 `StreakFlameBadge`：顶部火焰徽章，支持首页与 AppBar 复用
@@ -29,6 +34,7 @@
 
 ### 变更
 
+- **前端重设计（v0.6.0 收尾）**：在游戏化重设计基础上完成品牌视觉统一（问学 Quest Academy 品牌种子色 #3D5AFE）、三档主题完善与新图标落地
 - **首页 Hero 区**：移除吉祥物，改为欢迎语 + XP 进度环 + Streak 火焰徽章 + 最近成就入口
 - **学习路径页**：移除吉祥物，改为关卡节点路径（已完成/当前/锁定状态分明）
 - **AI 反馈形式**：思考态改为脉冲指示条；完成/出错改为 `CelebrationService` 粒子 + SnackBar，不再联动吉祥物
@@ -41,6 +47,7 @@
 - 删除 `MascotHero` / `mascotHeroFlightShuttleBuilder` 及相关 Hero 共享元素动画
 - 删除 `minimalModeProvider`，合并为 `ThemeFlavor.minimal`
 - 清理所有页面与组件中对 `MascotWidget` / `mascotControllerProvider` / `MascotOverlay` 的引用
+- 移除 Rive 依赖与 `assets/rive/` 相关资源（吉祥物已彻底移除，无降级保留）
 
 ---
 
@@ -137,8 +144,8 @@
 
 ---
 
-[Unreleased]: https://github.com/YJLZSL/polaris-learn/compare/v0.4.0...HEAD
-[0.4.0]: https://github.com/YJLZSL/polaris-learn/releases/tag/v0.4.0
-[0.3.0]: https://github.com/YJLZSL/polaris-learn/releases/tag/v0.3.0
-[0.2.0]: https://github.com/YJLZSL/polaris-learn/releases/tag/v0.2.0
-[0.1.0]: https://github.com/YJLZSL/polaris-learn/releases/tag/v0.1.0
+[Unreleased]: https://github.com/YJLZSL/quest-academy/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/YJLZSL/quest-academy/releases/tag/v0.4.0
+[0.3.0]: https://github.com/YJLZSL/quest-academy/releases/tag/v0.3.0
+[0.2.0]: https://github.com/YJLZSL/quest-academy/releases/tag/v0.2.0
+[0.1.0]: https://github.com/YJLZSL/quest-academy/releases/tag/v0.1.0

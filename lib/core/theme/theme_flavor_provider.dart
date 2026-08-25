@@ -81,7 +81,7 @@ class ThemeFlavorNotifier extends StateNotifier<ThemeFlavor> {
 /// 当前种子色提供者。
 ///
 /// 从 [sharedPreferencesProvider] 读取持久化整数值，键为 `seed_color`。
-/// 默认使用 Material 3 紫色调 `#6750A4`。
+/// 默认使用问学品牌色求知靛蓝 `#3D5AFE`。
 final seedColorProvider = StateNotifierProvider<SeedColorNotifier, Color>(
   (ref) => SeedColorNotifier(ref.read(sharedPreferencesProvider)),
 );
@@ -89,7 +89,7 @@ final seedColorProvider = StateNotifierProvider<SeedColorNotifier, Color>(
 /// [seedColorProvider] 的状态管理器。
 class SeedColorNotifier extends StateNotifier<Color> {
   SeedColorNotifier(this._prefs)
-      : super(Color(_prefs.getInt(_key) ?? 0xFF6750A4));
+      : super(Color(_prefs.getInt(_key) ?? 0xFF3D5AFE));
 
   static const _key = 'seed_color';
 
@@ -106,23 +106,27 @@ class SeedColorNotifier extends StateNotifier<Color> {
 abstract final class SeedColorPresets {
   const SeedColorPresets._();
 
-  /// 怀旧星空紫（原灵犀主色）。
+  /// 求知靛蓝（默认，问学品牌主色）。
+  static const Color questIndigo = Color(0xFF3D5AFE);
+
+  /// 探索青绿。
+  static const Color questTeal = Color(0xFF009688);
+
+  /// 活力珊瑚。
+  static const Color questCoral = Color(0xFFFF6B6B);
+
+  /// 专注琥珀。
+  static const Color questAmber = Color(0xFFFFB300);
+
+  /// 怀旧星空紫（历史预设，保留兼容旧用户持久化值）。
   static const Color starlightPurple = Color(0xFF6750A4);
 
-  /// 活泼珊瑚红。
-  static const Color playfulCoral = Color(0xFFFF6B6B);
-
-  /// 活泼青绿。
-  static const Color playfulAqua = Color(0xFF4ECDC4);
-
-  /// 活泼柠黄绿。
-  static const Color playfulLime = Color(0xFFA8E063);
-
-  /// 所有预设列表。
+  /// 所有预设列表（默认色排首位）。
   static const List<Color> all = [
+    questIndigo,
+    questTeal,
+    questCoral,
+    questAmber,
     starlightPurple,
-    playfulCoral,
-    playfulAqua,
-    playfulLime,
   ];
 }

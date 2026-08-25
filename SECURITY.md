@@ -1,17 +1,17 @@
 # 安全策略
 
-> 本文档定义灵犀学院的漏洞披露流程与安全红线。安全红线为强制约束，任何 PR 不得违反。
+> 本文档定义问学 Quest Academy 的漏洞披露流程与安全红线。安全红线为强制约束，任何 PR 不得违反。
 
 ## 支持版本
 
 | 版本 | 支持状态 |
 |------|----------|
-| 0.4.x | ✅ 支持 |
-| < 0.4 | ❌ 不支持 |
+| 0.6.x | ✅ 支持 |
+| < 0.6 | ❌ 不支持 |
 
 ## 报告漏洞
 
-- **GitHub Security Advisory**：推荐通过 [GitHub 私密安全公告](https://github.com/YJLZSL/polaris-learn/security/advisories/new) 提交
+- **GitHub Security Advisory**：推荐通过 [GitHub 私密安全公告](https://github.com/YJLZSL/quest-academy/security/advisories/new) 提交
 - **响应时间**：48 小时内确认收到，7 个工作日内给出初步评估
 - **请不要**公开披露未修复的漏洞，给予我们修复与发布补丁的时间
 
@@ -68,7 +68,7 @@ macos/Runner/*.entitlements.priv
 
 ### 6. 自动更新权限边界（v0.4.0 新增）
 
-- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release（`YJLZSL/polaris-learn`）的 APK
+- Android `REQUEST_INSTALL_PACKAGES` 权限**仅**用于安装来自自有 GitHub Release（`YJLZSL/quest-academy`）的 APK
 - `FileProvider` 仅共享应用临时目录下的更新文件（配置见 `android/app/src/main/res/xml/file_paths.xml`）
 - `UpdateService` **不读取/写入 API Key**，**不经过** `SecureLogInterceptor`（GitHub Releases API 为公开接口）
 - 下载**必须**使用 HTTPS，仅允许访问 `api.github.com` 与 `github.com` 域名
