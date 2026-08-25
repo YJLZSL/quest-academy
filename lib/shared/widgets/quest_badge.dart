@@ -23,7 +23,7 @@ enum QuestBadgeShape {
   octagon,
 }
 
-/// 灵犀学院成就徽章组件
+/// 问学成就徽章组件
 ///
 /// 升级要点（ThemeFlavor Token 体系）：
 /// - 圆角/形状统一取自 [ShapeTokens.avatarRadius]（圆角矩形形态）或

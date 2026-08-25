@@ -24,7 +24,7 @@ enum QuestCardVariant {
   glass,
 }
 
-/// 灵犀学院卡片组件
+/// 问学卡片组件
 ///
 /// 升级要点（ThemeFlavor Token 体系）：
 /// - 圆角统一取自 [ShapeTokens.cardRadius]，禁止硬编码。

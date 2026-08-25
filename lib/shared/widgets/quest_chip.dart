@@ -17,7 +17,7 @@ enum QuestChipVariant {
   action,
 }
 
-/// 灵犀学院 Chip 组件
+/// 问学 Chip 组件
 ///
 /// 基于 Material [Chip] 系列封装，圆角统一使用 [ShapeTokens.chipRadius]。
 /// 支持三种变体：

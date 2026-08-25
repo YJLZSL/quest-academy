@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'color_utils.dart';
 import 'theme_flavor_provider.dart';
 
-/// 灵犀学院阴影层级。
+/// 问学阴影层级。
 ///
 /// 提供语义阴影（subtle/elevated/highlighted）与静态层级（level0~level4）。
 /// 阴影颜色可随 [seedColor] 色调微调，并支持三种主题风味切换。
@@ -246,7 +246,7 @@ class QuestElevations extends ThemeExtension<QuestElevations> {
 
 /// 便捷扩展：从 [BuildContext] 获取 [QuestElevations]
 extension QuestElevationsX on BuildContext {
-  /// 获取当前主题中注册的灵犀阴影扩展；未注册时回退到亮色实例
+  /// 获取当前主题中注册的问学阴影扩展；未注册时回退到亮色实例
   QuestElevations get questElevations =>
       Theme.of(this).extension<QuestElevations>() ?? QuestElevations.light;
 }

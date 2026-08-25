@@ -1,4 +1,4 @@
-/// 灵犀学院学习内容数据模型。
+/// 问学学习内容数据模型。
 ///
 /// 层级结构：[Course] → [Module] → [Lesson] → [KnowledgePoint]。
 /// 每个知识点内嵌词汇表 [VocabularyTerm] 与测验 [QuizQuestion]。

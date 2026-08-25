@@ -5,7 +5,7 @@ import 'package:quest_academy/core/motion/spring_motion.dart';
 import 'package:quest_academy/core/theme/background_textures.dart';
 import 'package:quest_academy/core/theme/theme_flavor_provider.dart';
 
-/// 灵犀学院 AppBar 组件
+/// 问学 AppBar 组件
 ///
 /// 基于 [AppBar]，默认居中标题，支持自定义 leading。
 /// 支持滚动联动背景变化、leading/title/actions 交错入场。

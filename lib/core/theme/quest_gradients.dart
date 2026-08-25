@@ -243,7 +243,7 @@ class QuestGradients extends ThemeExtension<QuestGradients> {
 
 /// 便捷扩展：从 [BuildContext] 获取 [QuestGradients]
 extension QuestGradientsX on BuildContext {
-  /// 获取当前主题中注册的灵犀自定义渐变；未注册时回退到亮色实例
+  /// 获取当前主题中注册的问学自定义渐变；未注册时回退到亮色实例
   QuestGradients get questGradients =>
       Theme.of(this).extension<QuestGradients>() ?? QuestGradients.light;
 }

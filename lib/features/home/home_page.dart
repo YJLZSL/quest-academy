@@ -214,7 +214,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Text(
-          '欢迎来到灵犀学院',
+          '欢迎来到问学',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

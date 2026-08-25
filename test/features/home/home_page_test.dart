@@ -88,7 +88,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.text('欢迎来到灵犀学院'), findsOneWidget);
+      expect(find.text('欢迎来到问学'), findsOneWidget);
       expect(find.text('继续学习'), findsOneWidget);
       expect(find.text('AI 对话'), findsOneWidget);
       expect(find.text('我的笔记'), findsOneWidget);
@@ -113,7 +113,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.textContaining('小犀'), findsNothing);
+      expect(find.textContaining('AI 导师'), findsNothing);
       // 通过类型名检查 mascot 相关 Widget 不存在
       final mascotTypes = <Type>[];
       for (final element in tester.allElements) {

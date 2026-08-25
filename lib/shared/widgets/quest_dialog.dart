@@ -5,7 +5,7 @@ import 'package:quest_academy/core/theme/quest_elevations.dart';
 import 'package:quest_academy/core/theme/motion_tokens.dart';
 import 'package:quest_academy/core/theme/shape_tokens.dart';
 
-/// 灵犀学院统一对话框组件。
+/// 问学统一对话框组件。
 ///
 /// 主题适配说明（v0.x 主题 Token 化改造）：
 /// - 圆角完全取自 [ShapeTokens.dialogRadius]；

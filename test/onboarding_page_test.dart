@@ -31,7 +31,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // 第一步标题应可见
-      expect(find.text('欢迎来到灵犀学院'), findsOneWidget);
+      expect(find.text('欢迎来到问学'), findsOneWidget);
       // 第一步 CTA "下一步" 应可见（在内容区与底部栏各一个）
       expect(find.text('下一步'), findsNWidgets(2));
       // 跳过按钮应可见
@@ -148,7 +148,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // 应回到第一步
-      expect(find.text('欢迎来到灵犀学院'), findsOneWidget);
+      expect(find.text('欢迎来到问学'), findsOneWidget);
     });
   });
 }

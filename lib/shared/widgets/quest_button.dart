@@ -37,7 +37,7 @@ enum QuestButtonSize {
   large,
 }
 
-/// 灵犀学院按钮组件
+/// 问学按钮组件
 ///
 /// 升级要点（ThemeFlavor Token 体系）：
 /// - 圆角统一取自 [ShapeTokens.buttonRadius]；minecraft 风味下该值为 0，

@@ -18,7 +18,7 @@ enum QuestToastVariant {
   info,
 }
 
-/// 灵犀学院统一 Toast/SnackBar 工具。
+/// 问学统一 Toast/SnackBar 工具。
 ///
 /// 主题适配说明：
 /// - 背景色取自 [QuestColors] 语义色（successGreen / misconceptionRed / streakFire / infoTeal）；

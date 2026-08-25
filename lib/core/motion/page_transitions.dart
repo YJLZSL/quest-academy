@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'spring_motion.dart';
 
-/// 灵犀学院统一页面转场动画
+/// 问学统一页面转场动画
 ///
 /// 为 GoRouter 提供三种转场：
 /// - [buildPage]：主转场（淡入 + 上移，基于 [slideFadeTransitionBuilder]）

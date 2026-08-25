@@ -87,7 +87,7 @@ class _SocraticDialogPanelState extends ConsumerState<SocraticDialogPanel> {
           _messages.sublist(0, assistantIndex),
         ),
         options: const ChatOptions(
-          systemPrompt: '你是灵犀学院的苏格拉底式导师。请用引导式提问启发学生'
+          systemPrompt: '你是问学的苏格拉底式导师。请用引导式提问启发学生'
               '思考，而不是直接给出答案。鼓励学生自己推理。',
           temperature: 0.7,
         ),

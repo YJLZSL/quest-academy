@@ -76,8 +76,8 @@ class ApiSetupWizardPage extends StatelessWidget {
           description: '创建成功后会出现以 "sk-" 开头的密钥字符串，点击复制按钮保存。注意：密钥只显示一次，请妥善保管。',
         ),
         _SetupStep(
-          title: '步骤 6：粘贴到灵犀学院',
-          description: '回到灵犀学院，在 API 设置页的 OpenAI 卡片中粘贴 API Key，保存即可开始与小犀对话。',
+          title: '步骤 6：粘贴到问学',
+          description: '回到问学，在 API 设置页的 OpenAI 卡片中粘贴 API Key，保存即可开始与AI 导师对话。',
         ),
       ],
     ),
@@ -100,8 +100,8 @@ class ApiSetupWizardPage extends StatelessWidget {
           description: '登录后进入 "API Keys" 页面，点击 "Create Key" 按钮，为 Key 命名并生成。',
         ),
         _SetupStep(
-          title: '步骤 4：粘贴到灵犀学院',
-          description: '复制生成的密钥（以 "sk-ant-" 开头），回到灵犀学院 API 设置页，在 Anthropic 卡片中粘贴保存。',
+          title: '步骤 4：粘贴到问学',
+          description: '复制生成的密钥（以 "sk-ant-" 开头），回到问学 API 设置页，在 Anthropic 卡片中粘贴保存。',
         ),
       ],
     ),
@@ -124,8 +124,8 @@ class ApiSetupWizardPage extends StatelessWidget {
           description: '点击左侧 "Get API key" → "Create API key"，选择一个 Google Cloud 项目（或创建新项目）。',
         ),
         _SetupStep(
-          title: '步骤 4：粘贴到灵犀学院',
-          description: '复制生成的 API Key 字符串，回到灵犀学院 API 设置页，在 Gemini 卡片中粘贴保存。',
+          title: '步骤 4：粘贴到问学',
+          description: '复制生成的 API Key 字符串，回到问学 API 设置页，在 Gemini 卡片中粘贴保存。',
         ),
       ],
     ),
@@ -152,8 +152,8 @@ class ApiSetupWizardPage extends StatelessWidget {
           description: 'Ollama 默认在 localhost:11434 启动服务。可在终端执行 ollama list 查看已安装的模型。',
         ),
         _SetupStep(
-          title: '步骤 5：在灵犀学院添加 Provider',
-          description: '无需 API Key。回到灵犀学院 API 设置页，选择 Ollama 卡片，确认地址为 http://localhost:11434，选择已拉取的模型保存即可。',
+          title: '步骤 5：在问学添加 Provider',
+          description: '无需 API Key。回到问学 API 设置页，选择 Ollama 卡片，确认地址为 http://localhost:11434，选择已拉取的模型保存即可。',
         ),
       ],
     ),

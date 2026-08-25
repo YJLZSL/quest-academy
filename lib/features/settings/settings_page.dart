@@ -441,7 +441,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             SpringMotion.scalePressFeedback(
               onTap: () => showLicensePage(
                 context: context,
-                applicationName: '灵犀学院',
+                applicationName: '问学',
                 applicationVersion: kAppVersion,
               ),
               child: const ListTile(

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quest_academy/core/theme/shape_tokens.dart';
 import 'package:quest_academy/core/theme/theme_flavor_provider.dart';
 
-/// 灵犀学院统一输入框组件。
+/// 问学统一输入框组件。
 ///
 /// 提供一致的圆角、内边距和聚焦动画效果。
 /// 支持前缀图标、后缀组件、多行文本和密码模式。

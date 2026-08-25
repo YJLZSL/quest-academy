@@ -42,20 +42,20 @@ class OnboardingPage extends ConsumerStatefulWidget {
   static const List<_OnboardingStep> _steps = [
     _OnboardingStep(
       icon: Icons.waving_hand_rounded,
-      title: '欢迎来到灵犀学院',
+      title: '欢迎来到问学',
       description: '这里是引导式 AI 学习平台。AI 不会直接给你答案，而是通过提问引导你思考。',
       ctaText: '下一步',
     ),
     _OnboardingStep(
       icon: Icons.vpn_key_rounded,
       title: '自备 API，安全无忧',
-      description: '灵犀学院是非商业平台，你需要配置自己的 AI API（OpenAI/Claude/Gemini/Ollama）才能开启对话。密钥本地加密存储，永不上传。',
+      description: '问学是非商业平台，你需要配置自己的 AI API（OpenAI/DeepSeek/Kimi/通义千问/智谱/Claude/Gemini/Ollama 等主流模型）才能开启对话。密钥本地加密存储，永不上传。',
       ctaText: '去设置 API',
     ),
     _OnboardingStep(
       icon: Icons.palette_rounded,
       title: '主题与动效',
-      description: '灵犀学院采用 Material 3 设计语言，支持明暗主题与流畅动效，让学习过程更舒适。',
+      description: '问学采用 Material 3 设计语言，支持明暗主题与流畅动效，让学习过程更舒适。',
       ctaText: '下一步',
     ),
     _OnboardingStep(

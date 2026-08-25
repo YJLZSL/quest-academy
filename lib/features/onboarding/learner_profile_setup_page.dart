@@ -57,7 +57,7 @@ class _LearnerProfileSetupPageState
 
               // 标题
               Text(
-                '让小犀更了解你',
+                '让AI 导师更了解你',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

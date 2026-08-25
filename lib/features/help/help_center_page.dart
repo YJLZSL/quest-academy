@@ -34,16 +34,31 @@ class HelpCenterPage extends StatelessWidget {
   static const List<_HelpCategory> _categories = [
     _HelpCategory(
       icon: Icons.rocket_launch,
+      title: '新手教程',
+      content: '''## 新手教程
+
+欢迎使用问学！只需四步即可开启 AI 学习之旅：
+
+1. **配置 API**：前往 [API 设置向导](/onboarding/api-setup) 选择你的 AI 服务商（支持 OpenAI / DeepSeek / Kimi / 通义千问 / 智谱 GLM / Anthropic / Gemini / Groq / Ollama 等），填入 API Key。可点击「检测可用模型」自动拉取该密钥可用的模型。
+2. **测试连接**：在配置弹窗点击「测试连接」，验证密钥与延迟是否正常。
+3. **选择学习路径**：前往"学习"页面，从 L0 启蒙开始循序渐进。
+4. **开始对话**：在"对话"页面与 AI 导师自由交流，开启苏格拉底式引导学习。
+
+> 💡 问学是非商业平台，你需要自备 API Key 才能使用 AI 对话功能；密钥仅本地加密存储，永不上传。
+''',
+    ),
+    _HelpCategory(
+      icon: Icons.rocket_launch,
       title: '快速开始',
       content: '''## 快速开始
 
-欢迎使用灵犀学院！只需三步即可开始学习：
+欢迎使用问学！只需三步即可开始学习：
 
 1. **配置 API**：在 [API 设置向导](/onboarding/api-setup) 中选择你的 AI 服务商并配置密钥。
 2. **选择学习路径**：前往"学习"页面，从 L0 启蒙开始循序渐进。
-3. **开始对话**：在"对话"页面与 小犀 自由交流。
+3. **开始对话**：在"对话"页面与 AI 导师自由交流。
 
-> 💡 提示：灵犀学院是非商业平台，你需要自备 API Key 才能使用 AI 对话功能。
+> 💡 提示：问学是非商业平台，你需要自备 API Key 才能使用 AI 对话功能。
 ''',
     ),
     _HelpCategory(
@@ -51,7 +66,7 @@ class HelpCenterPage extends StatelessWidget {
       title: '学习路径',
       content: '''## 学习路径
 
-灵犀学院的学习内容分为五个层级：
+问学的学习内容分为五个层级：
 
 | 级别 | 名称 | 适合人群 |
 |------|------|----------|
@@ -78,7 +93,7 @@ class HelpCenterPage extends StatelessWidget {
 
 ### 为什么 AI 不直接给答案？
 
-灵犀学院采用**苏格拉底式教学法**，通过提问引导你主动思考，而非被动接收答案。这种方式的优点：
+问学采用**苏格拉底式教学法**，通过提问引导你主动思考，而非被动接收答案。这种方式的优点：
 
 - ✅ 加深对概念的**真正理解**
 - ✅ 培养**独立思考**能力
@@ -86,32 +101,10 @@ class HelpCenterPage extends StatelessWidget {
 
 ### 如何切换模式
 
-- **引导模式**（默认）：小犀会通过提问引导你思考
+- **引导模式**（默认）：AI 导师会通过提问引导你思考
 - **直接解答**：在设置中关闭"苏格拉底引导"即可获得直接答案
 
 > 你可以根据学习场景随时在两种模式间切换。
-''',
-    ),
-    _HelpCategory(
-      icon: Icons.emoji_events,
-      title: '小犀互动',
-      content: '''## 小犀互动
-
-### 点击彩蛋
-
-在任意页面点击小犀，它会做出不同反应：
-- **单击**：眨眼、挥手或蹦跳
-- **连续点击 5 次**：触发庆祝彩蛋 ✨
-
-### 情绪表情含义
-
-| 表情 | 含义 |
-|------|------|
-| 😊 开心 | 答对题目、完成任务 |
-| 🤔 思考 | AI 正在生成回复 |
-| 😢 难过 | 内容为空、需要操作 |
-| 🦏 好奇 | 引导你探索新功能 |
-| 🎉 庆祝 | 达成成就、彩蛋触发 |
 ''',
     ),
     _HelpCategory(
@@ -124,7 +117,7 @@ class HelpCenterPage extends StatelessWidget {
 你的 API Key 使用 **AES 加密**存储在本地，永不上传到任何服务器。
 
 - **存储方式**：通过平台原生安全存储（Android Keystore / Windows DPAPI）
-- **访问范围**：仅灵犀学院应用本身可读取
+- **访问范围**：仅问学应用本身可读取
 - **网络传输**：Key 仅在调用 AI API 时直接发送给对应服务商
 
 ### 数据导出导入
@@ -171,7 +164,11 @@ class HelpCenterPage extends StatelessWidget {
 
 ### 如何切换 Provider？
 
-前往 **设置 → API 配置**，启用或禁用不同的服务商。系统会自动选择第一个已配置且启用的 Provider。
+前往 **设置 → API 配置**，添加/启用不同的服务商。同一时间仅一个 Provider 为活跃。系统会自动选择当前活跃的 Provider。
+
+### 如何自动检测可用模型？
+
+在 **API 配置 → 编辑** 弹窗的「模型名」输入框右侧点击 🔍 图标（或点击「检测可用模型」），会自动拉取当前 API Key 下可用的模型列表，点击即可选用；同时提供「常用模型」快捷预设。
 
 > 如遇问题，可在右下角点击"反馈"提交 Issue。
 ''',
@@ -181,7 +178,7 @@ class HelpCenterPage extends StatelessWidget {
       title: '开源贡献',
       content: '''## 开源贡献
 
-灵犀学院是一个开源项目，欢迎你的参与！
+问学 Quest Academy 是一个开源项目，欢迎你的参与！
 
 ### 贡献方式
 

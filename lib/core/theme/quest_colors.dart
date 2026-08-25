@@ -249,7 +249,7 @@ Color _fromHsl(List<double> hsl) {
 
 /// 便捷扩展：从 [BuildContext] 获取 [QuestColors]。
 extension QuestColorsX on BuildContext {
-  /// 获取当前主题中注册的灵犀自定义颜色；未注册时回退到亮色实例。
+  /// 获取当前主题中注册的问学自定义颜色；未注册时回退到亮色实例。
   QuestColors get questColors =>
       Theme.of(this).extension<QuestColors>() ?? QuestColors.light;
 }
