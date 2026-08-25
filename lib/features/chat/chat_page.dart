@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quest_academy/core/motion/animation_utils.dart';
-import 'package:quest_academy/core/motion/page_transitions.dart';
 import 'package:quest_academy/core/motion/spring_motion.dart';
 import 'package:quest_academy/core/providers/app_providers.dart';
 import 'package:quest_academy/core/router/route_names.dart';

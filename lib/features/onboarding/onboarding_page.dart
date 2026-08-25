@@ -12,7 +12,6 @@ import 'package:quest_academy/shared/widgets/quest_button.dart';
 class _OnboardingStep {
   const _OnboardingStep({
     required this.icon,
-    this.iconColor,
     required this.title,
     required this.description,
     required this.ctaText,
@@ -20,7 +19,6 @@ class _OnboardingStep {
   });
 
   final IconData icon;
-  final Color? iconColor;
   final String title;
   final String description;
   final String ctaText;
@@ -336,7 +334,7 @@ class _OnboardingStepViewState extends State<_OnboardingStepView>
     Widget illustration = _StepIllustration(
       icon: widget.step.icon,
       size: widget.isDesktop ? 240 : 180,
-      color: widget.step.iconColor,
+      color: theme.colorScheme.primary,
     );
     if (!widget.reduceMotion) {
       illustration = SpringMotion.pulseBreathing(

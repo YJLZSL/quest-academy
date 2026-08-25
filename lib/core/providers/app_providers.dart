@@ -4,6 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/theme_flavor_provider.dart';
 
+/// 重新导出主题风味相关 Provider，方便统一导入。
+export '../theme/theme_flavor_provider.dart'
+    show
+        ThemeFlavor,
+        ThemeFlavorNotifier,
+        themeFlavorProvider,
+        SeedColorNotifier,
+        seedColorProvider,
+        SeedColorPresets;
+
 /// SharedPreferences 提供者。
 ///
 /// 在 `main()` 中通过 `overrideWithValue` 注入已初始化的实例，
@@ -101,13 +111,3 @@ final socraticModeProvider = StateNotifierProvider<SocraticModeNotifier, bool>(
 final onboardingCompletedProvider = StateProvider<bool>(
   (ref) => ref.watch(appConfigProvider).onboardingCompleted,
 );
-
-/// 重新导出主题风味相关 Provider，方便统一导入。
-export '../theme/theme_flavor_provider.dart'
-    show
-        ThemeFlavor,
-        ThemeFlavorNotifier,
-        themeFlavorProvider,
-        SeedColorNotifier,
-        seedColorProvider,
-        SeedColorPresets;

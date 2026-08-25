@@ -3295,6 +3295,1060 @@ class StreaksCompanion extends UpdateCompanion<Streak> {
   }
 }
 
+class $LearnerProfilesTable extends LearnerProfiles
+    with TableInfo<$LearnerProfilesTable, LearnerProfile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LearnerProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => 'default',
+  );
+  static const VerificationMeta _ageGroupMeta = const VerificationMeta(
+    'ageGroup',
+  );
+  @override
+  late final GeneratedColumn<String> ageGroup = GeneratedColumn<String>(
+    'age_group',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('young'),
+  );
+  static const VerificationMeta _skillLevelMeta = const VerificationMeta(
+    'skillLevel',
+  );
+  @override
+  late final GeneratedColumn<String> skillLevel = GeneratedColumn<String>(
+    'skill_level',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('beginner'),
+  );
+  static const VerificationMeta _learningGoalMeta = const VerificationMeta(
+    'learningGoal',
+  );
+  @override
+  late final GeneratedColumn<String> learningGoal = GeneratedColumn<String>(
+    'learning_goal',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _dailyMinutesMeta = const VerificationMeta(
+    'dailyMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> dailyMinutes = GeneratedColumn<int>(
+    'daily_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _paceMeta = const VerificationMeta('pace');
+  @override
+  late final GeneratedColumn<String> pace = GeneratedColumn<String>(
+    'pace',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('balanced'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    ageGroup,
+    skillLevel,
+    learningGoal,
+    dailyMinutes,
+    pace,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'learner_profiles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LearnerProfile> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('age_group')) {
+      context.handle(
+        _ageGroupMeta,
+        ageGroup.isAcceptableOrUnknown(data['age_group']!, _ageGroupMeta),
+      );
+    }
+    if (data.containsKey('skill_level')) {
+      context.handle(
+        _skillLevelMeta,
+        skillLevel.isAcceptableOrUnknown(data['skill_level']!, _skillLevelMeta),
+      );
+    }
+    if (data.containsKey('learning_goal')) {
+      context.handle(
+        _learningGoalMeta,
+        learningGoal.isAcceptableOrUnknown(
+          data['learning_goal']!,
+          _learningGoalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('daily_minutes')) {
+      context.handle(
+        _dailyMinutesMeta,
+        dailyMinutes.isAcceptableOrUnknown(
+          data['daily_minutes']!,
+          _dailyMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('pace')) {
+      context.handle(
+        _paceMeta,
+        pace.isAcceptableOrUnknown(data['pace']!, _paceMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LearnerProfile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LearnerProfile(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      ageGroup: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}age_group'],
+      )!,
+      skillLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skill_level'],
+      )!,
+      learningGoal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}learning_goal'],
+      )!,
+      dailyMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}daily_minutes'],
+      )!,
+      pace: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pace'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LearnerProfilesTable createAlias(String alias) {
+    return $LearnerProfilesTable(attachedDatabase, alias);
+  }
+}
+
+class LearnerProfile extends DataClass implements Insertable<LearnerProfile> {
+  final String id;
+
+  /// 年龄段：young / advanced
+  final String ageGroup;
+
+  /// 自评编程水平：beginner / intermediate / advanced
+  final String skillLevel;
+
+  /// 学习目标（自由文本）
+  final String learningGoal;
+
+  /// 每日偏好学习时长（分钟）
+  final int dailyMinutes;
+
+  /// 偏好的学习节奏：relaxed / balanced / intensive
+  final String pace;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LearnerProfile({
+    required this.id,
+    required this.ageGroup,
+    required this.skillLevel,
+    required this.learningGoal,
+    required this.dailyMinutes,
+    required this.pace,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['age_group'] = Variable<String>(ageGroup);
+    map['skill_level'] = Variable<String>(skillLevel);
+    map['learning_goal'] = Variable<String>(learningGoal);
+    map['daily_minutes'] = Variable<int>(dailyMinutes);
+    map['pace'] = Variable<String>(pace);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LearnerProfilesCompanion toCompanion(bool nullToAbsent) {
+    return LearnerProfilesCompanion(
+      id: Value(id),
+      ageGroup: Value(ageGroup),
+      skillLevel: Value(skillLevel),
+      learningGoal: Value(learningGoal),
+      dailyMinutes: Value(dailyMinutes),
+      pace: Value(pace),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LearnerProfile.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LearnerProfile(
+      id: serializer.fromJson<String>(json['id']),
+      ageGroup: serializer.fromJson<String>(json['ageGroup']),
+      skillLevel: serializer.fromJson<String>(json['skillLevel']),
+      learningGoal: serializer.fromJson<String>(json['learningGoal']),
+      dailyMinutes: serializer.fromJson<int>(json['dailyMinutes']),
+      pace: serializer.fromJson<String>(json['pace']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'ageGroup': serializer.toJson<String>(ageGroup),
+      'skillLevel': serializer.toJson<String>(skillLevel),
+      'learningGoal': serializer.toJson<String>(learningGoal),
+      'dailyMinutes': serializer.toJson<int>(dailyMinutes),
+      'pace': serializer.toJson<String>(pace),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LearnerProfile copyWith({
+    String? id,
+    String? ageGroup,
+    String? skillLevel,
+    String? learningGoal,
+    int? dailyMinutes,
+    String? pace,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LearnerProfile(
+    id: id ?? this.id,
+    ageGroup: ageGroup ?? this.ageGroup,
+    skillLevel: skillLevel ?? this.skillLevel,
+    learningGoal: learningGoal ?? this.learningGoal,
+    dailyMinutes: dailyMinutes ?? this.dailyMinutes,
+    pace: pace ?? this.pace,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LearnerProfile copyWithCompanion(LearnerProfilesCompanion data) {
+    return LearnerProfile(
+      id: data.id.present ? data.id.value : this.id,
+      ageGroup: data.ageGroup.present ? data.ageGroup.value : this.ageGroup,
+      skillLevel: data.skillLevel.present
+          ? data.skillLevel.value
+          : this.skillLevel,
+      learningGoal: data.learningGoal.present
+          ? data.learningGoal.value
+          : this.learningGoal,
+      dailyMinutes: data.dailyMinutes.present
+          ? data.dailyMinutes.value
+          : this.dailyMinutes,
+      pace: data.pace.present ? data.pace.value : this.pace,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearnerProfile(')
+          ..write('id: $id, ')
+          ..write('ageGroup: $ageGroup, ')
+          ..write('skillLevel: $skillLevel, ')
+          ..write('learningGoal: $learningGoal, ')
+          ..write('dailyMinutes: $dailyMinutes, ')
+          ..write('pace: $pace, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    ageGroup,
+    skillLevel,
+    learningGoal,
+    dailyMinutes,
+    pace,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LearnerProfile &&
+          other.id == this.id &&
+          other.ageGroup == this.ageGroup &&
+          other.skillLevel == this.skillLevel &&
+          other.learningGoal == this.learningGoal &&
+          other.dailyMinutes == this.dailyMinutes &&
+          other.pace == this.pace &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LearnerProfilesCompanion extends UpdateCompanion<LearnerProfile> {
+  final Value<String> id;
+  final Value<String> ageGroup;
+  final Value<String> skillLevel;
+  final Value<String> learningGoal;
+  final Value<int> dailyMinutes;
+  final Value<String> pace;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const LearnerProfilesCompanion({
+    this.id = const Value.absent(),
+    this.ageGroup = const Value.absent(),
+    this.skillLevel = const Value.absent(),
+    this.learningGoal = const Value.absent(),
+    this.dailyMinutes = const Value.absent(),
+    this.pace = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LearnerProfilesCompanion.insert({
+    this.id = const Value.absent(),
+    this.ageGroup = const Value.absent(),
+    this.skillLevel = const Value.absent(),
+    this.learningGoal = const Value.absent(),
+    this.dailyMinutes = const Value.absent(),
+    this.pace = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  static Insertable<LearnerProfile> custom({
+    Expression<String>? id,
+    Expression<String>? ageGroup,
+    Expression<String>? skillLevel,
+    Expression<String>? learningGoal,
+    Expression<int>? dailyMinutes,
+    Expression<String>? pace,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ageGroup != null) 'age_group': ageGroup,
+      if (skillLevel != null) 'skill_level': skillLevel,
+      if (learningGoal != null) 'learning_goal': learningGoal,
+      if (dailyMinutes != null) 'daily_minutes': dailyMinutes,
+      if (pace != null) 'pace': pace,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LearnerProfilesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? ageGroup,
+    Value<String>? skillLevel,
+    Value<String>? learningGoal,
+    Value<int>? dailyMinutes,
+    Value<String>? pace,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return LearnerProfilesCompanion(
+      id: id ?? this.id,
+      ageGroup: ageGroup ?? this.ageGroup,
+      skillLevel: skillLevel ?? this.skillLevel,
+      learningGoal: learningGoal ?? this.learningGoal,
+      dailyMinutes: dailyMinutes ?? this.dailyMinutes,
+      pace: pace ?? this.pace,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (ageGroup.present) {
+      map['age_group'] = Variable<String>(ageGroup.value);
+    }
+    if (skillLevel.present) {
+      map['skill_level'] = Variable<String>(skillLevel.value);
+    }
+    if (learningGoal.present) {
+      map['learning_goal'] = Variable<String>(learningGoal.value);
+    }
+    if (dailyMinutes.present) {
+      map['daily_minutes'] = Variable<int>(dailyMinutes.value);
+    }
+    if (pace.present) {
+      map['pace'] = Variable<String>(pace.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearnerProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('ageGroup: $ageGroup, ')
+          ..write('skillLevel: $skillLevel, ')
+          ..write('learningGoal: $learningGoal, ')
+          ..write('dailyMinutes: $dailyMinutes, ')
+          ..write('pace: $pace, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LearningEventsTable extends LearningEvents
+    with TableInfo<$LearningEventsTable, LearningEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LearningEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: _uuid,
+  );
+  static const VerificationMeta _eventTypeMeta = const VerificationMeta(
+    'eventType',
+  );
+  @override
+  late final GeneratedColumn<String> eventType = GeneratedColumn<String>(
+    'event_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _courseIdMeta = const VerificationMeta(
+    'courseId',
+  );
+  @override
+  late final GeneratedColumn<String> courseId = GeneratedColumn<String>(
+    'course_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lessonIdMeta = const VerificationMeta(
+    'lessonId',
+  );
+  @override
+  late final GeneratedColumn<String> lessonId = GeneratedColumn<String>(
+    'lesson_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _knowledgePointIdMeta = const VerificationMeta(
+    'knowledgePointId',
+  );
+  @override
+  late final GeneratedColumn<String> knowledgePointId = GeneratedColumn<String>(
+    'knowledge_point_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _metadataMeta = const VerificationMeta(
+    'metadata',
+  );
+  @override
+  late final GeneratedColumn<String> metadata = GeneratedColumn<String>(
+    'metadata',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _durationSecondsMeta = const VerificationMeta(
+    'durationSeconds',
+  );
+  @override
+  late final GeneratedColumn<int> durationSeconds = GeneratedColumn<int>(
+    'duration_seconds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    eventType,
+    courseId,
+    lessonId,
+    knowledgePointId,
+    metadata,
+    durationSeconds,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'learning_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LearningEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('event_type')) {
+      context.handle(
+        _eventTypeMeta,
+        eventType.isAcceptableOrUnknown(data['event_type']!, _eventTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventTypeMeta);
+    }
+    if (data.containsKey('course_id')) {
+      context.handle(
+        _courseIdMeta,
+        courseId.isAcceptableOrUnknown(data['course_id']!, _courseIdMeta),
+      );
+    }
+    if (data.containsKey('lesson_id')) {
+      context.handle(
+        _lessonIdMeta,
+        lessonId.isAcceptableOrUnknown(data['lesson_id']!, _lessonIdMeta),
+      );
+    }
+    if (data.containsKey('knowledge_point_id')) {
+      context.handle(
+        _knowledgePointIdMeta,
+        knowledgePointId.isAcceptableOrUnknown(
+          data['knowledge_point_id']!,
+          _knowledgePointIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('metadata')) {
+      context.handle(
+        _metadataMeta,
+        metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta),
+      );
+    }
+    if (data.containsKey('duration_seconds')) {
+      context.handle(
+        _durationSecondsMeta,
+        durationSeconds.isAcceptableOrUnknown(
+          data['duration_seconds']!,
+          _durationSecondsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LearningEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LearningEvent(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      eventType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_type'],
+      )!,
+      courseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}course_id'],
+      ),
+      lessonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lesson_id'],
+      ),
+      knowledgePointId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}knowledge_point_id'],
+      ),
+      metadata: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata'],
+      )!,
+      durationSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_seconds'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LearningEventsTable createAlias(String alias) {
+    return $LearningEventsTable(attachedDatabase, alias);
+  }
+}
+
+class LearningEvent extends DataClass implements Insertable<LearningEvent> {
+  final String id;
+
+  /// 事件类型：lesson_start / lesson_complete / quiz_attempt /
+  /// quiz_pass / socratic_turn / note_create / review_complete
+  final String eventType;
+
+  /// 关联课程 ID（可选）
+  final String? courseId;
+
+  /// 关联课时 ID（可选）
+  final String? lessonId;
+
+  /// 关联知识点 ID（可选）
+  final String? knowledgePointId;
+
+  /// 事件元数据 JSON（如测验分数、对话轮次等）
+  final String metadata;
+
+  /// 持续时长（秒，可选）
+  final int? durationSeconds;
+  final DateTime createdAt;
+  const LearningEvent({
+    required this.id,
+    required this.eventType,
+    this.courseId,
+    this.lessonId,
+    this.knowledgePointId,
+    required this.metadata,
+    this.durationSeconds,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['event_type'] = Variable<String>(eventType);
+    if (!nullToAbsent || courseId != null) {
+      map['course_id'] = Variable<String>(courseId);
+    }
+    if (!nullToAbsent || lessonId != null) {
+      map['lesson_id'] = Variable<String>(lessonId);
+    }
+    if (!nullToAbsent || knowledgePointId != null) {
+      map['knowledge_point_id'] = Variable<String>(knowledgePointId);
+    }
+    map['metadata'] = Variable<String>(metadata);
+    if (!nullToAbsent || durationSeconds != null) {
+      map['duration_seconds'] = Variable<int>(durationSeconds);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  LearningEventsCompanion toCompanion(bool nullToAbsent) {
+    return LearningEventsCompanion(
+      id: Value(id),
+      eventType: Value(eventType),
+      courseId: courseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(courseId),
+      lessonId: lessonId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lessonId),
+      knowledgePointId: knowledgePointId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(knowledgePointId),
+      metadata: Value(metadata),
+      durationSeconds: durationSeconds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(durationSeconds),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory LearningEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LearningEvent(
+      id: serializer.fromJson<String>(json['id']),
+      eventType: serializer.fromJson<String>(json['eventType']),
+      courseId: serializer.fromJson<String?>(json['courseId']),
+      lessonId: serializer.fromJson<String?>(json['lessonId']),
+      knowledgePointId: serializer.fromJson<String?>(json['knowledgePointId']),
+      metadata: serializer.fromJson<String>(json['metadata']),
+      durationSeconds: serializer.fromJson<int?>(json['durationSeconds']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'eventType': serializer.toJson<String>(eventType),
+      'courseId': serializer.toJson<String?>(courseId),
+      'lessonId': serializer.toJson<String?>(lessonId),
+      'knowledgePointId': serializer.toJson<String?>(knowledgePointId),
+      'metadata': serializer.toJson<String>(metadata),
+      'durationSeconds': serializer.toJson<int?>(durationSeconds),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  LearningEvent copyWith({
+    String? id,
+    String? eventType,
+    Value<String?> courseId = const Value.absent(),
+    Value<String?> lessonId = const Value.absent(),
+    Value<String?> knowledgePointId = const Value.absent(),
+    String? metadata,
+    Value<int?> durationSeconds = const Value.absent(),
+    DateTime? createdAt,
+  }) => LearningEvent(
+    id: id ?? this.id,
+    eventType: eventType ?? this.eventType,
+    courseId: courseId.present ? courseId.value : this.courseId,
+    lessonId: lessonId.present ? lessonId.value : this.lessonId,
+    knowledgePointId: knowledgePointId.present
+        ? knowledgePointId.value
+        : this.knowledgePointId,
+    metadata: metadata ?? this.metadata,
+    durationSeconds: durationSeconds.present
+        ? durationSeconds.value
+        : this.durationSeconds,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  LearningEvent copyWithCompanion(LearningEventsCompanion data) {
+    return LearningEvent(
+      id: data.id.present ? data.id.value : this.id,
+      eventType: data.eventType.present ? data.eventType.value : this.eventType,
+      courseId: data.courseId.present ? data.courseId.value : this.courseId,
+      lessonId: data.lessonId.present ? data.lessonId.value : this.lessonId,
+      knowledgePointId: data.knowledgePointId.present
+          ? data.knowledgePointId.value
+          : this.knowledgePointId,
+      metadata: data.metadata.present ? data.metadata.value : this.metadata,
+      durationSeconds: data.durationSeconds.present
+          ? data.durationSeconds.value
+          : this.durationSeconds,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearningEvent(')
+          ..write('id: $id, ')
+          ..write('eventType: $eventType, ')
+          ..write('courseId: $courseId, ')
+          ..write('lessonId: $lessonId, ')
+          ..write('knowledgePointId: $knowledgePointId, ')
+          ..write('metadata: $metadata, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    eventType,
+    courseId,
+    lessonId,
+    knowledgePointId,
+    metadata,
+    durationSeconds,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LearningEvent &&
+          other.id == this.id &&
+          other.eventType == this.eventType &&
+          other.courseId == this.courseId &&
+          other.lessonId == this.lessonId &&
+          other.knowledgePointId == this.knowledgePointId &&
+          other.metadata == this.metadata &&
+          other.durationSeconds == this.durationSeconds &&
+          other.createdAt == this.createdAt);
+}
+
+class LearningEventsCompanion extends UpdateCompanion<LearningEvent> {
+  final Value<String> id;
+  final Value<String> eventType;
+  final Value<String?> courseId;
+  final Value<String?> lessonId;
+  final Value<String?> knowledgePointId;
+  final Value<String> metadata;
+  final Value<int?> durationSeconds;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const LearningEventsCompanion({
+    this.id = const Value.absent(),
+    this.eventType = const Value.absent(),
+    this.courseId = const Value.absent(),
+    this.lessonId = const Value.absent(),
+    this.knowledgePointId = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.durationSeconds = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LearningEventsCompanion.insert({
+    this.id = const Value.absent(),
+    required String eventType,
+    this.courseId = const Value.absent(),
+    this.lessonId = const Value.absent(),
+    this.knowledgePointId = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.durationSeconds = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : eventType = Value(eventType);
+  static Insertable<LearningEvent> custom({
+    Expression<String>? id,
+    Expression<String>? eventType,
+    Expression<String>? courseId,
+    Expression<String>? lessonId,
+    Expression<String>? knowledgePointId,
+    Expression<String>? metadata,
+    Expression<int>? durationSeconds,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (eventType != null) 'event_type': eventType,
+      if (courseId != null) 'course_id': courseId,
+      if (lessonId != null) 'lesson_id': lessonId,
+      if (knowledgePointId != null) 'knowledge_point_id': knowledgePointId,
+      if (metadata != null) 'metadata': metadata,
+      if (durationSeconds != null) 'duration_seconds': durationSeconds,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LearningEventsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? eventType,
+    Value<String?>? courseId,
+    Value<String?>? lessonId,
+    Value<String?>? knowledgePointId,
+    Value<String>? metadata,
+    Value<int?>? durationSeconds,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return LearningEventsCompanion(
+      id: id ?? this.id,
+      eventType: eventType ?? this.eventType,
+      courseId: courseId ?? this.courseId,
+      lessonId: lessonId ?? this.lessonId,
+      knowledgePointId: knowledgePointId ?? this.knowledgePointId,
+      metadata: metadata ?? this.metadata,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (eventType.present) {
+      map['event_type'] = Variable<String>(eventType.value);
+    }
+    if (courseId.present) {
+      map['course_id'] = Variable<String>(courseId.value);
+    }
+    if (lessonId.present) {
+      map['lesson_id'] = Variable<String>(lessonId.value);
+    }
+    if (knowledgePointId.present) {
+      map['knowledge_point_id'] = Variable<String>(knowledgePointId.value);
+    }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
+    if (durationSeconds.present) {
+      map['duration_seconds'] = Variable<int>(durationSeconds.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearningEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('eventType: $eventType, ')
+          ..write('courseId: $courseId, ')
+          ..write('lessonId: $lessonId, ')
+          ..write('knowledgePointId: $knowledgePointId, ')
+          ..write('metadata: $metadata, ')
+          ..write('durationSeconds: $durationSeconds, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$QuestDatabase extends GeneratedDatabase {
   _$QuestDatabase(QueryExecutor e) : super(e);
   $QuestDatabaseManager get managers => $QuestDatabaseManager(this);
@@ -3306,6 +4360,10 @@ abstract class _$QuestDatabase extends GeneratedDatabase {
   late final $SettingsTable settings = $SettingsTable(this);
   late final $AchievementsTable achievements = $AchievementsTable(this);
   late final $StreaksTable streaks = $StreaksTable(this);
+  late final $LearnerProfilesTable learnerProfiles = $LearnerProfilesTable(
+    this,
+  );
+  late final $LearningEventsTable learningEvents = $LearningEventsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3319,6 +4377,8 @@ abstract class _$QuestDatabase extends GeneratedDatabase {
     settings,
     achievements,
     streaks,
+    learnerProfiles,
+    learningEvents,
   ];
 }
 
@@ -5060,6 +6120,542 @@ typedef $$StreaksTableProcessedTableManager =
       Streak,
       PrefetchHooks Function()
     >;
+typedef $$LearnerProfilesTableCreateCompanionBuilder =
+    LearnerProfilesCompanion Function({
+      Value<String> id,
+      Value<String> ageGroup,
+      Value<String> skillLevel,
+      Value<String> learningGoal,
+      Value<int> dailyMinutes,
+      Value<String> pace,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$LearnerProfilesTableUpdateCompanionBuilder =
+    LearnerProfilesCompanion Function({
+      Value<String> id,
+      Value<String> ageGroup,
+      Value<String> skillLevel,
+      Value<String> learningGoal,
+      Value<int> dailyMinutes,
+      Value<String> pace,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$LearnerProfilesTableFilterComposer
+    extends Composer<_$QuestDatabase, $LearnerProfilesTable> {
+  $$LearnerProfilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ageGroup => $composableBuilder(
+    column: $table.ageGroup,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skillLevel => $composableBuilder(
+    column: $table.skillLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get learningGoal => $composableBuilder(
+    column: $table.learningGoal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dailyMinutes => $composableBuilder(
+    column: $table.dailyMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pace => $composableBuilder(
+    column: $table.pace,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LearnerProfilesTableOrderingComposer
+    extends Composer<_$QuestDatabase, $LearnerProfilesTable> {
+  $$LearnerProfilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ageGroup => $composableBuilder(
+    column: $table.ageGroup,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skillLevel => $composableBuilder(
+    column: $table.skillLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get learningGoal => $composableBuilder(
+    column: $table.learningGoal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get dailyMinutes => $composableBuilder(
+    column: $table.dailyMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pace => $composableBuilder(
+    column: $table.pace,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LearnerProfilesTableAnnotationComposer
+    extends Composer<_$QuestDatabase, $LearnerProfilesTable> {
+  $$LearnerProfilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get ageGroup =>
+      $composableBuilder(column: $table.ageGroup, builder: (column) => column);
+
+  GeneratedColumn<String> get skillLevel => $composableBuilder(
+    column: $table.skillLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get learningGoal => $composableBuilder(
+    column: $table.learningGoal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get dailyMinutes => $composableBuilder(
+    column: $table.dailyMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pace =>
+      $composableBuilder(column: $table.pace, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LearnerProfilesTableTableManager
+    extends
+        RootTableManager<
+          _$QuestDatabase,
+          $LearnerProfilesTable,
+          LearnerProfile,
+          $$LearnerProfilesTableFilterComposer,
+          $$LearnerProfilesTableOrderingComposer,
+          $$LearnerProfilesTableAnnotationComposer,
+          $$LearnerProfilesTableCreateCompanionBuilder,
+          $$LearnerProfilesTableUpdateCompanionBuilder,
+          (
+            LearnerProfile,
+            BaseReferences<
+              _$QuestDatabase,
+              $LearnerProfilesTable,
+              LearnerProfile
+            >,
+          ),
+          LearnerProfile,
+          PrefetchHooks Function()
+        > {
+  $$LearnerProfilesTableTableManager(
+    _$QuestDatabase db,
+    $LearnerProfilesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LearnerProfilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LearnerProfilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LearnerProfilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> ageGroup = const Value.absent(),
+                Value<String> skillLevel = const Value.absent(),
+                Value<String> learningGoal = const Value.absent(),
+                Value<int> dailyMinutes = const Value.absent(),
+                Value<String> pace = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearnerProfilesCompanion(
+                id: id,
+                ageGroup: ageGroup,
+                skillLevel: skillLevel,
+                learningGoal: learningGoal,
+                dailyMinutes: dailyMinutes,
+                pace: pace,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> ageGroup = const Value.absent(),
+                Value<String> skillLevel = const Value.absent(),
+                Value<String> learningGoal = const Value.absent(),
+                Value<int> dailyMinutes = const Value.absent(),
+                Value<String> pace = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearnerProfilesCompanion.insert(
+                id: id,
+                ageGroup: ageGroup,
+                skillLevel: skillLevel,
+                learningGoal: learningGoal,
+                dailyMinutes: dailyMinutes,
+                pace: pace,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LearnerProfilesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$QuestDatabase,
+      $LearnerProfilesTable,
+      LearnerProfile,
+      $$LearnerProfilesTableFilterComposer,
+      $$LearnerProfilesTableOrderingComposer,
+      $$LearnerProfilesTableAnnotationComposer,
+      $$LearnerProfilesTableCreateCompanionBuilder,
+      $$LearnerProfilesTableUpdateCompanionBuilder,
+      (
+        LearnerProfile,
+        BaseReferences<_$QuestDatabase, $LearnerProfilesTable, LearnerProfile>,
+      ),
+      LearnerProfile,
+      PrefetchHooks Function()
+    >;
+typedef $$LearningEventsTableCreateCompanionBuilder =
+    LearningEventsCompanion Function({
+      Value<String> id,
+      required String eventType,
+      Value<String?> courseId,
+      Value<String?> lessonId,
+      Value<String?> knowledgePointId,
+      Value<String> metadata,
+      Value<int?> durationSeconds,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+typedef $$LearningEventsTableUpdateCompanionBuilder =
+    LearningEventsCompanion Function({
+      Value<String> id,
+      Value<String> eventType,
+      Value<String?> courseId,
+      Value<String?> lessonId,
+      Value<String?> knowledgePointId,
+      Value<String> metadata,
+      Value<int?> durationSeconds,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$LearningEventsTableFilterComposer
+    extends Composer<_$QuestDatabase, $LearningEventsTable> {
+  $$LearningEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eventType => $composableBuilder(
+    column: $table.eventType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lessonId => $composableBuilder(
+    column: $table.lessonId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get knowledgePointId => $composableBuilder(
+    column: $table.knowledgePointId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get metadata => $composableBuilder(
+    column: $table.metadata,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LearningEventsTableOrderingComposer
+    extends Composer<_$QuestDatabase, $LearningEventsTable> {
+  $$LearningEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eventType => $composableBuilder(
+    column: $table.eventType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lessonId => $composableBuilder(
+    column: $table.lessonId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get knowledgePointId => $composableBuilder(
+    column: $table.knowledgePointId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get metadata => $composableBuilder(
+    column: $table.metadata,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LearningEventsTableAnnotationComposer
+    extends Composer<_$QuestDatabase, $LearningEventsTable> {
+  $$LearningEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get eventType =>
+      $composableBuilder(column: $table.eventType, builder: (column) => column);
+
+  GeneratedColumn<String> get courseId =>
+      $composableBuilder(column: $table.courseId, builder: (column) => column);
+
+  GeneratedColumn<String> get lessonId =>
+      $composableBuilder(column: $table.lessonId, builder: (column) => column);
+
+  GeneratedColumn<String> get knowledgePointId => $composableBuilder(
+    column: $table.knowledgePointId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get metadata =>
+      $composableBuilder(column: $table.metadata, builder: (column) => column);
+
+  GeneratedColumn<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$LearningEventsTableTableManager
+    extends
+        RootTableManager<
+          _$QuestDatabase,
+          $LearningEventsTable,
+          LearningEvent,
+          $$LearningEventsTableFilterComposer,
+          $$LearningEventsTableOrderingComposer,
+          $$LearningEventsTableAnnotationComposer,
+          $$LearningEventsTableCreateCompanionBuilder,
+          $$LearningEventsTableUpdateCompanionBuilder,
+          (
+            LearningEvent,
+            BaseReferences<
+              _$QuestDatabase,
+              $LearningEventsTable,
+              LearningEvent
+            >,
+          ),
+          LearningEvent,
+          PrefetchHooks Function()
+        > {
+  $$LearningEventsTableTableManager(
+    _$QuestDatabase db,
+    $LearningEventsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LearningEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LearningEventsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LearningEventsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> eventType = const Value.absent(),
+                Value<String?> courseId = const Value.absent(),
+                Value<String?> lessonId = const Value.absent(),
+                Value<String?> knowledgePointId = const Value.absent(),
+                Value<String> metadata = const Value.absent(),
+                Value<int?> durationSeconds = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearningEventsCompanion(
+                id: id,
+                eventType: eventType,
+                courseId: courseId,
+                lessonId: lessonId,
+                knowledgePointId: knowledgePointId,
+                metadata: metadata,
+                durationSeconds: durationSeconds,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required String eventType,
+                Value<String?> courseId = const Value.absent(),
+                Value<String?> lessonId = const Value.absent(),
+                Value<String?> knowledgePointId = const Value.absent(),
+                Value<String> metadata = const Value.absent(),
+                Value<int?> durationSeconds = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearningEventsCompanion.insert(
+                id: id,
+                eventType: eventType,
+                courseId: courseId,
+                lessonId: lessonId,
+                knowledgePointId: knowledgePointId,
+                metadata: metadata,
+                durationSeconds: durationSeconds,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LearningEventsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$QuestDatabase,
+      $LearningEventsTable,
+      LearningEvent,
+      $$LearningEventsTableFilterComposer,
+      $$LearningEventsTableOrderingComposer,
+      $$LearningEventsTableAnnotationComposer,
+      $$LearningEventsTableCreateCompanionBuilder,
+      $$LearningEventsTableUpdateCompanionBuilder,
+      (
+        LearningEvent,
+        BaseReferences<_$QuestDatabase, $LearningEventsTable, LearningEvent>,
+      ),
+      LearningEvent,
+      PrefetchHooks Function()
+    >;
 
 class $QuestDatabaseManager {
   final _$QuestDatabase _db;
@@ -5080,4 +6676,8 @@ class $QuestDatabaseManager {
       $$AchievementsTableTableManager(_db, _db.achievements);
   $$StreaksTableTableManager get streaks =>
       $$StreaksTableTableManager(_db, _db.streaks);
+  $$LearnerProfilesTableTableManager get learnerProfiles =>
+      $$LearnerProfilesTableTableManager(_db, _db.learnerProfiles);
+  $$LearningEventsTableTableManager get learningEvents =>
+      $$LearningEventsTableTableManager(_db, _db.learningEvents);
 }

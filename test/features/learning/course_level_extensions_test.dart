@@ -1,4 +1,4 @@
-// ignore_for_file: lines_longer_than_80_lines
+﻿// ignore_for_file: lines_longer_than_80_lines
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,7 +8,7 @@ import 'package:quest_academy/features/learning/course_level_extensions.dart';
 
 void main() {
   group('CourseLevel.levelColor light 实例映射', () {
-    const colors = QuestColors.light;
+    final colors = QuestColors.light;
 
     test('L0 → brandSecondary（温暖橙，入门）', () {
       expect(CourseLevel.l0.levelColor(colors), colors.brandSecondary);
@@ -32,7 +32,7 @@ void main() {
   });
 
   group('CourseLevel.levelColor dark 实例映射', () {
-    const colors = QuestColors.dark;
+    final colors = QuestColors.dark;
 
     test('L0 → brandSecondary', () {
       expect(CourseLevel.l0.levelColor(colors), colors.brandSecondary);
@@ -57,7 +57,7 @@ void main() {
 
   group('CourseLevel.levelColor 语义色对应', () {
     test('每个级别在 light 下映射到不同语义色', () {
-      const colors = QuestColors.light;
+      final colors = QuestColors.light;
       final mapped = <CourseLevel, Color>{
         for (final level in CourseLevel.values)
           level: level.levelColor(colors),
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('每个级别在 dark 下映射到不同语义色', () {
-      const colors = QuestColors.dark;
+      final colors = QuestColors.dark;
       final mapped = <CourseLevel, Color>{
         for (final level in CourseLevel.values)
           level: level.levelColor(colors),
@@ -79,7 +79,7 @@ void main() {
     });
 
     test('L0-L4 顺序与文档约定一致', () {
-      const colors = QuestColors.light;
+      final colors = QuestColors.light;
       expect(CourseLevel.l0.levelColor(colors), colors.brandSecondary);
       expect(CourseLevel.l1.levelColor(colors), colors.socraticBlue);
       expect(CourseLevel.l2.levelColor(colors), colors.brandPrimary);
@@ -88,7 +88,7 @@ void main() {
     });
 
     test('全部 5 个级别遍历均可正确返回颜色', () {
-      const colors = QuestColors.light;
+      final colors = QuestColors.light;
       for (final level in CourseLevel.values) {
         final color = level.levelColor(colors);
         expect(color, isNotNull);

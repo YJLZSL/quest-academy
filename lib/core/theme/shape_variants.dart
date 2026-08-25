@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -158,7 +160,8 @@ class OctagonBorder extends OutlinedBorder {
   }
 
   Path _buildPath(Rect rect) {
-    final r = cornerRadius.clamp(0.0, rect.width / 4, rect.height / 4);
+    final maxByte = math.min(rect.width / 4, rect.height / 4);
+    final r = cornerRadius.clamp(0.0, maxByte);
     final path = Path();
 
     path.moveTo(rect.left + r, rect.top);
@@ -195,7 +198,7 @@ class OctagonBorder extends OutlinedBorder {
     if (a is OctagonBorder) {
       return OctagonBorder(
         side: BorderSide.lerp(a.side, side, t),
-        cornerRadius: math.lerpDouble(a.cornerRadius, cornerRadius, t)!,
+        cornerRadius: lerpDouble(a.cornerRadius, cornerRadius, t)!,
       );
     }
     return super.lerpFrom(a, t);
@@ -206,9 +209,17 @@ class OctagonBorder extends OutlinedBorder {
     if (b is OctagonBorder) {
       return OctagonBorder(
         side: BorderSide.lerp(side, b.side, t),
-        cornerRadius: math.lerpDouble(cornerRadius, b.cornerRadius, t)!,
+        cornerRadius: lerpDouble(cornerRadius, b.cornerRadius, t)!,
       );
     }
     return super.lerpTo(b, t);
+  }
+
+  @override
+  OutlinedBorder scale(double t) {
+    return OctagonBorder(
+      side: side.scale(t),
+      cornerRadius: cornerRadius * t,
+    );
   }
 }

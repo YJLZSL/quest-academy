@@ -228,6 +228,33 @@ class AnthropicProvider implements AiProvider {
     }
   }
 
+  /// 获取 Anthropic 可用模型列表（自动检测）。
+  ///
+  /// 调用 `GET {baseUrl}/v1/models`，解析 `data[].id`。
+  @override
+  Future<List<String>> fetchModels() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '$baseUrl/v1/models',
+        options: Options(
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+          },
+        ),
+      );
+      final data = response.data?['data'] as List<dynamic>?;
+      if (data == null) return const [];
+      return data
+          .map((e) => (e as Map<String, dynamic>)['id'] as String?)
+          .whereType<String>()
+          .where((id) => id.isNotEmpty)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   /// 安全读取 JSON 中的整型字段。
   ///
   /// 兼容 `int` 与 `num`（含 `double`）类型；解析失败返回 0。

@@ -52,7 +52,6 @@ class QuestGradients extends ThemeExtension<QuestGradients> {
     }
 
     final seedLight = withLightness(seed, 0.60);
-    final seedMuted = tint(seed, isMinimal ? 0.03 : 0.08);
     final surfaceMuted = tint(seed, isMinimal ? 0.02 : 0.05);
     final complementary = harmonyComplementary(seed);
 

@@ -261,7 +261,7 @@ class _XpRingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (math.min(size.width, size.height) - strokeWidth) / 2;
     const segmentCount = 24;
-    final segmentAngle = 2 * math.pi / segmentCount;
+    const segmentAngle = 2 * math.pi / segmentCount;
     final segmentLength = radius * segmentAngle * 0.7;
     final segmentWidth = segmentLength.clamp(4.0, strokeWidth);
     final filledSegments = (segmentCount * progress).round();

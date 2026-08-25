@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/motion/animation_utils.dart';
 import '../../core/motion/spring_motion.dart';
+import '../../core/theme/quest_colors.dart';
 import '../../core/theme/quest_gradients.dart';
 import '../../core/theme/theme_flavor_provider.dart';
 import 'animated_count_text.dart';

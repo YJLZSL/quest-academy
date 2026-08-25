@@ -97,7 +97,7 @@ class SeedColorNotifier extends StateNotifier<Color> {
 
   /// 设置种子色并持久化。
   void set(Color color) {
-    _prefs.setInt(_key, color.value);
+    _prefs.setInt(_key, color.toARGB32());
     state = color;
   }
 }

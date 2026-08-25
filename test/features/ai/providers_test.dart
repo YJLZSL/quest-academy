@@ -51,16 +51,6 @@ ResponseBody _buildStreamResponse(String body, {int statusCode = 200}) {
   });
 }
 
-/// 构造一个返回 [body] JSON 字节流的 [ResponseBody]。
-ResponseBody _buildJsonResponse(String body, {int statusCode = 200}) {
-  final bytes = utf8.encode(body);
-  final stream =
-      Stream<List<int>>.fromIterable([bytes]).cast<Uint8List>();
-  return ResponseBody(stream, statusCode, headers: {
-    Headers.contentTypeHeader: ['application/json'],
-  });
-}
-
 /// 按顺序返回预设响应的 HttpClientAdapter，用于测试重试逻辑。
 ///
 /// [_items] 中的元素可以是 [ResponseBody]（成功）或 [DioException]（失败）。

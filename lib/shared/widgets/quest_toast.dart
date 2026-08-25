@@ -80,7 +80,6 @@ class QuestToast {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           duration: duration,
           action: action,
-          actionTextColor: fgColor,
         ),
       );
   }

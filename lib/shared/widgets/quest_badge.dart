@@ -194,7 +194,7 @@ class _QuestBadgeState extends ConsumerState<QuestBadge>
     final colors = context.questColors;
     final flavor = ref.watch(themeFlavorProvider);
     final accent = flavor == ThemeFlavor.minecraft
-        ? colors.minecraftGrass
+        ? colors.pixelGrass
         : colors.achievementGold;
     final iconColor =
         widget.unlocked ? accent : theme.colorScheme.onSurfaceVariant;

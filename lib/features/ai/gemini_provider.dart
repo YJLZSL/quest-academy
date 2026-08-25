@@ -222,6 +222,33 @@ class GeminiProvider implements AiProvider {
     }
   }
 
+  /// 获取 Gemini 可用模型列表（自动检测）。
+  ///
+  /// 调用 `GET {baseUrl}/v1beta/models?key={apiKey}`，解析 `models[].name`
+  /// 并去除 `models/` 前缀。
+  @override
+  Future<List<String>> fetchModels() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '$baseUrl/v1beta/models?key=$apiKey',
+      );
+      final models = response.data?['models'] as List<dynamic>?;
+      if (models == null) return const [];
+      return models
+          .map((e) {
+            final name = (e as Map<String, dynamic>)['name'] as String?;
+            if (name == null || name.isEmpty) return null;
+            return name.startsWith('models/')
+                ? name.substring('models/'.length)
+                : name;
+          })
+          .whereType<String>()
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   /// 安全读取 JSON 中的整型字段。
   ///
   /// 兼容 `int` 与 `num`（含 `double`）类型；解析失败返回 0。

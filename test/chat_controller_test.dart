@@ -49,6 +49,9 @@ class _FakeAiProvider implements AiProvider {
 
   @override
   Future<bool> testConnection() async => true;
+
+  @override
+  Future<List<String>> fetchModels() async => const [];
 }
 
 /// 轮询等待控制器结束流式状态。
@@ -481,4 +484,7 @@ class _AiProviderSequence implements AiProvider {
 
   @override
   Future<bool> testConnection() async => true;
+
+  @override
+  Future<List<String>> fetchModels() async => const [];
 }

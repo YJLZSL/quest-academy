@@ -54,7 +54,7 @@ class UpdateController extends StateNotifier<UpdateState> {
       final lastCheck = _prefs.getLastCheckTime();
       if (lastCheck != null) {
         final elapsed = DateTime.now().difference(lastCheck);
-        if (elapsed < Duration(hours: kUpdateCheckIntervalHours)) {
+        if (elapsed < const Duration(hours: kUpdateCheckIntervalHours)) {
           return;
         }
       }

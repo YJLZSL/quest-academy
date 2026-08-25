@@ -12,6 +12,7 @@ import 'package:quest_academy/core/theme/shape_variants.dart';
 import 'package:quest_academy/data/models/course_content.dart';
 import 'package:quest_academy/data/providers/course_providers.dart';
 import 'package:quest_academy/data/providers/db_providers.dart';
+import 'package:quest_academy/data/repositories/progress_repository.dart';
 import 'package:quest_academy/features/learning/course_level_extensions.dart';
 import 'package:quest_academy/features/progress/achievement_service.dart';
 import 'package:quest_academy/features/progress/celebration_service.dart';
@@ -100,7 +101,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final gradients = context.questGradients;
-    final questColors = context.questColors;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
     final isStreakActive = _streakDays > 0;
 
@@ -250,7 +250,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final gamificationRow = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _XpSummaryRing(),
+        _xpSummaryRing(),
         const SizedBox(width: 16),
         StreakFlameBadge(
           days: _streakDays,
@@ -291,7 +291,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// 从学习进度计算 XP 并渲染 [XpProgressRing]。
-  Widget _XpSummaryRing() {
+  Widget _xpSummaryRing() {
     final progressRepo = ref.watch(progressRepositoryProvider);
     return FutureBuilder<int>(
       future: _computeTotalXp(progressRepo),
@@ -314,7 +314,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 每个已完成知识点计 10 XP。
   Future<int> _computeTotalXp(ProgressRepository repo) async {
     final progressList = await repo.getAllProgress();
-    final completed = progressList.where((p) => p.status == 'completed').length;
+    final completed =
+        progressList.where((p) => p.status == 'completed').length;
     return completed * 10;
   }
 
