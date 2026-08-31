@@ -12,6 +12,8 @@ import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
 import 'package:quest_academy/shared/widgets/quest_chip.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 笔记列表页。
 ///
@@ -79,9 +81,14 @@ class _NotesPageState extends ConsumerState<NotesPage> {
         stream: _stream,
         builder: (context, snapshot) {
           final all = snapshot.data ?? const <Note>[];
+          if (snapshot.hasError) {
+            return QuestErrorState(
+              message: '加载笔记失败：${snapshot.error}',
+            );
+          }
           if (!snapshot.hasData &&
               snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const SkeletonList();
           }
           if (all.isEmpty) {
             return _buildEmpty(context);

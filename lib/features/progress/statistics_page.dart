@@ -15,6 +15,8 @@ import 'package:quest_academy/shared/widgets/animated_count_text.dart';
 import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 时间范围枚举。
 enum StatsTimeRange {
@@ -122,12 +124,10 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
     return Scaffold(
       appBar: const QuestAppBar(title: Text('学习统计')),
       body: asyncData.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Text('加载失败：$error'),
-          ),
+        loading: () => const SkeletonPage(blockCount: 3, blockHeight: 130),
+        error: (error, _) => QuestErrorState(
+          message: '加载统计数据失败：$error',
+          onRetry: () => ref.invalidate(statisticsDataProvider),
         ),
         data: (data) => _Body(
           data: data,

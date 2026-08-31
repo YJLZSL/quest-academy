@@ -33,6 +33,9 @@ class _EmptyCourseRepository implements CourseRepository {
   ) async => null;
 
   @override
+  List<CourseLoadError> get loadErrors => <CourseLoadError>[];
+
+  @override
   void clearCache() {}
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quest_academy/core/motion/app_motion.dart';
 import 'package:quest_academy/core/motion/spring_motion.dart';
 import 'package:quest_academy/core/theme/quest_colors.dart';
 import 'package:quest_academy/core/theme/quest_elevations.dart';
@@ -12,6 +13,11 @@ import 'package:quest_academy/core/theme/shape_tokens.dart';
 /// - Minecraft 风味下强制直角，并改用 [QuestElevations.pixelBorder] 厚边阴影；
 /// - Minimal 风味下通过 [MotionTokens.pageEntranceDelay] 判断是否关闭缩放入场；
 /// - 颜色、阴影均走语义 Token，组件内不再硬编码任何视觉常量。
+///
+/// 动效规范（全局统一节奏）：
+/// - 入场为「淡入 + 轻微上移 + 缩放」，时长取 [MotionTokens.durationMedium]
+///   （250ms），曲线取 [MotionTokens.curveStandard]，与卡片/展开收起一致；
+/// - reduceMotion 时降级为直接显示。
 ///
 /// 提供一致的圆角、标题、内容和操作按钮布局。
 /// 支持自定义图标和确认/取消回调。
@@ -76,9 +82,11 @@ class QuestDialog extends StatelessWidget {
     String cancelLabel = '取消',
     bool showCancel = true,
     bool isDestructive = false,
+    bool barrierDismissible = true,
   }) {
     return showDialog<bool>(
       context: context,
+      barrierDismissible: barrierDismissible,
       builder: (ctx) => QuestDialog(
         title: title,
         content: content,
@@ -117,6 +125,9 @@ class QuestDialog extends StatelessWidget {
       // Minimal 风味关闭缩放入场，仅保留淡入，营造更克制的视觉节奏。
       beginScale: isMinimal ? 1.0 : 0.9,
       beginOffset: const Offset(0, 0.02),
+      // 时长/曲线统一取主题令牌，与全局动效节奏保持一致（250ms 标准减速）。
+      duration: AppMotion.mediumOf(context),
+      curve: motionTokens.curveStandard,
       child: Dialog(
         backgroundColor: Colors.transparent,
         elevation: 0,

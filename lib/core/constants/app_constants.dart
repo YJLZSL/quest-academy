@@ -1,6 +1,6 @@
 /// 应用级常量定义
 const String kAppName = '问学';
-const String kAppVersion = '0.6.0';
+const String kAppVersion = '0.7.0';
 
 /// GitHub 仓库信息（用于自动更新与"关于"页展示）
 const String kRepoOwner = 'YJLZSL';

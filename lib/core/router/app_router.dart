@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quest_academy/core/motion/animation_utils.dart';
 import 'package:quest_academy/core/motion/page_transitions.dart';
 import 'package:quest_academy/core/providers/app_providers.dart';
 import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/motion_tokens.dart';
 import 'package:quest_academy/features/progress/achievements_page.dart';
 import 'package:quest_academy/features/progress/statistics_page.dart';
 import 'package:quest_academy/features/chat/chat_list_page.dart';
 import 'package:quest_academy/features/chat/chat_page.dart';
+import 'package:quest_academy/features/guide/guide_page.dart';
 import 'package:quest_academy/features/help/help_center_page.dart';
 import 'package:quest_academy/features/home/home_page.dart';
 import 'package:quest_academy/features/learning/learning_path_page.dart';
@@ -18,6 +21,7 @@ import 'package:quest_academy/features/onboarding/api_setup_wizard_page.dart';
 import 'package:quest_academy/features/onboarding/onboarding_page.dart';
 import 'package:quest_academy/features/settings/api_settings_page.dart';
 import 'package:quest_academy/features/settings/settings_page.dart';
+import 'package:quest_academy/features/settings/tts_settings_page.dart';
 
 /// 全局 GoRouter 提供者。
 ///
@@ -188,6 +192,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: RouteNames.ttsSettingsPath,
+            name: RouteNames.ttsSettings,
+            pageBuilder: (context, state) => QuestPageTransitions.buildSlidePage(
+              context: context,
+              state: state,
+              child: const TtsSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: RouteNames.guidePath,
+            name: RouteNames.guide,
+            pageBuilder: (context, state) => QuestPageTransitions.buildSlidePage(
+              context: context,
+              state: state,
+              child: const GuidePage(),
+            ),
+          ),
+          GoRoute(
             path: RouteNames.helpPath,
             name: RouteNames.help,
             pageBuilder: (context, state) => QuestPageTransitions.buildPage(
@@ -293,6 +315,9 @@ class _AppShellState extends State<_AppShell> {
     );
   }
 
+  /// 桌面端侧边栏是否展开（会话内状态，不持久化）。
+  bool _railExtended = true;
+
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
@@ -303,19 +328,34 @@ class _AppShellState extends State<_AppShell> {
       return Scaffold(
         body: Row(
           children: [
+            // 侧边栏：extended 切换由 NavigationRail 内部提供宽度过渡，
+            // 与全局 200–300ms 节奏一致；底部提供显式展开/收起入口。
             NavigationRail(
               selectedIndex: index,
+              extended: _railExtended,
               onDestinationSelected: (i) => context.go(_destinations[i].path),
               labelType: NavigationRailLabelType.all,
               useIndicator: true,
+              minExtendedWidth: 180,
               destinations: [
                 for (var i = 0; i < _destinations.length; i++)
                   NavigationRailDestination(
                     icon: _buildIcon(_destinations[i].icon),
-                    selectedIcon: _buildIcon(_destinations[i].selectedIcon, selected: true),
+                    selectedIcon:
+                        _buildIcon(_destinations[i].selectedIcon, selected: true),
                     label: Text(_destinations[i].label),
                   ),
               ],
+              trailing: Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _RailToggleButton(
+                    extended: _railExtended,
+                    onToggle: () =>
+                        setState(() => _railExtended = !_railExtended),
+                  ),
+                ),
+              ),
             ),
             const VerticalDivider(thickness: 1, width: 1),
             Expanded(child: widget.child),
@@ -337,6 +377,45 @@ class _AppShellState extends State<_AppShell> {
               label: _destinations[i].label,
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// 侧边栏展开/收起切换按钮。
+///
+/// 图标在两种状态间旋转 180°，时长取 [MotionTokens.durationShort]（200ms），
+/// reduceMotion 时即时切换。
+class _RailToggleButton extends StatelessWidget {
+  const _RailToggleButton({
+    required this.extended,
+    required this.onToggle,
+  });
+
+  final bool extended;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final motionTokens = context.motionTokens;
+    final reduceMotion = AnimationUtils.reduceMotionOf(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: IconButton(
+        tooltip: extended ? '收起侧边栏' : '展开侧边栏',
+        onPressed: () {
+          AnimationUtils.hapticLight();
+          onToggle();
+        },
+        icon: AnimatedRotation(
+          turns: extended ? 0.5 : 0.0,
+          duration: reduceMotion ? Duration.zero : motionTokens.durationShort,
+          curve: motionTokens.curveStandard,
+          child: Icon(
+            extended ? Icons.chevron_left : Icons.chevron_right,
+          ),
+        ),
       ),
     );
   }

@@ -19,15 +19,29 @@ enum MessageRole { system, user, assistant }
 
 /// 聊天消息模型。
 ///
-/// 不可变值对象，由 [role] 与 [content] 两个字段构成。
+/// 不可变值对象，由 [role]、[content] 与可选的 [imageBase64DataUrls]
+/// 三个字段构成。图片以 Base64 Data URL 列表存储，仅用于当前请求；
+/// 持久化到数据库时只保存文本 [content]。
+///
 /// 提供三个命名构造函数 [ChatMessage.user]、[ChatMessage.assistant]、
 /// [ChatMessage.system] 便于构造常用角色消息。
 class ChatMessage {
-  const ChatMessage({required this.role, required this.content});
+  const ChatMessage({
+    required this.role,
+    required this.content,
+    this.imageBase64DataUrls = const [],
+  });
 
-  /// 用户消息。
-  factory ChatMessage.user(String content) =>
-      ChatMessage(role: MessageRole.user, content: content);
+  /// 用户消息，可附带图片。
+  factory ChatMessage.user(
+    String content, {
+    List<String> images = const [],
+  }) =>
+      ChatMessage(
+        role: MessageRole.user,
+        content: content,
+        imageBase64DataUrls: images,
+      );
 
   /// 助手消息。
   factory ChatMessage.assistant(String content) =>
@@ -42,6 +56,14 @@ class ChatMessage {
 
   /// 消息文本内容。
   final String content;
+
+  /// 随消息附带的 Base64 Data URL 图片列表。
+  ///
+  /// 仅用于当前 AI 请求，不会持久化到数据库。
+  final List<String> imageBase64DataUrls;
+
+  /// 当前消息是否包含图片。
+  bool get hasImages => imageBase64DataUrls.isNotEmpty;
 }
 
 /// 聊天请求选项。

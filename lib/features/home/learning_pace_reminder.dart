@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quest_academy/core/theme/quest_colors.dart';
 import 'package:quest_academy/core/theme/shape_variants.dart';
 import 'package:quest_academy/features/progress/streak_service.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+
+/// 节奏提醒的语义强调色。
+///
+/// 使用语义枚举而非硬编码色值，实际颜色在 build 时从 [QuestColors] 解析，
+/// 保证浅色/深色主题下均有足够对比度。
+enum _PaceAccent { info, fire, success, gold, brand }
 
 /// 学习节奏提醒 Widget。
 ///
@@ -18,12 +25,14 @@ class LearningPaceReminder extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final questColors = context.questColors;
 
     return FutureBuilder<_PaceInfo>(
       future: _getPaceInfo(ref),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const SizedBox.shrink();
         final info = snapshot.data!;
+        final accentColor = _resolveAccent(questColors, info.accent);
 
         return QuestCard(
           padding: const EdgeInsets.all(14),
@@ -33,12 +42,12 @@ class LearningPaceReminder extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: info.iconBgColor.withValues(alpha: 0.15),
+                  color: accentColor.withValues(alpha: 0.15),
                   borderRadius: ShapeVariants.roundedMedium.borderRadius,
                 ),
                 child: Icon(
                   info.icon,
-                  color: info.iconBgColor,
+                  color: accentColor,
                   size: 22,
                 ),
               ),
@@ -85,7 +94,7 @@ class LearningPaceReminder extends ConsumerWidget {
     if (streakDays >= 14) {
       return const _PaceInfo(
         icon: Icons.self_improvement_rounded,
-        iconBgColor: Color(0xFF26A69A),
+        accent: _PaceAccent.info,
         title: '学习达人！记得适当休息',
         subtitle: '持续学习很棒，但大脑也需要休息来巩固记忆哦',
       );
@@ -93,7 +102,7 @@ class LearningPaceReminder extends ConsumerWidget {
     if (streakDays >= 7) {
       return const _PaceInfo(
         icon: Icons.local_fire_department_rounded,
-        iconBgColor: Color(0xFFFF7043),
+        accent: _PaceAccent.fire,
         title: '一周连续学习！势不可挡',
         subtitle: '坚持7天以上，你已经养成了良好的学习习惯',
       );
@@ -101,7 +110,7 @@ class LearningPaceReminder extends ConsumerWidget {
     if (streakDays >= 3) {
       return const _PaceInfo(
         icon: Icons.trending_up_rounded,
-        iconBgColor: Color(0xFF66BB6A),
+        accent: _PaceAccent.success,
         title: '保持这个节奏！',
         subtitle: '再坚持几天就能养成稳定的学习习惯',
       );
@@ -109,17 +118,28 @@ class LearningPaceReminder extends ConsumerWidget {
     if (streakDays >= 1) {
       return const _PaceInfo(
         icon: Icons.wb_sunny_rounded,
-        iconBgColor: Color(0xFFFFB300),
+        accent: _PaceAccent.gold,
         title: '今天也在学习，很棒！',
         subtitle: '每天一小步，坚持就会看到进步',
       );
     }
     return const _PaceInfo(
       icon: Icons.waving_hand_rounded,
-      iconBgColor: Color(0xFF7C4DFF),
+      accent: _PaceAccent.brand,
       title: '好久不见，欢迎回来！',
       subtitle: '从上次学的地方继续，重新开始永远不晚',
     );
+  }
+
+  /// 将语义强调色解析为当前主题下的实际颜色。
+  Color _resolveAccent(QuestColors colors, _PaceAccent accent) {
+    return switch (accent) {
+      _PaceAccent.info => colors.infoTeal,
+      _PaceAccent.fire => colors.streakFire,
+      _PaceAccent.success => colors.successGreen,
+      _PaceAccent.gold => colors.achievementGold,
+      _PaceAccent.brand => colors.brandPrimary,
+    };
   }
 }
 
@@ -127,13 +147,16 @@ class LearningPaceReminder extends ConsumerWidget {
 class _PaceInfo {
   const _PaceInfo({
     required this.icon,
-    required this.iconBgColor,
+    required this.accent,
     required this.title,
     required this.subtitle,
   });
 
   final IconData icon;
-  final Color iconBgColor;
+
+  /// 语义强调色（实际颜色由主题解析）。
+  final _PaceAccent accent;
+
   final String title;
   final String subtitle;
 }

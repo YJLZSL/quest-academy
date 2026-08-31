@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../theme/motion_tokens.dart';
 import 'spring_motion.dart';
 
 /// 问学统一页面转场动画
@@ -9,6 +10,10 @@ import 'spring_motion.dart';
 /// - [buildPage]：主转场（淡入 + 上移，基于 [slideFadeTransitionBuilder]）
 /// - [buildSlidePage]：右滑入（对话子页面等）
 /// - [buildModalPage]：底部滑入（编辑器等全屏模态）
+///
+/// 时长统一取自主题令牌 [MotionTokens]，保证与全局动效节奏一致：
+/// - 主转场：入 300ms / 出 200ms
+/// - 滑动与模态：入 250ms / 出 200ms
 ///
 /// 自动检测 reduceMotion 无障碍设置并降级为即时切换（直接返回 child）。
 class QuestPageTransitions {
@@ -59,12 +64,13 @@ class QuestPageTransitions {
     required GoRouterState state,
     required Widget child,
   }) {
+    final motion = context.motionTokens;
     return CustomTransitionPage<T>(
       key: state.pageKey,
       child: child,
       transitionsBuilder: slideFadeTransitionBuilder,
-      transitionDuration: SpringMotion.slowDuration,
-      reverseTransitionDuration: SpringMotion.defaultDuration,
+      transitionDuration: motion.durationLong,
+      reverseTransitionDuration: motion.durationShort,
     );
   }
 
@@ -76,12 +82,13 @@ class QuestPageTransitions {
     required GoRouterState state,
     required Widget child,
   }) {
+    final motion = context.motionTokens;
     return CustomTransitionPage<T>(
       key: state.pageKey,
       child: child,
       transitionsBuilder: _buildSlideTransition,
-      transitionDuration: SpringMotion.gentleDuration,
-      reverseTransitionDuration: SpringMotion.defaultDuration,
+      transitionDuration: motion.durationMedium,
+      reverseTransitionDuration: motion.durationShort,
     );
   }
 
@@ -94,13 +101,14 @@ class QuestPageTransitions {
     required Widget child,
     bool fullscreenDialog = true,
   }) {
+    final motion = context.motionTokens;
     return CustomTransitionPage<T>(
       key: state.pageKey,
       child: child,
       fullscreenDialog: fullscreenDialog,
       transitionsBuilder: _buildModalTransition,
-      transitionDuration: SpringMotion.gentleDuration,
-      reverseTransitionDuration: SpringMotion.defaultDuration,
+      transitionDuration: motion.durationMedium,
+      reverseTransitionDuration: motion.durationShort,
     );
   }
 

@@ -13,6 +13,8 @@ import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_badge.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 成就列表 FutureProvider，首次加载后缓存。
 final achievementsListProvider =
@@ -44,12 +46,14 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage> {
     return Scaffold(
       appBar: const QuestAppBar(title: Text('成就')),
       body: asyncList.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Text('加载失败：$error'),
-          ),
+        loading: () => const SkeletonList(
+          style: SkeletonStyle.card,
+          itemCount: 4,
+          cardHeight: 96,
+        ),
+        error: (error, _) => QuestErrorState(
+          message: '加载成就失败：$error',
+          onRetry: () => ref.invalidate(achievementsListProvider),
         ),
         data: (list) {
           _detectNewlyUnlocked(list);

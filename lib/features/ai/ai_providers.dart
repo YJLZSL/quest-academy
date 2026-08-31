@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/providers/storage_providers.dart';
 import 'ai_provider.dart';
 import 'ai_provider_registry.dart';
+import 'multimodal_service.dart';
 import 'prompt_manager.dart';
+import 'tts_service.dart';
 
 /// [AiProviderRegistry] 提供者。
 ///
@@ -33,4 +35,20 @@ final promptManagerProvider = FutureProvider<PromptManager>((ref) async {
   final manager = PromptManager();
   await manager.loadPrompts();
   return manager;
+});
+
+/// [TtsService] 提供者。
+///
+/// 单例：应用生命周期内复用同一 TTS 引擎。
+final ttsServiceProvider = Provider<TtsService>((ref) {
+  final service = TtsService();
+  ref.onDispose(service.dispose);
+  return service;
+});
+
+/// [MultimodalService] 提供者。
+///
+/// 单例：应用生命周期内复用同一图片/文件选择服务。
+final multimodalServiceProvider = Provider<MultimodalService>((ref) {
+  return MultimodalService();
 });

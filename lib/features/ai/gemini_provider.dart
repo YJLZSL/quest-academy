@@ -67,15 +67,7 @@ class GeminiProvider implements AiProvider {
         '$baseUrl/v1beta/models/$model:streamGenerateContent?key=$apiKey&alt=sse';
 
     // 将 ChatMessage 转为 Gemini contents 格式（role: user/model）
-    final contents = messages.map((m) {
-      final role = m.role == MessageRole.assistant ? 'model' : 'user';
-      return {
-        'role': role,
-        'parts': [
-          {'text': m.content},
-        ],
-      };
-    }).toList();
+    final contents = messages.map(_messageToGeminiContent).toList();
 
     try {
       final response = await _dio.post<ResponseBody>(
@@ -247,6 +239,42 @@ class GeminiProvider implements AiProvider {
     } catch (_) {
       return const [];
     }
+  }
+
+  /// 将 [ChatMessage] 转为 Gemini contents 格式。
+  ///
+  /// 若消息附带图片，则 parts 中追加 `inlineData`。
+  Map<String, dynamic> _messageToGeminiContent(ChatMessage message) {
+    final role = message.role == MessageRole.assistant ? 'model' : 'user';
+    final parts = <Map<String, dynamic>>[
+      {'text': message.content},
+    ];
+
+    for (final dataUrl in message.imageBase64DataUrls) {
+      final parsed = _parseBase64DataUrl(dataUrl);
+      if (parsed != null) {
+        parts.add({
+          'inlineData': {
+            'mimeType': parsed.mimeType,
+            'data': parsed.base64Data,
+          },
+        });
+      }
+    }
+
+    return {'role': role, 'parts': parts};
+  }
+
+  /// 解析 Base64 Data URL，返回 MIME 类型与裸 Base64 数据。
+  ///
+  /// 格式：`data:image/jpeg;base64,/9j/4AAQ...`
+  ({String mimeType, String base64Data})? _parseBase64DataUrl(String dataUrl) {
+    final match = RegExp(r'^data:([^;]+);base64,(.+)$').firstMatch(dataUrl);
+    if (match == null) return null;
+    return (
+      mimeType: match.group(1)!,
+      base64Data: match.group(2)!,
+    );
   }
 
   /// 安全读取 JSON 中的整型字段。

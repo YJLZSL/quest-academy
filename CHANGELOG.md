@@ -5,6 +5,32 @@
 格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/) 1.1.0，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/) 2.0.0。
 
+## [0.7.0] - 2026-08-31
+
+### 新增
+
+- **设置内分步「新手教程」**（`lib/features/guide/`）
+  - 5 步引导：认识问学 → 连接 AI 服务 → 按路径学习 → 自由对话与多模态 → 记录成就与坚持
+  - 步骤指示器（进度条 + 百分比 + 圆点）、可跳过、完成后可重新查看
+  - 完成状态与内容版本持久化到 SharedPreferences（`guide_completed` / `guide_version`），不新增数据库表
+  - 教程内容更新时，设置入口为老用户显示「有更新」徽章
+- **统一定效组件**（`lib/core/motion/app_motion.dart`）：`AppMotion` / `AppExpandable` / `AppStaggeredItem` / `AppInteractive`
+- **加载与失败态组件**：`SkeletonList` / `SkeletonPage` / `QuestErrorState`（带重试）
+- **Android release 签名**：新增 `android/app/quest-release.jks` 与 `android/key.properties`（均已被 .gitignore 忽略），自动更新依赖此签名保持跨版本一致
+
+### 变更
+
+- **主题体系**：`MotionTokens` 新增统一时长（200/250/300ms）与缓动曲线；`AppTheme` 补齐 hover/focus/splash、列表与折叠面板、表单控件、弹层、分隔线与进度条主题；深色模式显式抬升 surface 各级容器以适配纯黑（OLED）背景
+- **主题切换无闪烁**：ThemeData 按 (brightness, flavor, seed) 缓存，配合 `themeAnimationDuration`（250ms）平滑过渡，reduceMotion 时即时切换
+- **动效统一**：页面切换、弹窗、侧边栏、列表展开收起、按钮与卡片交互统一从主题令牌读取时长与曲线，单次动效控制在 200–300ms
+- **加载/失败/反馈三态统一**：9 处加载态改为骨架屏、13 处裸 SnackBar 改为 `QuestToast`（语义色 + 自动对比度）
+- **交互态增强**：`QuestCard` 补充悬停底色与键盘聚焦描边
+- **硬编码色值收敛**：新建 `ProviderBrandColors` 与 `CelebrationPalette`
+
+### 修复
+
+- `assets/courses/l0_python_basics.json` 存在重复 JSON 对象导致课程静默加载失败，已删除重复块；`CourseRepository` 增加 `CourseLoadError` 与 `loadErrors`，加载失败从静默跳过改为可观测
+
 ## [Unreleased]
 
 ### 新增

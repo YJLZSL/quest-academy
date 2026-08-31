@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +13,14 @@ import 'package:quest_academy/core/theme/shape_variants.dart';
 import 'package:quest_academy/data/db/database.dart';
 import 'package:quest_academy/data/providers/db_providers.dart';
 import 'package:quest_academy/features/ai/ai_provider.dart';
+import 'package:quest_academy/features/ai/ai_providers.dart';
 import 'package:quest_academy/features/chat/chat_controller.dart';
 import 'package:quest_academy/shared/utils/responsive.dart';
 import 'package:quest_academy/shared/widgets/level_exploration_buttons.dart';
+import 'package:quest_academy/shared/widgets/multimodal_input_toolbar.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_chip.dart';
+import 'package:quest_academy/shared/widgets/quest_toast.dart';
 import 'package:quest_academy/shared/widgets/markdown_renderer.dart';
 
 /// 自由对话主页。
@@ -44,6 +49,13 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   /// 最近对话列表，供顶部 PopupMenu 切换。
   List<Conversation> _recent = const <Conversation>[];
+
+  /// 待发送的图片 Base64 Data URL 列表。
+  final List<String> _pendingImages = [];
+
+  /// OCR / 拍照做题场景提示词。
+  static const String _ocrPrompt =
+      '请识别图片中的文字/题目，结构化输出识别结果。如果是题目，请给出解题思路与答案。';
 
   @override
   void initState() {
@@ -94,13 +106,39 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     context.go('${RouteNames.chatListPath}/${conv.id}');
   }
 
-  /// 发送当前输入。
+  /// 发送当前输入（含待发送图片）。
   Future<void> _send() async {
     final text = _inputController.text;
-    if (text.trim().isEmpty) return;
+    if (text.trim().isEmpty && _pendingImages.isEmpty) return;
+
+    final images = List<String>.from(_pendingImages);
     _inputController.clear();
+    _pendingImages.clear();
     setState(() {});
-    await ref.read(chatControllerProvider.notifier).sendMessage(text);
+
+    // 若用户只发了图片没有文字，自动注入 OCR / 拍照做题提示词。
+    final effectiveText = text.trim().isEmpty ? _ocrPrompt : text;
+    await ref
+        .read(chatControllerProvider.notifier)
+        .sendMessage(effectiveText, imageBase64DataUrls: images);
+  }
+
+  /// 处理多模态工具栏返回的图片。
+  void _onImageSelected(List<String> images) {
+    if (images.isEmpty) return;
+    setState(() => _pendingImages.addAll(images));
+  }
+
+  /// 处理多模态工具栏返回的文档文本或语音文本。
+  void _onInputText(String value) {
+    if (value.isEmpty) return;
+    final current = _inputController.text;
+    final separator = current.isEmpty || current.endsWith('\n') ? '' : '\n';
+    _inputController.text = '$current$separator$value';
+    _inputController.selection = TextSelection.collapsed(
+      offset: _inputController.text.length,
+    );
+    setState(() {});
   }
 
   /// 使用预设建议发送（空状态快捷 Chip）。
@@ -120,9 +158,22 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   Future<void> _saveAsNote(String content) async {
     await ref.read(chatControllerProvider.notifier).saveAsNote(content);
     if (!mounted) return;
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-      const SnackBar(content: Text('已保存到笔记')),
-    );
+    QuestToast.success(context, '已保存到笔记');
+  }
+
+  /// 朗读指定文本。
+  Future<void> _speak(String content) async {
+    final tts = ref.read(ttsServiceProvider);
+    // 移除 Markdown 标记，只朗读纯文本。
+    final plainText = content
+        .replaceAll(RegExp(r'!\[.*?\]\(.*?\)'), '')
+        .replaceAll(RegExp(r'\[([^\]]*)\]\([^)]*\)'), r'$1')
+        .replaceAll(RegExp(r'[*_#`~>|\-]'), '')
+        .trim();
+    if (plainText.isEmpty) return;
+    await tts.speak(plainText);
+    if (!mounted) return;
+    QuestToast.info(context, '开始朗读');
   }
 
   @override
@@ -130,12 +181,10 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     final state = ref.watch(chatControllerProvider);
     final socratic = ref.watch(socraticModeProvider);
 
-    // 监听错误，弹出 SnackBar。
+    // 监听错误，弹出统一错误 Toast（语义色 + 自动对比度）。
     ref.listen<ChatControllerState>(chatControllerProvider, (previous, next) {
       if (next.error != null && previous?.error != next.error) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          SnackBar(content: Text(next.error!)),
-        );
+        QuestToast.error(context, next.error!);
       }
     });
 
@@ -256,11 +305,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           key: ValueKey('msg_${msgIndex}_${msg.role.name}'),
           role: msg.role,
           content: msg.content,
+          images: msg.imageBase64DataUrls,
           isStreaming: false,
           isWaitingForFirstToken: false,
           showExploration: showExploration,
           onSaveAsNote: msg.role == MessageRole.assistant
               ? () => _saveAsNote(msg.content)
+              : null,
+          onSpeak: msg.role == MessageRole.assistant
+              ? () => _speak(msg.content)
               : null,
           onRegenerateAnswer: showExploration
               ? (answer) => ref
@@ -332,40 +385,77 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  /// 输入区域：多行输入框（聚焦边框动画）+ 发送/停止按钮（弹性缩放）。
+  /// 输入区域：多模态工具栏 + 图片预览 + 多行输入框 + 发送/停止按钮。
   Widget _buildInputArea(BuildContext context, ChatControllerState state) {
     final theme = Theme.of(context);
     final hasText = _inputController.text.trim().isNotEmpty;
-    final canSend = hasText && !state.isStreaming;
+    final canSend = (hasText || _pendingImages.isNotEmpty) && !state.isStreaming;
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _AnimatedInputField(
-              controller: _inputController,
-              focusNode: _inputFocusNode,
-              enabled: !state.isStreaming,
-              onChanged: () => setState(() {}),
+          MultimodalInputToolbar(
+            enabled: !state.isStreaming,
+            onImageSelected: _onImageSelected,
+            onDocumentText: _onInputText,
+            onVoiceText: _onInputText,
+          ),
+          if (_pendingImages.isNotEmpty) _buildPendingImagesPreview(theme),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: _AnimatedInputField(
+                    controller: _inputController,
+                    focusNode: _inputFocusNode,
+                    enabled: !state.isStreaming,
+                    onChanged: () => setState(() {}),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // 发送/停止按钮：有文本或图片时 spring scale 放大。
+                if (reduceMotion)
+                  _buildSendButtonPlain(theme, canSend, state.isStreaming)
+                else
+                  AnimatedScale(
+                    scale: hasText || _pendingImages.isNotEmpty ? 1.0 : 0.9,
+                    duration: SpringMotion.fastDuration,
+                    curve: SpringMotion.fastCurve,
+                    child: AnimatedOpacity(
+                      opacity:
+                          hasText || _pendingImages.isNotEmpty || state.isStreaming
+                              ? 1.0
+                              : 0.6,
+                      duration: SpringMotion.fastDuration,
+                      child: _buildSendButtonPlain(theme, canSend, state.isStreaming),
+                    ),
+                  ),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
-          // 发送/停止按钮：有文本时 spring scale 放大，空文本时缩小置灰。
-          if (reduceMotion)
-            _buildSendButtonPlain(theme, canSend, state.isStreaming)
-          else
-            AnimatedScale(
-              scale: hasText ? 1.0 : 0.9,
-              duration: SpringMotion.fastDuration,
-              curve: SpringMotion.fastCurve,
-              child: AnimatedOpacity(
-                opacity: hasText || state.isStreaming ? 1.0 : 0.6,
-                duration: SpringMotion.fastDuration,
-                child: _buildSendButtonPlain(theme, canSend, state.isStreaming),
-              ),
+        ],
+      ),
+    );
+  }
+
+  /// 待发送图片缩略图。
+  Widget _buildPendingImagesPreview(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (int i = 0; i < _pendingImages.length; i++)
+            _PendingImageChip(
+              dataUrl: _pendingImages[i],
+              onRemove: () => setState(() => _pendingImages.removeAt(i)),
             ),
         ],
       ),
@@ -452,19 +542,23 @@ class _MessageBubble extends StatefulWidget {
     super.key,
     required this.role,
     required this.content,
+    this.images = const [],
     required this.isStreaming,
     required this.isWaitingForFirstToken,
     required this.showExploration,
     this.onSaveAsNote,
+    this.onSpeak,
     this.onRegenerateAnswer,
   });
 
   final MessageRole role;
   final String content;
+  final List<String> images;
   final bool isStreaming;
   final bool isWaitingForFirstToken;
   final bool showExploration;
   final VoidCallback? onSaveAsNote;
+  final VoidCallback? onSpeak;
   final ValueChanged<String>? onRegenerateAnswer;
 
   @override
@@ -631,11 +725,29 @@ class _MessageBubbleState extends State<_MessageBubble>
 
     final textStyle = TextStyle(color: fgColor);
 
-    // 用户消息：纯文本 SelectableText（无 Markdown，无动画）。
+    // 用户消息：纯文本 SelectableText + 图片缩略图。
     if (_isUser) {
-      return SelectableText(
-        widget.content,
-        style: textStyle,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.content.isNotEmpty)
+            SelectableText(
+              widget.content,
+              style: textStyle,
+            ),
+          if (widget.images.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final url in widget.images)
+                  _InlineImage(dataUrl: url),
+              ],
+            ),
+          ],
+        ],
       );
     }
 
@@ -665,17 +777,28 @@ class _MessageBubbleState extends State<_MessageBubble>
   }
 
   Widget _buildMoreButton(ThemeData theme, Color fgColor) {
-    return PopupMenuButton<String>(
-      icon: Icon(Icons.more_horiz, size: 18, color: fgColor.withValues(alpha: 0.7)),
-      tooltip: '更多',
-      itemBuilder: (context) => const [
-        PopupMenuItem<String>(
+    final items = <PopupMenuEntry<String>>[
+      const PopupMenuItem<String>(
+        value: 'speak',
+        child: Text('朗读'),
+      ),
+    ];
+    if (widget.onSaveAsNote != null) {
+      items.add(
+        const PopupMenuItem<String>(
           value: 'save',
           child: Text('保存为笔记'),
         ),
-      ],
+      );
+    }
+
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_horiz, size: 18, color: fgColor.withValues(alpha: 0.7)),
+      tooltip: '更多',
+      itemBuilder: (context) => items,
       onSelected: (value) {
         if (value == 'save') widget.onSaveAsNote?.call();
+        if (value == 'speak') widget.onSpeak?.call();
       },
     );
   }
@@ -1245,4 +1368,93 @@ class _TitleButton extends StatelessWidget {
 
 class _SendIntent extends Intent {
   const _SendIntent();
+}
+
+// ───────────────────────────────────────────────────────────────
+// 待发送图片缩略图
+// ───────────────────────────────────────────────────────────────
+
+class _InlineImage extends StatelessWidget {
+  const _InlineImage({required this.dataUrl});
+
+  final String dataUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bytes = Uri.parse(dataUrl).data?.contentAsBytes();
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: bytes != null && bytes.isNotEmpty
+          ? Image.memory(
+              bytes,
+              width: 160,
+              height: 160,
+              fit: BoxFit.cover,
+            )
+          : Container(
+              width: 160,
+              height: 160,
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: const Icon(Icons.broken_image_outlined),
+            ),
+    );
+  }
+}
+
+class _PendingImageChip extends StatelessWidget {
+  const _PendingImageChip({
+    required this.dataUrl,
+    required this.onRemove,
+  });
+
+  final String dataUrl;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          Image.memory(
+            Uri.parse(dataUrl).data?.contentAsBytes() ?? Uint8List(0),
+            width: 64,
+            height: 64,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              width: 64,
+              height: 64,
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: const Icon(Icons.broken_image_outlined),
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onRemove,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.error.withValues(alpha: 0.8),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                  ),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: Icon(
+                  Icons.close,
+                  size: 14,
+                  color: theme.colorScheme.onError,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

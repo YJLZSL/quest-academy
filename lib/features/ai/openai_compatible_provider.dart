@@ -68,9 +68,7 @@ class OpenAICompatibleProvider implements AiProvider {
     final requestMessages = <Map<String, dynamic>>[
       if (options.systemPrompt != null && options.systemPrompt!.isNotEmpty)
         {'role': 'system', 'content': options.systemPrompt},
-      ...messages.map(
-        (m) => {'role': m.role.name, 'content': m.content},
-      ),
+      ...messages.map(_messageToOpenAiJson),
     ];
 
     try {
@@ -228,6 +226,26 @@ class OpenAICompatibleProvider implements AiProvider {
     } catch (_) {
       return const [];
     }
+  }
+
+  /// 将 [ChatMessage] 转为 OpenAI 兼容 messages 格式。
+  ///
+  /// 若消息附带图片，则 content 为数组（text + image_url）。
+  Map<String, dynamic> _messageToOpenAiJson(ChatMessage message) {
+    if (message.role == MessageRole.assistant || !message.hasImages) {
+      return {'role': message.role.name, 'content': message.content};
+    }
+
+    final parts = <Map<String, dynamic>>[
+      {'type': 'text', 'text': message.content},
+      ...message.imageBase64DataUrls.map(
+        (url) => <String, dynamic>{
+          'type': 'image_url',
+          'image_url': <String, dynamic>{'url': url},
+        },
+      ),
+    ];
+    return {'role': message.role.name, 'content': parts};
   }
 
   /// 安全读取 JSON 中的整型字段。

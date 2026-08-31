@@ -1,8 +1,30 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/course_content.dart';
+
+/// 课程加载失败记录。
+///
+/// 用于在 UI 上展示哪些课程文件加载失败，便于排查内容损坏。
+class CourseLoadError {
+  /// 创建加载失败记录。
+  const CourseLoadError({
+    required this.path,
+    required this.error,
+    this.stackTrace,
+  });
+
+  /// 课程文件路径。
+  final String path;
+
+  /// 异常对象。
+  final Object error;
+
+  /// 可选的堆栈跟踪。
+  final StackTrace? stackTrace;
+}
 
 /// 课程内容仓库：从 `assets/courses/` 加载课程 JSON 并解析为 [Course] 对象。
 ///
@@ -18,6 +40,9 @@ class CourseRepository {
   /// 已加载课程的内存缓存，避免重复读取 assets。
   List<Course>? _cache;
 
+  /// 最近一次加载失败的课程文件记录。
+  final List<CourseLoadError> _loadErrors = [];
+
   /// 加载所有课程，按 [Course.order] 升序排列。
   ///
   /// 单个课程文件缺失或 JSON 损坏时跳过该课程，不影响其他课程加载。
@@ -27,6 +52,7 @@ class CourseRepository {
     if (cached != null) {
       return cached;
     }
+    _loadErrors.clear();
     final courses = <Course>[];
     final courseFiles = await _loadCourseFiles();
     for (final path in courseFiles) {
@@ -97,8 +123,14 @@ class CourseRepository {
         return null;
       }
       return Course.fromJson(decoded);
-    } catch (_) {
-      // 资产缺失或 JSON 损坏时返回 null，调用方将跳过该课程。
+    } catch (e, st) {
+      // 资产缺失或 JSON 损坏时记录错误并返回 null，调用方将跳过该课程。
+      _loadErrors.add(
+        CourseLoadError(path: path, error: e, stackTrace: st),
+      );
+      if (kDebugMode) {
+        debugPrint('Failed to load course file $path: $e');
+      }
       return null;
     }
   }
@@ -125,6 +157,11 @@ class CourseRepository {
       return <String>[];
     }
   }
+
+  /// 最近一次 [getAllCourses] 调用过程中的加载失败记录。
+  ///
+  /// 调用 [clearCache] 不会清空该记录；每次 [getAllCourses] 会重置。
+  List<CourseLoadError> get loadErrors => List.unmodifiable(_loadErrors);
 
   /// 清除课程缓存（用于热重载或手动刷新）。
   ///

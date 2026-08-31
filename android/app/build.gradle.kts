@@ -17,7 +17,11 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.questacademy.quest_academy"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+
+    // ndkVersion 已移除：本项目的原生依赖（sqlite3_flutter_libs 等）均使用预编译 .so，
+    // 无需本机 NDK 参与编译。保留该行时，若未安装 NDK 28.2.13676358 会报
+    // [CXX1101] ... did not have a source.properties file 导致构建失败。
+    // 若后续引入需要 NDK 编译的插件，请先 `sdkmanager "ndk;28.2.13676358"` 再恢复此行。
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

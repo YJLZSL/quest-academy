@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:quest_academy/core/theme/celebration_palette.dart';
 
 // ---------------------------------------------------------------------------
 // 枚举
@@ -331,17 +332,9 @@ class _ParticleSystemState extends State<ParticleSystem>
     }
   }
 
-  /// 默认主色调集合。
+  /// 默认主色调集合（取自统一庆祝色板）。
   List<Color> _defaultColors() {
-    return const <Color>[
-      Color(0xFFFF5252), // 红
-      Color(0xFFFFD740), // 黄
-      Color(0xFF69F0AE), // 绿
-      Color(0xFF40C4FF), // 蓝
-      Color(0xFFE040FB), // 紫
-      Color(0xFFFFAB40), // 橙
-      Color(0xFFFF80AB), // 粉
-    ];
+    return CelebrationPalette.defaultColors;
   }
 
   // ---------------------------------------------------------------------------

@@ -12,11 +12,14 @@ import 'package:quest_academy/data/providers/db_providers.dart';
 import 'package:quest_academy/features/progress/celebration_service.dart';
 import 'package:quest_academy/shared/utils/responsive.dart';
 import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
+import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
 import 'package:quest_academy/shared/widgets/quest_button.dart';
 import 'package:quest_academy/features/learning/widgets/continue_learning_sidebar.dart';
 import 'package:quest_academy/features/learning/widgets/learning_card_widget.dart';
 import 'package:quest_academy/features/learning/widgets/quiz_widget.dart';
 import 'package:quest_academy/features/learning/widgets/socratic_dialog_panel.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 课程单节课学习页。
 ///
@@ -156,15 +159,30 @@ class _LessonPageState extends ConsumerState<LessonPage> {
         data: (course) {
           final lesson = _findLesson(course);
           if (lesson == null) {
-            return const Center(child: Text('章节不存在'));
+            return QuestErrorState(
+              title: '章节不存在',
+              message: '该章节可能已被调整或移除。',
+              icon: Icons.search_off_rounded,
+              actionLabel: '返回学习路径',
+              onAction: () => context.go(RouteNames.learningPath),
+            );
           }
           if (_sectionComplete) {
             return _buildCelebration(context, lesson);
           }
           return _buildBody(context, lesson);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('加载失败：$error')),
+        loading: () => const SkeletonPage(
+              blockCount: 2,
+              blockHeight: 160,
+              showTitle: false,
+            ),
+        error: (error, _) => QuestErrorState(
+              message: '加载课程失败：$error',
+              onRetry: () => ref.invalidate(courseProvider(widget.courseId)),
+              actionLabel: '返回学习路径',
+              onAction: () => context.go(RouteNames.learningPath),
+            ),
       ),
     );
   }
@@ -173,7 +191,11 @@ class _LessonPageState extends ConsumerState<LessonPage> {
   Widget _buildBody(BuildContext context, Lesson lesson) {
     final kps = lesson.knowledgePoints;
     if (kps.isEmpty) {
-      return const Center(child: Text('该章节暂无知识点'));
+      return const EmptyStateWidget(
+        icon: Icons.menu_book_outlined,
+        title: '该章节暂无知识点',
+        description: '可以先学习其他章节，或稍后再回来看看',
+      );
     }
     final isDesktop = Responsive.isDesktop(context);
     final theme = Theme.of(context);

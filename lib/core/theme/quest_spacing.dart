@@ -98,4 +98,37 @@ extension QuestSpacingX on BuildContext {
   /// 获取当前主题中注册的间距 Token；未注册时回退到标准刻度。
   QuestSpacing get questSpacing =>
       Theme.of(this).extension<QuestSpacing>() ?? QuestSpacing.standard;
+
+  /// 页面级水平内边距（响应式）。
+  ///
+  /// 桌面端 32、平板 24、移动端 16，保证不同屏幕宽度下页面留白比例协调，
+  /// 双端体验一致。垂直方向统一为 [QuestSpacing.lg]。
+  EdgeInsets get pagePadding {
+    final spacing = questSpacing;
+    final width = MediaQuery.sizeOf(this).width;
+    final horizontal = switch (width) {
+      >= 1024 => spacing.x2l,
+      >= 600 => spacing.xl,
+      _ => spacing.lg,
+    };
+    return EdgeInsets.symmetric(
+      horizontal: horizontal,
+      vertical: spacing.lg,
+    );
+  }
+
+  /// 卡片统一内边距。
+  EdgeInsets get cardPadding => EdgeInsets.all(questSpacing.lg);
+
+  /// 区块之间的统一垂直间距（24）。
+  SizedBox get sectionGap => SizedBox(height: questSpacing.xl);
+
+  /// 卡片/列表项之间的统一垂直间距（12）。
+  SizedBox get itemGap => SizedBox(height: questSpacing.md);
+
+  /// 紧凑元素之间的统一垂直间距（8）。
+  SizedBox get tightGap => SizedBox(height: questSpacing.sm);
+
+  /// 极小间距（4）。
+  SizedBox get microGap => SizedBox(height: questSpacing.xs);
 }

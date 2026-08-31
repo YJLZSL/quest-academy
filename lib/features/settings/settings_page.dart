@@ -8,16 +8,20 @@ import '../../core/motion/spring_motion.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/router/route_names.dart';
 import '../../core/theme/quest_colors.dart';
+import '../../core/theme/shape_tokens.dart';
 import '../../data/models/provider_config.dart';
 import '../../data/providers/db_providers.dart';
 import '../../data/providers/storage_providers.dart';
 import '../ai/ai_providers.dart';
+import '../guide/guide_content.dart';
+import '../guide/guide_controller.dart';
 import '../update/update_controller.dart';
 import '../update/update_dialog.dart';
 import '../update/update_state.dart';
 import '../../shared/widgets/quest_app_bar.dart';
 import '../../shared/widgets/quest_button.dart';
 import '../../shared/widgets/quest_card.dart';
+import '../../shared/widgets/quest_toast.dart';
 import 'api_settings_page.dart' show providerConfigsProvider;
 import 'widgets/theme_flavor_selector.dart';
 import 'data_export_service.dart';
@@ -25,7 +29,9 @@ import '../../core/constants/app_constants.dart';
 
 /// 设置页。
 ///
-/// 分组展示外观、语言、学习偏好、数据管理、API 配置入口、关于与帮助。
+/// 分组展示入门教程、外观、语言、学习偏好、数据管理、API 配置入口、
+/// 语音朗读、关于与帮助。其中「入门」分组置顶，放置新手教程入口，
+/// 保证新用户进入设置后第一眼即可发现引导内容。
 /// 所有用户偏好通过 [SharedPreferences] 持久化，状态通过 Riverpod
 /// StateProvider 双向绑定。
 class SettingsPage extends ConsumerStatefulWidget {
@@ -122,8 +128,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('导出失败：$e')));
+        QuestToast.error(context, '导出失败：$e');
       }
     }
   }
@@ -136,9 +141,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
     );
     if (result == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('导入完成')),
-      );
+      QuestToast.success(context, '导入完成');
     }
   }
 
@@ -173,9 +176,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ref.invalidate(currentAiProviderProvider);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已清空所有数据')),
-      );
+      QuestToast.success(context, '已清空所有数据');
     }
   }
 
@@ -214,9 +215,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await Clipboard.setData(const ClipboardData(text: kRepoUrl));
     if (context.mounted) {
       AnimationUtils.hapticLight();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('仓库地址已复制')),
-      );
+      QuestToast.success(context, '仓库地址已复制');
     }
   }
 
@@ -235,6 +234,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final reduceMotion = AnimationUtils.reduceMotionOf(context);
 
     final sections = <Widget>[
+      // 入门引导（置顶，保证新用户一眼可见）
+      const _SectionTitle('入门'),
+      _AnimatedSettingsCard(
+        index: 7,
+        onTap: () => context.go(RouteNames.guidePath),
+        child: _GuideEntryTile(
+          guideState: ref.watch(guideControllerProvider),
+        ),
+      ),
+      const SizedBox(height: 16),
+
       // 外观
       const _SectionTitle('外观'),
       _AnimatedSettingsCard(
@@ -402,6 +412,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ),
             const SizedBox(width: 8),
             const Icon(Icons.chevron_right_outlined),
+          ],
+        ),
+      ),
+      const SizedBox(height: 8),
+      _AnimatedSettingsCard(
+        index: 5,
+        onTap: () => context.go(RouteNames.ttsSettingsPath),
+        child: const Row(
+          children: [
+            Icon(Icons.volume_up_outlined),
+            SizedBox(width: 12),
+            Expanded(child: Text('语音朗读设置')),
+            Icon(Icons.chevron_right_outlined),
           ],
         ),
       ),
@@ -783,5 +806,110 @@ class _ImportDialogState extends ConsumerState<_ImportDialog> {
         '  设置 ${p.settings} 项\n'
         '  Provider 配置 ${p.providerConfigs} 个\n'
         '（已存在的记录将跳过，不覆盖）';
+  }
+}
+
+/// 「新手教程」设置入口行。
+///
+/// 尾标随完成状态变化，让新用户与老用户都能立刻理解当前状态：
+/// - 未完成：显示「N 步 · 快速上手」，暗示成本很低；
+/// - 已完成：绿色「已完成」徽章，同时仍可点击重新查看；
+/// - 内容有更新：橙色「有更新」徽章，提示教程内容已变动。
+class _GuideEntryTile extends StatelessWidget {
+  const _GuideEntryTile({required this.guideState});
+
+  final GuideState guideState;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = context.questColors;
+
+    final Widget trailing;
+    if (guideState.hasUpdate) {
+      trailing = _GuideBadge(
+        icon: Icons.upgrade_rounded,
+        label: '有更新',
+        color: colors.streakFire,
+      );
+    } else if (guideState.completed) {
+      trailing = _GuideBadge(
+        icon: Icons.check_circle_rounded,
+        label: '已完成',
+        color: colors.successGreen,
+      );
+    } else {
+      trailing = Text(
+        '${kGuideSteps.length} 步 · 快速上手',
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        const Icon(Icons.menu_book_rounded),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('新手教程'),
+              const SizedBox(height: 2),
+              Text(
+                '分步了解核心功能，可跳过也可重新查看',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+        trailing,
+        const SizedBox(width: 8),
+        const Icon(Icons.chevron_right_outlined),
+      ],
+    );
+  }
+}
+
+/// 教程状态徽章。
+class _GuideBadge extends StatelessWidget {
+  const _GuideBadge({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(context.shapeTokens.chipRadius),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

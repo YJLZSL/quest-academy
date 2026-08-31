@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/provider_config.dart';
 import '../../data/providers/storage_providers.dart';
 import '../../data/repositories/provider_config_repository.dart';
+import '../../shared/widgets/quest_toast.dart';
 import 'api_test_service.dart';
 
 /// Provider 编辑/新增对话框。
@@ -156,15 +157,15 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
           await ref.read(apiTestServiceProvider).fetchModels(config);
       if (!mounted) return;
       setState(() => _detectedModels = models);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            models.isEmpty
-                ? '未检测到可用模型（该服务商可能不支持自动检测）'
-                : '检测到 ${models.length} 个可用模型',
-          ),
-        ),
-      );
+      // 未检测到模型时给出中性提示（并非错误），成功时用成功语义色。
+      if (models.isEmpty) {
+        QuestToast.info(
+          context,
+          '未检测到可用模型（该服务商可能不支持自动检测）',
+        );
+      } else {
+        QuestToast.success(context, '检测到 ${models.length} 个可用模型');
+      }
     } finally {
       if (mounted) setState(() => _isDetecting = false);
     }
@@ -178,9 +179,13 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
       final result =
           await ref.read(apiTestServiceProvider).testConnection(config);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.message)),
-        );
+        // 按结果类型选择语义变体：成功为绿色，其余为红色。
+        switch (result) {
+          case ApiTestSuccess():
+            QuestToast.success(context, result.message);
+          default:
+            QuestToast.error(context, result.message);
+        }
       }
     } finally {
       if (mounted) setState(() => _isTesting = false);
@@ -209,9 +214,7 @@ class _ProviderEditDialogState extends ConsumerState<ProviderEditDialog> {
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败：$e')),
-        );
+        QuestToast.error(context, '保存失败：$e');
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

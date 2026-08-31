@@ -29,6 +29,7 @@
 | **v0.3.0** | 2026-07-23 | 打磨·测试·发布：Hero 共享元素动画（`MascotHero` + `mascotHeroFlightShuttleBuilder`）、按压微交互（`QuestButton` scale 0.96 / `QuestCard` scale 0.99 / `QuestChip` `AnimatedSwitcher`）、`SpringMotion.fastSpeed` 时长修复（151ms → 148ms ≤ 150ms）、列表滚动优化（`cacheExtent: 500` + `RepaintBoundary`）、PageView 手感升级（`BouncingScrollPhysics` + `reduceMotion` 按钮降级）、GoRouter 过渡统一（`slideFadeTransitionBuilder` + `SpringMotion.entranceCurve`）、新增 149 个测试用例 |
 | **v0.4.0** | 2026-07-24 | 双端专注版：移除 macOS 支持、新增应用内自动更新（`UpdateService`/`UpdateController`/`UpdateDialog`/`UpdateState`，基于 GitHub Releases API，Android APK + Windows ZIP 双端）、新增 `LearnerProfiles` / `LearningEvents` 两张 Drift 表（schemaVersion v3）、新增 `package_info_plus` / `open_filex` / `archive` / `msix` 依赖、前端 UI 审查修复（硬编码颜色改用语义色、死代码清理）、CI/CD 修复（Windows zip 路径、ScrollCacheExtent 类型、MSVC /WX 标志、rive_common 编译） |
 | **v0.6.0** | 2026-08-25 | 品牌升级·问学 Quest Academy：包名 `lingxi_academy`→`quest_academy`、GitHub 仓库 `YJLZSL/polaris-learn`→`YJLZSL/quest-academy`、类名 `Lingxi*`→`Quest*` 全面更名；彻底移除吉祥物与 Rive 依赖；前端重设计收尾与新品牌图标落地 |
+| **v0.7.0** | 2026-08-30 | 体验打磨·教程与主题动效：新增设置内分步「新手教程」（步骤指示器 / 可跳过 / 可重新查看 / 完成状态与内容版本持久化）；主题体系补充统一交互态（hover/focus/splash）、列表与折叠面板、表单控件、弹层、分隔线与进度条主题，深色模式适配纯黑背景的 surface 层级；`MotionTokens` 新增统一时长（200/250/300ms）与缓动曲线并全面落地到页面切换、弹窗、侧边栏、展开收起；新增 `AppMotion` / `AppExpandable` / `AppStaggeredItem` / `AppInteractive` 统一定效组件；加载态统一为骨架屏（`SkeletonList` / `SkeletonPage`）、失败态统一为 `QuestErrorState`（带重试）、反馈统一为 `QuestToast`；`QuestCard` 补充悬停底色与键盘聚焦描边；硬编码色值收敛至 `ProviderBrandColors` / `CelebrationPalette` |
 
 ---
 
@@ -78,6 +79,10 @@
 | `package_info_plus` | ^8.0.0 | 自动更新版本号读取 |
 | `open_filex` | ^4.7.0 | 调用系统安装器（APK/ZIP） |
 | `archive` | ^3.6.1 | 解压 Windows ZIP 更新包 |
+| `image_picker` | ^1.1.2 | 图片选择/拍照（Android + Windows） |
+| `file_picker` | ^8.0.5 | 文件选择（Android + Windows） |
+| `mime` | ^1.0.6 | MIME 类型识别（多模态 Data URL） |
+| `flutter_tts` | ^4.2.0 | 文本转语音 TTS（Android + Windows） |
 
 ### 开发依赖（dev_dependencies）
 
@@ -113,7 +118,7 @@ lib/
 │   ├── motion/                   #   动画曲线（spring_motion.dart, animation_utils.dart, page_transitions.dart）
 │   ├── providers/                #   全局 Provider（app_providers.dart）
 │   ├── router/                   #   路由（app_router.dart, route_names.dart）
-│   └── theme/                    #   主题（app_theme.dart, quest_colors.dart, quest_gradients.dart, quest_elevations.dart, shape_variants.dart）
+│   └── theme/                    #   主题（app_theme.dart, quest_colors.dart, quest_gradients.dart, quest_elevations.dart, shape_variants.dart, motion_tokens.dart, provider_brand_colors.dart, celebration_palette.dart, quest_spacing.dart）
 ├── data/                         # 数据层：本地持久化与数据模型
 │   ├── db/                       #   Drift 数据库（database.dart, connection.dart, secure_database.dart）
 │   ├── models/                   #   纯数据模型（provider_config.dart, course_content.dart）
@@ -124,6 +129,7 @@ lib/
 │   ├── achievements/             #   成就页
 │   ├── ai/                       #   AI Provider 抽象与实现、SSE、安全日志、提示词管理
 │   ├── chat/                     #   对话列表与对话页
+│   ├── guide/                    #   应用内新手教程（guide_content.dart 步骤数据 / guide_controller.dart 完成状态 / guide_page.dart 分步 UI）
 │   ├── help/                     #   帮助中心
 │   ├── home/                     #   首页（含 empty_states 子目录）
 │   ├── learning/                 #   学习路径与课时（含 widgets 子目录）
@@ -136,7 +142,7 @@ lib/
 │   └── update/                   #   应用内自动更新（controller, dialog, service, state）
 └── shared/                       # 共享层：跨 feature 复用
     ├── utils/                    #   工具（responsive.dart, misconception_parser.dart）
-    └── widgets/                  #   通用组件（quest_card, quest_button, quest_app_bar 等）
+    └── widgets/                  #   通用组件（quest_card, quest_button, quest_app_bar, skeleton_list, quest_error_state, quest_toast, empty_state_widget 等）
 ```
 
 ### 各层职责
@@ -198,6 +204,46 @@ QuestColors.light.brandPrimary;
 | 2 | `highlighted` | 高亮卡片（hero 区） |
 
 实现上移除 `AnimatedPhysicalModel`，改用 `BoxDecoration.boxShadow` 以确保圆角与阴影在 Web/桌面端一致。
+
+### 动效令牌约定
+
+全局动效统一由 `MotionTokens`（`lib/core/theme/motion_tokens.dart`）驱动，**禁止**在页面/组件中写死 `Duration(milliseconds: xxx)`。
+
+| 令牌 | 取值 | 适用 |
+|------|------|------|
+| `durationShort` | 200ms | 按压反馈、悬停/聚焦态、箭头旋转等小元素 |
+| `durationMedium` | 250ms | 展开收起、卡片/列表项入场、弹窗与底部面板 |
+| `durationLong` | 300ms | 页面切换、侧边栏、大位移 |
+| `curveStandard` | `Curves.easeOutCubic` | 入场通用 |
+| `curveEmphasized` | `Easing.emphasizedDecelerate` | 大位移 / 页面级 |
+| `curveExit` | `Curves.easeInCubic` | 退场 / 反向 |
+
+```dart
+// ✅ 正确：从主题令牌读取（reduceMotion 时统一降级）
+AnimatedScale(
+  scale: scale,
+  duration: AppMotion.resolve(context, AppMotion.shortOf(context)),
+  curve: AppMotion.standardCurveOf(context),
+);
+
+// ❌ 错误：写死时长与曲线
+AnimatedScale(scale: scale, duration: Duration(milliseconds: 220));
+```
+
+统一定效组件（`lib/core/motion/app_motion.dart`）：`AppMotion`（令牌读取与 reduceMotion 解析）、`AppExpandable`（展开收起）、`AppStaggeredItem`（列表交错入场）、`AppInteractive`（按压 + 悬停 + 键盘聚焦）。
+
+**所有动画必须尊重系统「减少动效」偏好**：通过 `AnimationUtils.reduceMotionOf(context)` 或 `AppMotion.resolve` 降级为 `Duration.zero` / 直接显示，双端一致。
+
+### 加载态 / 失败态 / 反馈约定
+
+三态必须使用统一组件，不得各自拼装：
+
+| 场景 | 组件 | 说明 |
+|------|------|------|
+| 列表/页面加载中 | `SkeletonList` / `SkeletonPage` | 骨架屏替代裸 `CircularProgressIndicator`，reduceMotion 时关闭流光 |
+| 加载或操作失败 | `QuestErrorState` | 语义红图标 + 说明 + 可选「重试」，次级引导可选 |
+| 空数据 | `EmptyStateWidget` | 图标 + 标题 + 描述 + 可选 CTA |
+| 操作成功/失败/警告/提示 | `QuestToast.success/error/warning/info` | 语义色 + 自动对比度前景色，替代裸 `SnackBar` |
 
 #### 新增主题令牌步骤
 
@@ -864,13 +910,57 @@ flutter test test/data/                               # 运行指定目录
 flutter test --coverage                               # 生成覆盖率（coverage/lcov.info）
 
 # 构建（release）
-flutter build apk --release                           # Android
-flutter build windows --release                       # Windows
+flutter build apk --release --split-per-abi --no-tree-shake-icons   # Android（按 ABI 分包，推荐）
+flutter build apk --release --no-tree-shake-icons                   # Android 通用包（universal）
+flutter build windows --release --no-tree-shake-icons               # Windows
+
+# 或使用封装脚本（清理 → 双端构建 → 重命名 → 校验和，产物输出到 dist/）
+./scripts/build_release.sh                # 双端
+./scripts/build_release.sh android        # 仅 Android
+./scripts/build_release.sh windows        # 仅 Windows
+
+> ⚠️ **必须带 `--no-tree-shake-icons`**：本项目启用图标树摇时构建会失败
+> （`Process 'flutter.bat' finished with non-zero exit value 1`），
+> 原因是部分插件字体参与树摇后丢失字形。代价是 APK 体积增加约数百 KB，可接受。
 
 # 图标与启动屏
 flutter pub run flutter_launcher_icons                # 生成应用图标
 flutter pub run flutter_native_splash:create          # 生成启动屏
 ```
+
+### 签名配置（Android）
+
+- 签名 keystore：`android/app/quest-release.jks`（别名 `quest`）
+- 签名参数：`android/key.properties`（`storeFile` / `storePassword` / `keyAlias` / `keyPassword`）
+- 两个文件**均已被 `.gitignore` 忽略**，切勿提交；请自行离线备份，丢失后无法发布覆盖安装的新版本。
+- `android/app/build.gradle.kts` 会检测 `key.properties`：存在则用 release 签名，否则**回退到 debug 签名**（仅供本地调试，不可用于分发）。
+
+> ⚠️ **自动更新强依赖签名一致性**：后续每个版本的 APK 都必须使用同一份 keystore，
+> 否则 Android 会拒绝覆盖安装（`INSTALL_FAILED_UPDATE_INCOMPATIBLE`）。
+
+### 版本发布与自动更新
+
+版本号同时维护在两处，**必须同步修改**：
+
+| 位置 | 字段 | 说明 |
+|------|------|------|
+| `pubspec.yaml` | `version: x.y.z+n` | `x.y.z` 为版本名，`n` 为 `versionCode`（每次构建必须递增） |
+| `lib/core/constants/app_constants.dart` | `kAppVersion` | 设置页「关于」与自动更新比较所用 |
+
+自动更新基于 **GitHub Releases**（见 `lib/features/update/update_service.dart`），读取
+`releases/latest` 并按规则挑选资产：
+
+- **Android**：按 ABI 优先级挑选 —— `arm64-v8a` > `universal` > `armeabi-v7a` > `x86_64`（文件名需包含对应关键字）
+- **Windows**：文件名需包含 `windows` 或 `win` 的 `.zip`，客户端下载后解压并打开目录
+
+发布步骤：
+
+1. 同步更新上述两处版本号，并递增 `pubspec.yaml` 的构建号。
+2. 构建双端产物并**按命名规则重命名**：
+   - `quest-academy-<version>-android-arm64-v8a.apk`（以及 `-armeabi-v7a.apk`、`-x86_64.apk`）
+   - `quest-academy-<version>-windows-x64.zip`（压缩包内直接放 `Release/` 目录内容）
+3. 在 GitHub 上创建 Release：tag 为 `v<version>`（如 `v0.7.0`），上传上述资产并发布。
+4. 客户端启动 3 秒后静默检查（24 小时节流），发现新版本即弹窗提示下载安装。
 
 ### 运行应用
 

@@ -102,6 +102,9 @@ class _QuestCardState extends ConsumerState<QuestCard> {
   bool _pressed = false;
   bool _visible = false;
 
+  /// 键盘聚焦态：用于显示聚焦描边，保证键盘可达性。
+  bool _focused = false;
+
   @override
   void initState() {
     super.initState();
@@ -191,8 +194,17 @@ class _QuestCardState extends ConsumerState<QuestCard> {
     final borderRadius = flavor == ThemeFlavor.minecraft
         ? BorderRadius.zero
         : BorderRadius.circular(shapeTokens.cardRadius);
-    final cardColor = _resolveColor(context);
+    var cardColor = _resolveColor(context);
     final clickable = widget.onTap != null;
+
+    // 悬停态：底色叠加主色 8%（与主题 hoverColor 一致），配合缩放提供
+    // 更明确的可点击暗示。玻璃卡片保持透明叠加，避免破坏毛玻璃效果。
+    if (clickable && _hovering) {
+      final hoverTint = Theme.of(context).colorScheme.primary.withValues(
+            alpha: widget.variant == QuestCardVariant.glass ? 0.12 : 0.08,
+          );
+      cardColor = Color.alphaBlend(hoverTint, cardColor);
+    }
 
     // hover/press 缩放统一从 MotionTokens 读取；minimal 下 cardHoverScale == 1.0
     // 自动禁用缩放反馈，避免在专注模式下分散注意力。
@@ -220,6 +232,7 @@ class _QuestCardState extends ConsumerState<QuestCard> {
       color: cardColor,
       borderRadius: borderRadius,
       clickable: clickable,
+      focused: _focused,
       content: content,
       shadows: shadows,
     );
@@ -290,10 +303,18 @@ class _QuestCardState extends ConsumerState<QuestCard> {
     required Color color,
     required BorderRadius borderRadius,
     required bool clickable,
+    required bool focused,
     required Widget content,
     required List<BoxShadow> shadows,
   }) {
-    final hasBorder = widget.borderColor != null;
+    final theme = Theme.of(context);
+    // 聚焦描边优先级最高：键盘用户需要清晰的焦点指示。
+    // 其次是调用方显式指定的 borderColor。
+    final border = focused
+        ? Border.all(color: theme.colorScheme.primary, width: 2)
+        : (widget.borderColor != null
+            ? Border.all(color: widget.borderColor!)
+            : null);
     final hasGradient = widget.backgroundGradient != null;
 
     return Material(
@@ -303,13 +324,21 @@ class _QuestCardState extends ConsumerState<QuestCard> {
         decoration: BoxDecoration(
           gradient: widget.backgroundGradient,
           borderRadius: borderRadius,
-          border: hasBorder ? Border.all(color: widget.borderColor!) : null,
+          border: border,
           boxShadow: shadows,
         ),
         child: clickable
             ? InkWell(
                 onTap: _handleTap,
                 borderRadius: borderRadius,
+                // 聚焦/悬停水波纹与主题一致（AppTheme 已统一 focus/hover 色）。
+                focusColor: theme.focusColor,
+                hoverColor: theme.hoverColor,
+                // 键盘聚焦时显示主色描边（见上方 border 解析），
+                // 保证仅用键盘也能清楚知道当前焦点位置。
+                onFocusChange: (value) {
+                  if (mounted) setState(() => _focused = value);
+                },
                 child: content,
               )
             : content,

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quest_academy/core/motion/animation_utils.dart';
 import 'package:quest_academy/core/motion/spring_motion.dart';
 import 'package:quest_academy/core/router/route_names.dart';
+import 'package:quest_academy/core/theme/provider_brand_colors.dart';
 import 'package:quest_academy/data/models/provider_config.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_button.dart';
@@ -51,7 +52,7 @@ class ApiSetupWizardPage extends StatelessWidget {
     _ProviderTutorial(
       type: ProviderType.openaiCompatible,
       icon: Icons.smart_toy,
-      color: Color(0xFF10A37F),
+      color: ProviderBrandColors.openai,
       steps: [
         _SetupStep(
           title: '步骤 1：访问 OpenAI 平台',
@@ -84,7 +85,7 @@ class ApiSetupWizardPage extends StatelessWidget {
     _ProviderTutorial(
       type: ProviderType.anthropic,
       icon: Icons.psychology,
-      color: Color(0xFFD97757),
+      color: ProviderBrandColors.anthropic,
       steps: [
         _SetupStep(
           title: '步骤 1：访问 Anthropic 控制台',
@@ -108,7 +109,7 @@ class ApiSetupWizardPage extends StatelessWidget {
     _ProviderTutorial(
       type: ProviderType.gemini,
       icon: Icons.auto_awesome,
-      color: Color(0xFF4285F4),
+      color: ProviderBrandColors.gemini,
       steps: [
         _SetupStep(
           title: '步骤 1：访问 Google AI Studio',
@@ -132,7 +133,7 @@ class ApiSetupWizardPage extends StatelessWidget {
     _ProviderTutorial(
       type: ProviderType.ollama,
       icon: Icons.dns,
-      color: Color(0xFF6B7280),
+      color: ProviderBrandColors.ollama,
       steps: [
         _SetupStep(
           title: '步骤 1：下载 Ollama',

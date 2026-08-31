@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quest_academy/core/providers/app_providers.dart';
 import 'package:quest_academy/core/router/app_router.dart';
 import 'package:quest_academy/core/theme/app_theme.dart';
+import 'package:quest_academy/core/theme/motion_tokens.dart';
 import 'package:quest_academy/core/theme/theme_flavor_provider.dart';
 import 'package:quest_academy/features/progress/celebration_service.dart';
 import 'package:quest_academy/features/update/update_controller.dart';
@@ -25,6 +26,20 @@ class QuestApp extends ConsumerStatefulWidget {
 class _QuestAppState extends ConsumerState<QuestApp> {
   /// 防止更新弹窗重复弹出（同一会话只弹一次）。
   bool _updateDialogShown = false;
+
+  /// 主题缓存：键为 (brightness, flavor, seedColor)，避免每次 build 重新
+  /// 计算 ThemeData（ColorScheme.fromSeed 开销较大），同时保证主题切换时
+  /// 复用同一实例，减少不必要的重绘。
+  final Map<(Brightness, ThemeFlavor, Color), ThemeData> _themeCache = {};
+
+  /// 获取（或构建并缓存）指定参数的主题。
+  ThemeData _themeFor(Brightness brightness, ThemeFlavor flavor, Color seed) {
+    final key = (brightness, flavor, seed);
+    return _themeCache.putIfAbsent(
+      key,
+      () => AppTheme.themeFor(brightness, seed: seed, flavor: flavor),
+    );
+  }
 
   @override
   void initState() {
@@ -67,23 +82,25 @@ class _QuestAppState extends ConsumerState<QuestApp> {
     final seedColor = ref.watch(seedColorProvider);
 
     final brightness = _resolveBrightness(themeMode);
-    final theme = AppTheme.themeFor(
-      brightness,
-      seed: seedColor,
-      flavor: flavor,
-    );
+    final theme = _themeFor(brightness, flavor, seedColor);
+    final darkTheme = _themeFor(Brightness.dark, flavor, seedColor);
+    // 主题切换动画：与全局动效节奏一致（250ms / 标准减速曲线）。
+    // reduceMotion 时降级为即时切换，避免出现闪烁式跳变。
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final motionTokens = theme.extension<MotionTokens>() ?? MotionTokens.standard;
 
     return GlobalCelebrationLayer(
       child: MaterialApp.router(
         title: '问学',
         debugShowCheckedModeBanner: false,
         theme: theme,
-        darkTheme: AppTheme.themeFor(
-          Brightness.dark,
-          seed: seedColor,
-          flavor: flavor,
-        ),
+        darkTheme: darkTheme,
         themeMode: themeMode,
+        // 主题切换（浅色 ⇄ 深色）时对所有 ThemeData 属性做插值过渡，
+        // 避免颜色/圆角/阴影瞬间跳变造成闪烁。
+        themeAnimationDuration:
+            reduceMotion ? Duration.zero : motionTokens.durationMedium,
+        themeAnimationCurve: motionTokens.curveStandard,
         locale: locale,
         supportedLocales: const [
           Locale('zh', 'CN'),

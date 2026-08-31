@@ -11,6 +11,8 @@ import 'package:quest_academy/shared/utils/responsive.dart';
 import 'package:quest_academy/shared/widgets/empty_state_widget.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 对话列表页。
 ///
@@ -56,9 +58,14 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
         stream: _stream,
         builder: (context, snapshot) {
           final list = snapshot.data ?? const <Conversation>[];
+          if (snapshot.hasError) {
+            return QuestErrorState(
+              message: '加载对话列表失败：${snapshot.error}',
+            );
+          }
           if (!snapshot.hasData &&
               snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const SkeletonList();
           }
           if (list.isEmpty) {
             return _buildEmpty(context);

@@ -16,6 +16,8 @@ class RouteNames {
   static const String noteEditor = 'noteEditor';
   static const String settings = 'settings';
   static const String settingsApi = 'settingsApi';
+  static const String ttsSettings = 'ttsSettings';
+  static const String guide = 'guide';
   static const String achievements = 'achievements';
   static const String statistics = 'statistics';
   static const String help = 'help';
@@ -32,6 +34,8 @@ class RouteNames {
   static const String noteEditorPath = '/notes/:noteId';
   static const String settingsPath = '/settings';
   static const String settingsApiPath = '/settings/api';
+  static const String ttsSettingsPath = '/settings/tts';
+  static const String guidePath = '/settings/guide';
   static const String achievementsPath = '/achievements';
   static const String statisticsPath = '/statistics';
   static const String helpPath = '/help';

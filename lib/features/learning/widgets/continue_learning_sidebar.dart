@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quest_academy/shared/utils/responsive.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_toast.dart';
 
 /// "继续学习"侧边栏。
 ///
@@ -83,9 +84,9 @@ class ContinueLearningSidebar extends StatelessWidget {
                   child: QuestCard(
                     onTap: () {
                       onTopicTap?.call();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('即将跳转：$topic')),
-                      );
+                      // 相关主题来自知识点的 relatedTopics 字段，未必能映射到
+                      // 具体课程，因此给出中性提示而非承诺跳转。
+                      QuestToast.info(context, '相关主题：$topic');
                     },
                     child: Row(
                       children: [

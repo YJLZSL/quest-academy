@@ -2,7 +2,7 @@ name: quest_academy
 description: 问学 Quest Academy - 引导式 AI 学习应用
 publish_to: 'none'
 
-version: 0.6.0+1
+version: 0.7.0+2
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -34,6 +34,14 @@ dependencies:
 
   # 网络
   dio: ^5.4.3+1
+
+  # 多模态与文件
+  image_picker: ^1.1.2
+  file_picker: ^8.0.5
+  mime: ^1.0.6
+
+  # 语音
+  flutter_tts: ^4.2.0
 
   # 自动更新（版本检查 / 下载 / 安装）
   package_info_plus: ^8.0.0

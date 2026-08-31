@@ -22,6 +22,9 @@ import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_button.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/quest_toast.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 import 'package:quest_academy/shared/widgets/streak_flame_badge.dart';
 import 'package:quest_academy/shared/widgets/xp_progress_ring.dart';
 /// 首页：展示欢迎信息、连续学习天数、继续学习入口与快捷操作。
@@ -84,9 +87,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     } on Object {
       // DB 操作失败时静默处理，不影响首页展示
       if (mounted) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          const SnackBar(content: Text('学习记录同步失败，请稍后重试')),
-        );
+        QuestToast.error(context, '学习记录同步失败，请稍后重试');
       }
     }
   }
@@ -500,17 +501,20 @@ class _HomePageState extends ConsumerState<HomePage> {
         );
       },
       loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: CircularProgressIndicator()),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: SkeletonList(
+          style: SkeletonStyle.card,
+          itemCount: 2,
+          cardHeight: 88,
+          padding: EdgeInsets.zero,
+        ),
       ),
       error: (_, __) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Text(
-          '课程加载失败',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: colorScheme.error,
-          ),
-          textAlign: TextAlign.center,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: QuestErrorState(
+          title: '课程加载失败',
+          message: '暂时无法读取课程内容，可稍后重试。',
+          onRetry: () => ref.invalidate(allCoursesProvider),
         ),
       ),
     );

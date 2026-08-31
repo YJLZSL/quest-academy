@@ -8,6 +8,8 @@ import 'package:quest_academy/data/db/database.dart';
 import 'package:quest_academy/data/providers/db_providers.dart';
 import 'package:quest_academy/shared/widgets/quest_app_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_button.dart';
+import 'package:quest_academy/shared/widgets/quest_toast.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 笔记编辑器。
 ///
@@ -108,9 +110,7 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
     if (title.isEmpty && content.isEmpty) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-        const SnackBar(content: Text('标题或内容不能为空')),
-      );
+      QuestToast.warning(context, '标题或内容不能为空');
       return;
     }
     final repo = ref.read(noteRepositoryProvider);
@@ -127,9 +127,7 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
     }
     if (!mounted) return;
     AnimationUtils.hapticSuccess();
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-      const SnackBar(content: Text('已保存')),
-    );
+    QuestToast.success(context, '已保存');
     _back();
   }
 
@@ -201,7 +199,7 @@ class _NoteEditorPageState extends ConsumerState<NoteEditorPage> {
         ],
       ),
       body: !_loaded
-          ? const Center(child: CircularProgressIndicator())
+          ? const SkeletonPage(blockCount: 2, blockHeight: 72)
           : _buildForm(context),
     );
   }

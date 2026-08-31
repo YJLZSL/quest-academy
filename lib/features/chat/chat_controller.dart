@@ -118,9 +118,17 @@ class ChatController extends StateNotifier<ChatControllerState> {
   /// 4. 持久化用户消息；
   /// 5. 注入系统提示词（按苏格拉底开关）发起流式请求；
   /// 6. 监听增量、完成、错误事件。
-  Future<void> sendMessage(String text) async {
+  ///
+  /// [imageBase64DataUrls] 为可选的 Base64 Data URL 图片列表，用于多模态
+  /// 识别（OCR、拍照做题等）。图片不会随消息文本一起持久化。
+  Future<void> sendMessage(
+    String text, {
+    List<String> imageBase64DataUrls = const [],
+  }) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty || state.isStreaming) return;
+    if ((trimmed.isEmpty && imageBase64DataUrls.isEmpty) || state.isStreaming) {
+      return;
+    }
 
     // 1. 先校验 Provider 可用性（在创建 Conversation / addMessage 之前）。
     final AiProvider? provider =
@@ -158,8 +166,15 @@ class ChatController extends StateNotifier<ChatControllerState> {
     }
 
     // 4. 持久化用户消息并追加到状态。
-    await msgRepo.addMessage(conversationId, 'user', trimmed);
-    final userMsg = ChatMessage.user(trimmed);
+    // 持久化时只保存文本；图片描述以标记形式附加，便于历史记录可读。
+    final persistedUserText = imageBase64DataUrls.isEmpty
+        ? trimmed
+        : '$trimmed\n[附 ${imageBase64DataUrls.length} 张图片]';
+    await msgRepo.addMessage(conversationId, 'user', persistedUserText);
+    final userMsg = ChatMessage.user(
+      trimmed,
+      images: imageBase64DataUrls,
+    );
     state = state.copyWith(
       messages: <ChatMessage>[...state.messages, userMsg],
       clearError: true,

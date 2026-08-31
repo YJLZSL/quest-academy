@@ -19,6 +19,8 @@ import 'package:quest_academy/shared/utils/responsive.dart';
 import 'package:quest_academy/shared/widgets/animated_progress_bar.dart';
 import 'package:quest_academy/shared/widgets/quest_card.dart';
 import 'package:quest_academy/shared/widgets/quest_chip.dart';
+import 'package:quest_academy/shared/widgets/quest_error_state.dart';
+import 'package:quest_academy/shared/widgets/skeleton_list.dart';
 
 /// 学习路径页。
 ///
@@ -57,8 +59,15 @@ class _LearningPathPageState extends ConsumerState<LearningPathPage> {
           }
           return _buildPath(context, courses, theme);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('加载课程失败：$error')),
+        loading: () => const SkeletonList(
+          style: SkeletonStyle.card,
+          itemCount: 3,
+          cardHeight: 120,
+        ),
+        error: (error, _) => QuestErrorState(
+          message: '加载课程失败：$error',
+          onRetry: () => ref.invalidate(allCoursesProvider),
+        ),
       ),
     );
   }

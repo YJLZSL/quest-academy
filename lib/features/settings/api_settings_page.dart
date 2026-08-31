@@ -6,6 +6,9 @@ import '../../data/providers/storage_providers.dart';
 import '../ai/ai_providers.dart';
 import '../../shared/widgets/quest_app_bar.dart';
 import '../../shared/widgets/quest_card.dart';
+import '../../shared/widgets/quest_error_state.dart';
+import '../../shared/widgets/quest_toast.dart';
+import '../../shared/widgets/skeleton_list.dart';
 import 'provider_edit_dialog.dart';
 
 /// 当前已配置的 Provider 列表 FutureProvider。
@@ -112,10 +115,9 @@ class ApiSettingsPage extends ConsumerWidget {
     ref.read(aiProviderRegistryProvider).invalidateCache();
     ref.invalidate(currentAiProviderProvider);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('已将 ${config.providerType.displayName} 设为活跃'),
-        ),
+      QuestToast.success(
+        context,
+        '已将 ${config.providerType.displayName} 设为活跃',
       );
     }
   }
@@ -133,8 +135,15 @@ class ApiSettingsPage extends ConsumerWidget {
         label: const Text('添加 Provider'),
       ),
       body: asyncConfigs.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('加载失败：$e')),
+        loading: () => const SkeletonList(
+          style: SkeletonStyle.card,
+          itemCount: 3,
+          cardHeight: 120,
+        ),
+        error: (e, _) => QuestErrorState(
+          message: '加载配置失败：$e',
+          onRetry: () => ref.invalidate(providerConfigsProvider),
+        ),
         data: (configs) {
           if (configs.isEmpty) {
             return _EmptyState(
